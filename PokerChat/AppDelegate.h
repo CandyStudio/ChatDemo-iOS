@@ -7,9 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Pomelo.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, PomeloDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic) UINavigationController *navController;
+@property (strong, nonatomic) Pomelo *pomelo;
 
 @end

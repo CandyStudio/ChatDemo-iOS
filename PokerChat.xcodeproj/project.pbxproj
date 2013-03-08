@@ -7,6 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B31BF83C16E8825A00561E33 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B31BF83A16E8825A00561E33 /* LoginViewController.m */; };
+		B31BF83D16E8825A00561E33 /* LoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B31BF83B16E8825A00561E33 /* LoginViewController.xib */; };
+		B31BF85916E8853800561E33 /* Pomelo.m in Sources */ = {isa = PBXBuildFile; fileRef = B31BF84216E8853800561E33 /* Pomelo.m */; };
+		B31BF85A16E8853800561E33 /* PomeloProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = B31BF84416E8853800561E33 /* PomeloProtocol.m */; };
+		B31BF85B16E8853800561E33 /* SocketIO.m in Sources */ = {isa = PBXBuildFile; fileRef = B31BF84716E8853800561E33 /* SocketIO.m */; };
+		B31BF85C16E8853800561E33 /* SocketIOJSONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = B31BF84916E8853800561E33 /* SocketIOJSONSerialization.m */; };
+		B31BF85D16E8853800561E33 /* SocketIOPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = B31BF84B16E8853800561E33 /* SocketIOPacket.m */; };
+		B31BF85E16E8853800561E33 /* SocketIOTransportWebsocket.m in Sources */ = {isa = PBXBuildFile; fileRef = B31BF84E16E8853800561E33 /* SocketIOTransportWebsocket.m */; };
+		B31BF85F16E8853800561E33 /* SocketIOTransportXHR.m in Sources */ = {isa = PBXBuildFile; fileRef = B31BF85016E8853800561E33 /* SocketIOTransportXHR.m */; };
+		B31BF86016E8853800561E33 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = B31BF85216E8853800561E33 /* base64.c */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		B31BF86116E8853800561E33 /* NSData+SRB64Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = B31BF85516E8853800561E33 /* NSData+SRB64Additions.m */; };
+		B31BF86216E8853800561E33 /* SRWebSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = B31BF85816E8853800561E33 /* SRWebSocket.m */; };
+		B31BF86416E8856000561E33 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B31BF86316E8856000561E33 /* Security.framework */; };
+		B31BF86616E8856900561E33 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B31BF86516E8856900561E33 /* CFNetwork.framework */; };
+		B31BF86816E8857100561E33 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B31BF86716E8857100561E33 /* libicucore.dylib */; };
 		B3D097C516E8284000E99380 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C416E8284000E99380 /* UIKit.framework */; };
 		B3D097C716E8284000E99380 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C616E8284000E99380 /* Foundation.framework */; };
 		B3D097C916E8284000E99380 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C816E8284000E99380 /* CoreGraphics.framework */; };
@@ -16,9 +31,40 @@
 		B3D097D716E8284100E99380 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = B3D097D616E8284100E99380 /* Default.png */; };
 		B3D097D916E8284100E99380 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B3D097D816E8284100E99380 /* Default@2x.png */; };
 		B3D097DB16E8284100E99380 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B3D097DA16E8284100E99380 /* Default-568h@2x.png */; };
+		B3D097E916E829C500E99380 /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D097E716E829C500E99380 /* ChatViewController.m */; };
+		B3D097EA16E829C500E99380 /* ChatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3D097E816E829C500E99380 /* ChatViewController.xib */; };
+		B3D097FE16E84AD200E99380 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097FD16E84AD200E99380 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B31BF83916E8825900561E33 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
+		B31BF83A16E8825A00561E33 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
+		B31BF83B16E8825A00561E33 /* LoginViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginViewController.xib; sourceTree = "<group>"; };
+		B31BF84116E8853800561E33 /* Pomelo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pomelo.h; sourceTree = "<group>"; };
+		B31BF84216E8853800561E33 /* Pomelo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Pomelo.m; sourceTree = "<group>"; };
+		B31BF84316E8853800561E33 /* PomeloProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PomeloProtocol.h; sourceTree = "<group>"; };
+		B31BF84416E8853800561E33 /* PomeloProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PomeloProtocol.m; sourceTree = "<group>"; };
+		B31BF84616E8853800561E33 /* SocketIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketIO.h; sourceTree = "<group>"; };
+		B31BF84716E8853800561E33 /* SocketIO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketIO.m; sourceTree = "<group>"; };
+		B31BF84816E8853800561E33 /* SocketIOJSONSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketIOJSONSerialization.h; sourceTree = "<group>"; };
+		B31BF84916E8853800561E33 /* SocketIOJSONSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketIOJSONSerialization.m; sourceTree = "<group>"; };
+		B31BF84A16E8853800561E33 /* SocketIOPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketIOPacket.h; sourceTree = "<group>"; };
+		B31BF84B16E8853800561E33 /* SocketIOPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketIOPacket.m; sourceTree = "<group>"; };
+		B31BF84C16E8853800561E33 /* SocketIOTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketIOTransport.h; sourceTree = "<group>"; };
+		B31BF84D16E8853800561E33 /* SocketIOTransportWebsocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketIOTransportWebsocket.h; sourceTree = "<group>"; };
+		B31BF84E16E8853800561E33 /* SocketIOTransportWebsocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketIOTransportWebsocket.m; sourceTree = "<group>"; };
+		B31BF84F16E8853800561E33 /* SocketIOTransportXHR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketIOTransportXHR.h; sourceTree = "<group>"; };
+		B31BF85016E8853800561E33 /* SocketIOTransportXHR.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SocketIOTransportXHR.m; sourceTree = "<group>"; };
+		B31BF85216E8853800561E33 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
+		B31BF85316E8853800561E33 /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
+		B31BF85416E8853800561E33 /* NSData+SRB64Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+SRB64Additions.h"; sourceTree = "<group>"; };
+		B31BF85516E8853800561E33 /* NSData+SRB64Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+SRB64Additions.m"; sourceTree = "<group>"; };
+		B31BF85616E8853800561E33 /* SocketRocket-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SocketRocket-Prefix.pch"; sourceTree = "<group>"; };
+		B31BF85716E8853800561E33 /* SRWebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SRWebSocket.h; sourceTree = "<group>"; };
+		B31BF85816E8853800561E33 /* SRWebSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SRWebSocket.m; sourceTree = "<group>"; };
+		B31BF86316E8856000561E33 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		B31BF86516E8856900561E33 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		B31BF86716E8857100561E33 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		B3D097C016E8284000E99380 /* PokerChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PokerChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D097C416E8284000E99380 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B3D097C616E8284000E99380 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -32,6 +78,10 @@
 		B3D097D616E8284100E99380 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		B3D097D816E8284100E99380 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		B3D097DA16E8284100E99380 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		B3D097E616E829C500E99380 /* ChatViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatViewController.h; sourceTree = "<group>"; };
+		B3D097E716E829C500E99380 /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
+		B3D097E816E829C500E99380 /* ChatViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatViewController.xib; sourceTree = "<group>"; };
+		B3D097FD16E84AD200E99380 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,6 +89,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B31BF86816E8857100561E33 /* libicucore.dylib in Frameworks */,
+				B31BF86616E8856900561E33 /* CFNetwork.framework in Frameworks */,
+				B31BF86416E8856000561E33 /* Security.framework in Frameworks */,
+				B3D097FE16E84AD200E99380 /* QuartzCore.framework in Frameworks */,
 				B3D097C516E8284000E99380 /* UIKit.framework in Frameworks */,
 				B3D097C716E8284000E99380 /* Foundation.framework in Frameworks */,
 				B3D097C916E8284000E99380 /* CoreGraphics.framework in Frameworks */,
@@ -48,6 +102,60 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B31BF83F16E884F900561E33 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				B31BF84016E8853800561E33 /* Pomelo */,
+				B31BF84516E8853800561E33 /* SocketIO */,
+				B31BF85116E8853800561E33 /* SocketRocket */,
+			);
+			name = Util;
+			path = PokerChat/Util;
+			sourceTree = SOURCE_ROOT;
+		};
+		B31BF84016E8853800561E33 /* Pomelo */ = {
+			isa = PBXGroup;
+			children = (
+				B31BF84116E8853800561E33 /* Pomelo.h */,
+				B31BF84216E8853800561E33 /* Pomelo.m */,
+				B31BF84316E8853800561E33 /* PomeloProtocol.h */,
+				B31BF84416E8853800561E33 /* PomeloProtocol.m */,
+			);
+			path = Pomelo;
+			sourceTree = "<group>";
+		};
+		B31BF84516E8853800561E33 /* SocketIO */ = {
+			isa = PBXGroup;
+			children = (
+				B31BF84616E8853800561E33 /* SocketIO.h */,
+				B31BF84716E8853800561E33 /* SocketIO.m */,
+				B31BF84816E8853800561E33 /* SocketIOJSONSerialization.h */,
+				B31BF84916E8853800561E33 /* SocketIOJSONSerialization.m */,
+				B31BF84A16E8853800561E33 /* SocketIOPacket.h */,
+				B31BF84B16E8853800561E33 /* SocketIOPacket.m */,
+				B31BF84C16E8853800561E33 /* SocketIOTransport.h */,
+				B31BF84D16E8853800561E33 /* SocketIOTransportWebsocket.h */,
+				B31BF84E16E8853800561E33 /* SocketIOTransportWebsocket.m */,
+				B31BF84F16E8853800561E33 /* SocketIOTransportXHR.h */,
+				B31BF85016E8853800561E33 /* SocketIOTransportXHR.m */,
+			);
+			path = SocketIO;
+			sourceTree = "<group>";
+		};
+		B31BF85116E8853800561E33 /* SocketRocket */ = {
+			isa = PBXGroup;
+			children = (
+				B31BF85216E8853800561E33 /* base64.c */,
+				B31BF85316E8853800561E33 /* base64.h */,
+				B31BF85416E8853800561E33 /* NSData+SRB64Additions.h */,
+				B31BF85516E8853800561E33 /* NSData+SRB64Additions.m */,
+				B31BF85616E8853800561E33 /* SocketRocket-Prefix.pch */,
+				B31BF85716E8853800561E33 /* SRWebSocket.h */,
+				B31BF85816E8853800561E33 /* SRWebSocket.m */,
+			);
+			path = SocketRocket;
+			sourceTree = "<group>";
+		};
 		B3D097B516E8284000E99380 = {
 			isa = PBXGroup;
 			children = (
@@ -68,6 +176,10 @@
 		B3D097C316E8284000E99380 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B31BF86716E8857100561E33 /* libicucore.dylib */,
+				B31BF86516E8856900561E33 /* CFNetwork.framework */,
+				B31BF86316E8856000561E33 /* Security.framework */,
+				B3D097FD16E84AD200E99380 /* QuartzCore.framework */,
 				B3D097C416E8284000E99380 /* UIKit.framework */,
 				B3D097C616E8284000E99380 /* Foundation.framework */,
 				B3D097C816E8284000E99380 /* CoreGraphics.framework */,
@@ -78,8 +190,16 @@
 		B3D097CA16E8284000E99380 /* PokerChat */ = {
 			isa = PBXGroup;
 			children = (
+				B3D097E216E8289000E99380 /* UI */,
+				B31BF83F16E884F900561E33 /* Util */,
 				B3D097D316E8284100E99380 /* AppDelegate.h */,
 				B3D097D416E8284100E99380 /* AppDelegate.m */,
+				B31BF83916E8825900561E33 /* LoginViewController.h */,
+				B31BF83A16E8825A00561E33 /* LoginViewController.m */,
+				B31BF83B16E8825A00561E33 /* LoginViewController.xib */,
+				B3D097E616E829C500E99380 /* ChatViewController.h */,
+				B3D097E716E829C500E99380 /* ChatViewController.m */,
+				B3D097E816E829C500E99380 /* ChatViewController.xib */,
 				B3D097CB16E8284000E99380 /* Supporting Files */,
 			);
 			path = PokerChat;
@@ -97,6 +217,13 @@
 				B3D097DA16E8284100E99380 /* Default-568h@2x.png */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B3D097E216E8289000E99380 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = UI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -154,6 +281,8 @@
 				B3D097D716E8284100E99380 /* Default.png in Resources */,
 				B3D097D916E8284100E99380 /* Default@2x.png in Resources */,
 				B3D097DB16E8284100E99380 /* Default-568h@2x.png in Resources */,
+				B3D097EA16E829C500E99380 /* ChatViewController.xib in Resources */,
+				B31BF83D16E8825A00561E33 /* LoginViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,6 +295,18 @@
 			files = (
 				B3D097D116E8284000E99380 /* main.m in Sources */,
 				B3D097D516E8284100E99380 /* AppDelegate.m in Sources */,
+				B3D097E916E829C500E99380 /* ChatViewController.m in Sources */,
+				B31BF83C16E8825A00561E33 /* LoginViewController.m in Sources */,
+				B31BF85916E8853800561E33 /* Pomelo.m in Sources */,
+				B31BF85A16E8853800561E33 /* PomeloProtocol.m in Sources */,
+				B31BF85B16E8853800561E33 /* SocketIO.m in Sources */,
+				B31BF85C16E8853800561E33 /* SocketIOJSONSerialization.m in Sources */,
+				B31BF85D16E8853800561E33 /* SocketIOPacket.m in Sources */,
+				B31BF85E16E8853800561E33 /* SocketIOTransportWebsocket.m in Sources */,
+				B31BF85F16E8853800561E33 /* SocketIOTransportXHR.m in Sources */,
+				B31BF86016E8853800561E33 /* base64.c in Sources */,
+				B31BF86116E8853800561E33 /* NSData+SRB64Additions.m in Sources */,
+				B31BF86216E8853800561E33 /* SRWebSocket.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -191,7 +332,8 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Yunlong Li (97TE3ZATPJ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Yunlong Li (97TE3ZATPJ)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -206,6 +348,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "C8F630E5-5F84-4D66-A1F3-A96719613395";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "EBA61C5F-14B2-42E4-B02B-A3F9D0892F5A";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -236,10 +380,14 @@
 		B3D097DF16E8284100E99380 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer: Yunlong Li (97TE3ZATPJ)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PokerChat/PokerChat-Prefix.pch";
 				INFOPLIST_FILE = "PokerChat/PokerChat-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "C68BCD66-45EF-4842-86DA-304A5FABE5E2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -247,9 +395,11 @@
 		B3D097E016E8284100E99380 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PokerChat/PokerChat-Prefix.pch";
 				INFOPLIST_FILE = "PokerChat/PokerChat-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -274,6 +424,7 @@
 				B3D097E016E8284100E99380 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

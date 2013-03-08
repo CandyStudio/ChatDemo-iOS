@@ -7,20 +7,24 @@
 //
 
 #import "AppDelegate.h"
+#import "ChatViewController.h"
+#import "LoginViewController.h"
 
 @implementation AppDelegate
 
-- (void)dealloc
-{
-    [_window release];
-    [super dealloc];
-}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
+    _pomelo = [[Pomelo alloc] initWithDelegate:self];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES];
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
+    LoginViewController *loginController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
+    loginController.pomelo = _pomelo;
+    self.navController = [[UINavigationController alloc] initWithRootViewController:loginController];
+    [self.window setRootViewController:self.navController];
+    self.navController.navigationBarHidden = YES;
     [self.window makeKeyAndVisible];
     return YES;
 }
