@@ -44,21 +44,6 @@ typedef enum
 
 - (IBAction)login:(id)sender
 {
-//    NSString *name = _nameTextField.text;
-//    NSString *channel = _channelTextField.text;
-//    if (([name length] > 0) && ([channel length] > 0)) {
-//        [self.pomelo connectToHost:@"10.0.1.23" onPort:3014 withCallback:^(Pomelo *p) {
-//            NSDictionary *params = [NSDictionary dictionaryWithObject:name forKey:@"uid"];
-//            NSLog(@"params = %@",params);
-//            [self.pomelo requestWithRoute:@"gate.gateHandler.queryEntry" andParams:params andCallback:^(NSDictionary *result) {
-//                NSLog(@"result=%@",result);
-//                [self.pomelo disconnectWithCallback:^(Pomelo *p) {
-//                    NSLog(@"result2=%@",result);
-//                    [self entryWithData:result];
-//                }];
-//            }];
-//        }];
-//    }
     NSString *username = _nameTextField.text;
     NSString *passward = _channelTextField.text;
     [self.pomelo connectToHost:@"10.0.1.44" onPort:3014 withCallback:^(Pomelo *p) {
@@ -67,12 +52,30 @@ typedef enum
         [self.pomelo requestWithRoute:@"gate.gateHandler.login" andParams:params andCallback:^(NSDictionary *result) {
             NSLog(@"result = %@",result);
             [self.pomelo disconnectWithCallback:^(Pomelo *p) {
-//                [self entryWithLoginData:result];
                 NSLog(@"normalLoginResult1=%@",result);
-                [self entrywithGuestLogin:result guestName:username guestPassword:passward];
+                UserData *userData = [[UserData alloc] initWithDic:result];
+                [UserDataManager sharedUserDataManager].user = userData;
+                [UserDataManager sharedUserDataManager].user.username = username;
+                [self entryWithNormalLogin:result guestName:username guestPassword:passward];
             }];
         }];
     }];
+}
+
+- (void)entryWithNormalLogin:(NSDictionary *)data guestName:theusername guestPassword:thepassword
+{
+    NSString *host = [data objectForKey:@"host"];
+    NSInteger port = [[data objectForKey:@"port"] intValue];
+
+    [self.pomelo connectToHost:host onPort:port withCallback:^(Pomelo *p) {
+        NSLog(@"[UserDataManager sharedUserDataManager].user.userid = %@",[UserDataManager sharedUserDataManager].user.userid);
+        NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid};
+        [p requestWithRoute:@"connector.entryHandler.enter" andParams:params andCallback:^(NSDictionary *result) {
+            NSLog(@"loginResult = %@",result);
+            [self enterRoom:result];
+        }];
+    }];
+
 }
 
 - (void)entryWithLoginData:(NSDictionary *)data
@@ -186,15 +189,23 @@ typedef enum
 
 
 - (IBAction)guestLogin:(id)sender {
-    NSString *guestName = [[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] stringValue];
+    NSString *guestName = [NSString stringWithFormat:@"%@",[NSNumber numberWithInt:[[NSDate date] timeIntervalSince1970]]];
+//    NSString *guestName = (NSString *)[[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]] integerValue];
     NSString *guestPassword = GUSETPASSWORD;
-    [self.pomelo connectToHost:@"10.0.1.23" onPort:3014 withCallback:^(Pomelo *p) {
-        NSDictionary *params = @{@"username": guestName,@"password":guestPassword};
-        [self.pomelo requestWithRoute:@"gate.gateHandler.login" andParams:params andCallback:^(NSDictionary *result) {
+    NSLog(@"guestName=%@",guestName);
+    userRole = UserRoleGuest;
+    [self.pomelo connectToHost:@"10.0.1.44" onPort:3014 withCallback:^(Pomelo *p) {
+        NSDictionary *params = @{@"username": guestName,@"password":guestPassword,@"role":[NSString stringWithFormat:@"%d",userRole]};
+        
+        [self.pomelo requestWithRoute:@"gate.gateHandler.register" andParams:params andCallback:^(NSDictionary *result) {
+            NSLog(@"guestLoginResult = %@",result);
             [self.pomelo disconnectWithCallback:^(Pomelo *p) {
-                UserData *user = [[UserData alloc] initWithDic:result];
-                [UserDataManager sharedUserDataManager].user = user;
-                [UserDataManager sharedUserDataManager].user.username = guestName;
+                UserData *userData = [[UserData alloc] initWithDic:result];
+                [UserDataManager sharedUserDataManager].user = userData;
+              
+                NSLog(@"[UserDataManager sharedUserDataManager].user.username = %@",guestName);
+                [UserDataManager sharedUserDataManager].user.username = (NSString *)guestName;
+                [UserDataManager sharedUserDataManager].user.role = @(UserRoleGuest);
                 [self entrywithGuestLogin:result guestName:guestName guestPassword:guestPassword];
                 
             }];
@@ -206,10 +217,7 @@ typedef enum
 {
     NSString *host = [data objectForKey:@"host"];
     NSInteger port = [[data objectForKey:@"port"] intValue];
-    
-    
     [self.pomelo connectToHost:host onPort:port withCallback:^(Pomelo *p) {
-//        NSDictionary *params = @{@"username": guestname,@"password":guestPassword};
         NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid};
         [p requestWithRoute:@"connector.entryHandler.enter" andParams:params andCallback:^(NSDictionary *result) {
             NSLog(@"normalLoginResult = %@",result);
