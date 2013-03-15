@@ -13,11 +13,14 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import "Pomelo.h"
+@class RefreshHeaderView;
 /*!
     @class ChatViewController
     @superclass UIViewController
  */
 @interface ChatViewController : UIViewController<UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate>
+
+@property (strong, nonatomic) RefreshHeaderView *refreshHeaderView;
 /**
  *chatTextField
  */
@@ -54,6 +57,8 @@
  *onlinePlayerTableView 在线玩家
  */
 @property (strong, nonatomic) IBOutlet UITableView *onlinePlayerTableView;
+
+@property (weak, nonatomic) IBOutlet UITableView *chatTableView;
 /**
  *pomelo
  */
@@ -69,6 +74,7 @@
 /**
  *保存个人玩家基本信息。
  */
+@property (weak, nonatomic) IBOutlet UIButton *chatLogButton;
 @property (strong, nonatomic) NSMutableDictionary *userDic;
 @end
 //方法的规范注释

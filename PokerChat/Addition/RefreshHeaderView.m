@@ -72,16 +72,126 @@
     return self;
 }
 
+#pragma mark -
+#pragma mark private method
 - (void)setState:(PullRefreshState)theState
 {
-//    switch (theState) {
-//        case PullRefreshStatePulling:
-//            _statusLabel.text = NSLocalizedString(@"", <#comment#>)
-//            break;
-//            
-//        default:
-//            break;
-//    }
+    switch (theState) {
+        case PullRefreshStatePulling:
+            _statusLabel.text = NSLocalizedString(@"Release to refresh...", @"Release to refresh status");
+            [CATransaction begin];
+            [CATransaction setAnimationDuration:FLIP_ANIMATION_DURATION];
+			_arrowImage.transform = CATransform3DMakeRotation((M_PI / 180.0) * 180.0f, 0.0f, 0.0f, 1.0f);
+			[CATransaction commit];
+			
+            break;
+        case PullRefreshStateNormal:
+            if (_state == PullRefreshStatePulling) {
+				[CATransaction begin];
+				[CATransaction setAnimationDuration:FLIP_ANIMATION_DURATION];
+				_arrowImage.transform = CATransform3DIdentity;
+				[CATransaction commit];
+			}
+			
+			_statusLabel.text = NSLocalizedString(@"Pull down to refresh...", @"Pull down to refresh status");
+			[_activityView stopAnimating];
+			[CATransaction begin];
+			[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+			_arrowImage.hidden = NO;
+			_arrowImage.transform = CATransform3DIdentity;
+			[CATransaction commit];
+			[self refreshLastUpdateDate];
+			            
+            break;
+        case PullRefreshStateLoading:
+            _statusLabel.text = NSLocalizedString(@"Loading...", @"Loading Status");
+			[_activityView startAnimating];
+			[CATransaction begin];
+			[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
+			_arrowImage.hidden = YES;
+			[CATransaction commit];
+			
+			break;
+
+        default:
+            break;
+    }
+}
+
+#pragma mark -
+#pragma mark public method
+- (void)refreshLastUpdateDate
+{
+    if ([_delegate respondsToSelector:@selector(egoRefreshHeaderDataSourceLastUpdated:)]) {
+		NSDate *date = [_delegate egoRefreshHeaderDataSourceLastUpdated:self];		
+		NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+		[formatter setAMSymbol:@"AM"];
+		[formatter setPMSymbol:@"PM"];
+		[formatter setDateFormat:@"MM/dd/yyyy hh:mm:a"];
+		_lastUpdateLabel.text = [NSString stringWithFormat:@"Last Updated: %@", [formatter stringFromDate:date]];
+		[[NSUserDefaults standardUserDefaults] setObject:_lastUpdateLabel.text forKey:@"EGORefreshTableView_LastRefresh"];
+		[[NSUserDefaults standardUserDefaults] synchronize];
+	} else {
+		_lastUpdateLabel.text = nil;
+	}
+}
+
+- (void)egoRefreshScrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (_state == PullRefreshStateLoading) {
+		
+		CGFloat offset = MAX(scrollView.contentOffset.y * -1, 0);
+		offset = MIN(offset, 60);
+		scrollView.contentInset = UIEdgeInsetsMake(offset, 0.0f, 0.0f, 0.0f);
+		
+	} else if (scrollView.isDragging) {
+		
+		BOOL _loading = NO;
+		if ([_delegate respondsToSelector:@selector(egoRefreshHeaderDataSourceIsLoading:)]) {
+			_loading = [_delegate egoRefreshHeaderDataSourceIsLoading:self];
+		}
+		
+		if (_state == PullRefreshStatePulling && scrollView.contentOffset.y > -65.0f && scrollView.contentOffset.y < 0.0f && !_loading) {
+			[self setState:PullRefreshStateNormal];
+		} else if (_state == PullRefreshStateNormal && scrollView.contentOffset.y < -65.0f && !_loading) {
+			[self setState:PullRefreshStatePulling];
+		}
+		
+		if (scrollView.contentInset.top != 0) {
+			scrollView.contentInset = UIEdgeInsetsZero;
+		}
+	}
+}
+
+- (void)egoRefreshScrollViewDidEndDragging:(UIScrollView *)scrollView
+{
+    BOOL _loading = NO;
+	if ([_delegate respondsToSelector:@selector(egoRefreshHeaderDataSourceIsLoading:)]) {
+		_loading = [_delegate egoRefreshHeaderDataSourceIsLoading:self];
+	}
+	
+	if (scrollView.contentOffset.y <= - 65.0f && !_loading) {
+		
+		if ([_delegate respondsToSelector:@selector(egoRefreshHeaderDidTriggerRefresh:)]) {
+			[_delegate egoRefreshHeaderDidTriggerRefresh:self];
+		}
+		
+		[self setState:PullRefreshStateLoading];
+		[UIView beginAnimations:nil context:NULL];
+		[UIView setAnimationDuration:0.2];
+		scrollView.contentInset = UIEdgeInsetsMake(60.0f, 0.0f, 0.0f, 0.0f);
+		[UIView commitAnimations];
+	}
+}
+
+- (void)egoRefreshScrollViewDataSourceDidFinishedLoading:(UIScrollView *)scrollView
+{
+    [UIView beginAnimations:nil context:NULL];
+	[UIView setAnimationDuration:.3];
+	[scrollView setContentInset:UIEdgeInsetsMake(0.0f, 0.0f, 0.0f, 0.0f)];
+	[UIView commitAnimations];
+	
+	[self setState:PullRefreshStateNormal];
 }
 
 @end

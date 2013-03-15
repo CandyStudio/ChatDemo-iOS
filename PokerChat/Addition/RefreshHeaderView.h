@@ -20,7 +20,7 @@ typedef enum
 @protocol RefreshHeaderViewDelegat<NSObject>
 
 - (void)egoRefreshHeaderDidTriggerRefresh:(RefreshHeaderView *)view;
-- (void)egoRefreshHeaderDataSourceIsLoading:(RefreshHeaderView *)view;
+- (BOOL)egoRefreshHeaderDataSourceIsLoading:(RefreshHeaderView *)view;
 @optional
 - (NSDate *)egoRefreshHeaderDataSourceLastUpdated:(RefreshHeaderView *)view;
 

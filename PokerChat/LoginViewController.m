@@ -228,7 +228,7 @@ typedef enum
 {
     RoomViewController *roomController = [[RoomViewController alloc] initWithNibName:@"RoomViewController" bundle:nil];
     roomController.pomelo = self.pomelo;
-    roomController.roomlistArray = [data objectForKey:@"roomlist"];
+    roomController.roomlistArray =[NSMutableArray arrayWithArray: [data objectForKey:@"roomlist"]];
     [self.navigationController pushViewController:roomController animated:YES];
 }
 
