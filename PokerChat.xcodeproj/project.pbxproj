@@ -34,6 +34,10 @@
 		B3D097E916E829C500E99380 /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D097E716E829C500E99380 /* ChatViewController.m */; };
 		B3D097EA16E829C500E99380 /* ChatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3D097E816E829C500E99380 /* ChatViewController.xib */; };
 		B3D097FE16E84AD200E99380 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097FD16E84AD200E99380 /* QuartzCore.framework */; };
+		B3DF333516F1B8F000E9C4D9 /* UserData.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF333416F1B8F000E9C4D9 /* UserData.m */; };
+		B3DF333816F1BBBB00E9C4D9 /* UserDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF333716F1BBBB00E9C4D9 /* UserDataManager.m */; };
+		B3DF333F16F1CA2000E9C4D9 /* RoomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF333D16F1CA2000E9C4D9 /* RoomViewController.m */; };
+		B3DF334016F1CA2000E9C4D9 /* RoomViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3DF333E16F1CA2000E9C4D9 /* RoomViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -82,6 +86,13 @@
 		B3D097E716E829C500E99380 /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
 		B3D097E816E829C500E99380 /* ChatViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatViewController.xib; sourceTree = "<group>"; };
 		B3D097FD16E84AD200E99380 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B3DF333316F1B8F000E9C4D9 /* UserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserData.h; sourceTree = "<group>"; };
+		B3DF333416F1B8F000E9C4D9 /* UserData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserData.m; sourceTree = "<group>"; };
+		B3DF333616F1BBBB00E9C4D9 /* UserDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserDataManager.h; sourceTree = "<group>"; };
+		B3DF333716F1BBBB00E9C4D9 /* UserDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserDataManager.m; sourceTree = "<group>"; };
+		B3DF333C16F1CA2000E9C4D9 /* RoomViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomViewController.h; sourceTree = "<group>"; };
+		B3DF333D16F1CA2000E9C4D9 /* RoomViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomViewController.m; sourceTree = "<group>"; };
+		B3DF333E16F1CA2000E9C4D9 /* RoomViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,6 +201,7 @@
 		B3D097CA16E8284000E99380 /* PokerChat */ = {
 			isa = PBXGroup;
 			children = (
+				B3DF333216F1B77500E9C4D9 /* Manage */,
 				B3D097E216E8289000E99380 /* UI */,
 				B31BF83F16E884F900561E33 /* Util */,
 				B3D097D316E8284100E99380 /* AppDelegate.h */,
@@ -200,6 +212,9 @@
 				B3D097E616E829C500E99380 /* ChatViewController.h */,
 				B3D097E716E829C500E99380 /* ChatViewController.m */,
 				B3D097E816E829C500E99380 /* ChatViewController.xib */,
+				B3DF333C16F1CA2000E9C4D9 /* RoomViewController.h */,
+				B3DF333D16F1CA2000E9C4D9 /* RoomViewController.m */,
+				B3DF333E16F1CA2000E9C4D9 /* RoomViewController.xib */,
 				B3D097CB16E8284000E99380 /* Supporting Files */,
 			);
 			path = PokerChat;
@@ -224,6 +239,17 @@
 			children = (
 			);
 			path = UI;
+			sourceTree = "<group>";
+		};
+		B3DF333216F1B77500E9C4D9 /* Manage */ = {
+			isa = PBXGroup;
+			children = (
+				B3DF333316F1B8F000E9C4D9 /* UserData.h */,
+				B3DF333416F1B8F000E9C4D9 /* UserData.m */,
+				B3DF333616F1BBBB00E9C4D9 /* UserDataManager.h */,
+				B3DF333716F1BBBB00E9C4D9 /* UserDataManager.m */,
+			);
+			path = Manage;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -283,6 +309,7 @@
 				B3D097DB16E8284100E99380 /* Default-568h@2x.png in Resources */,
 				B3D097EA16E829C500E99380 /* ChatViewController.xib in Resources */,
 				B31BF83D16E8825A00561E33 /* LoginViewController.xib in Resources */,
+				B3DF334016F1CA2000E9C4D9 /* RoomViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -307,6 +334,9 @@
 				B31BF86016E8853800561E33 /* base64.c in Sources */,
 				B31BF86116E8853800561E33 /* NSData+SRB64Additions.m in Sources */,
 				B31BF86216E8853800561E33 /* SRWebSocket.m in Sources */,
+				B3DF333516F1B8F000E9C4D9 /* UserData.m in Sources */,
+				B3DF333816F1BBBB00E9C4D9 /* UserDataManager.m in Sources */,
+				B3DF333F16F1CA2000E9C4D9 /* RoomViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,12 +412,14 @@
 			buildSettings = {
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Yunlong Li (97TE3ZATPJ)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Yunlong Li (97TE3ZATPJ)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PokerChat/PokerChat-Prefix.pch";
 				INFOPLIST_FILE = "PokerChat/PokerChat-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "C68BCD66-45EF-4842-86DA-304A5FABE5E2";
+				PROVISIONING_PROFILE = "EDC1924E-DBED-42E3-8BAF-4699118BEC2B";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "EDC1924E-DBED-42E3-8BAF-4699118BEC2B";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;

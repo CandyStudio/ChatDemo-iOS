@@ -33,4 +33,12 @@
  *Pomelo
  */
 @property (strong, nonatomic) Pomelo *pomelo;
+
+@property (weak, nonatomic) IBOutlet UIButton *registerButton;
+
+@property (weak, nonatomic) IBOutlet UIButton *guestButton;
+
+@property (weak, nonatomic) IBOutlet UITextField *onceAgainPassword;
+
+
 @end

@@ -1,0 +1,18 @@
+//
+//  RoomViewController.h
+//  PokerChat
+//
+//  Created by 束 永兴 on 13-3-14.
+//  Copyright (c) 2013年 Vienta.su. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "Pomelo.h"
+
+@interface RoomViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
+@property (weak, nonatomic) IBOutlet UITextField *creatRoomTextField;
+@property (weak, nonatomic) IBOutlet UIButton *creatRoomButton;
+@property (weak, nonatomic) IBOutlet UITableView *romeList;
+@property (strong,nonatomic) NSMutableArray *roomlistArray;
+@property (strong,nonatomic) Pomelo *pomelo;
+@end

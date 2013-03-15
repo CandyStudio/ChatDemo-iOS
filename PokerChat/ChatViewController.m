@@ -8,6 +8,8 @@
 
 #import "ChatViewController.h"
 #import "LoginViewController.h"
+#import "UserDataManager.h"
+#import "UserData.h"
 
 @interface ChatViewController ()
 /**
@@ -25,10 +27,9 @@
         self.chatStr = [[NSMutableString alloc] initWithCapacity:10];
         self.contactList = [[NSMutableArray alloc] initWithCapacity:1];
         self.userDic = [[NSMutableDictionary alloc] initWithCapacity:0];
-        [self.contactList addObject:@"All"];
+        [self.contactList addObject:@{@"username": @"All"}];
         self.target = @"*";
         NSLog(@"self.contactList = %@",self.contactList);
-        NSLog(@"ChatViewController");
     }
     return self;
 }
@@ -51,7 +52,9 @@
 {
     [_pomelo onRoute:@"onAdd" withCallback:^(NSDictionary *data) {
         NSLog(@"user add -----");
-        NSString *name = [data objectForKey:@"user"];
+        NSLog(@"onAdd = %@",data);
+        NSString *name = [data objectForKey:@"username"];
+        
         [self.onlinePlayerTableView beginUpdates];
         [_contactList addObject:name];
         self.numLabel.text = [NSString stringWithFormat:@"人数:%d",_contactList.count];
@@ -94,7 +97,7 @@
 {
     [super viewDidLoad];
     self.nameLabel.text = [NSString stringWithFormat:@"昵称：%@",[self.userDic objectForKey:@"username"]];
-    self.roomLabel.text = [NSString stringWithFormat:@"房间：%@",[self.userDic objectForKey:@"rid"]];
+    self.roomLabel.text = [NSString stringWithFormat:@"房间：%@",[self.userDic objectForKey:@"channel"]];
     self.numLabel.text = [NSString stringWithFormat:@"人数：%d",self.contactList.count];
     [self initEvents];
     [self init2Events];
@@ -188,8 +191,9 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     NSInteger row = indexPath.row;
-    NSLog(@"contactList=%@",self.contactList);
-    cell.textLabel.text = [self.contactList objectAtIndex:row];
+    NSLog(@"contactList=%@",[self.contactList objectAtIndex:row]);
+    cell.textLabel.text = [[self.contactList objectAtIndex:row] objectForKey:@"username"];
+//    在线玩家的名称
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     return cell;
 }
@@ -205,12 +209,12 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [self.contactList objectAtIndex:indexPath.row];
-    NSLog(@"cell = %@",cell);
-    if ([(NSString *)cell isEqualToString:@"All"]){
+    NSString *cellStr = [[self.contactList objectAtIndex:indexPath.row] objectForKey:@"All"];
+    NSLog(@"cell = %@",cellStr);
+    if ([cellStr isEqualToString:@"All"]){
         self.target = @"*";
     } else {
-        self.target = (NSString *)cell;
+        self.target = cellStr;
     }
 }
 
@@ -224,7 +228,7 @@
     NSLog(@"should Return");
     NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
                           _chatTextField.text, @"content",
-                          self.target, @"target",
+                          self.target, @"target",[UserDataManager sharedUserDataManager].user.userid,@"userid",
                           nil];
     NSLog(@"data=%@",data);
     if ([[data objectForKey:@"content"] isEqual:@""]) {
