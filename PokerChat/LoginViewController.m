@@ -63,7 +63,7 @@ typedef enum
 {
     [self.pomelo connectToHost:@"10.0.1.44" onPort:3014 withCallback:^(Pomelo *p) {
         NSDictionary *params = @{@"username": theUsername,@"password":thePassword};
-//        NSLocalizedString(params, @"normal login first connect to server");
+//        NSLogv(<#NSString *format#>, <#va_list args#>)
         [self.pomelo requestWithRoute:@"gate.gateHandler.login" andParams:params andCallback:^(NSDictionary *result) {
             [self.pomelo disconnectWithCallback:^(Pomelo *p) {
 //                NSLocalizedString(result, @"the result after request server");
