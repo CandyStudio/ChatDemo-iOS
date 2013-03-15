@@ -31,10 +31,15 @@
         self.chatStr = [[NSMutableString alloc] initWithCapacity:10];
         self.contactList = [[NSMutableArray alloc] initWithCapacity:1];
         self.userDic = [[NSMutableDictionary alloc] initWithCapacity:0];
+        self.chatLogArray = [[NSMutableArray alloc] initWithCapacity:10];
         [self.contactList addObject:@{@"username": @"All"}];
         self.target = @{@"username": @"All",@"userid":@"",@"content":@""};
-        self.chatTableView.tag = CHAT_TABLEVIEW;
-        self.onlinePlayerTableView.tag = ONLINE_PLAYER_TABLEVIEW;
+        self.tempArray = [[NSMutableArray alloc] initWithCapacity:10];
+        /*
+         210 679 359 70
+         */
+       
+        
     }
     return self;
 }
@@ -101,6 +106,7 @@
     [self.pomelo offRoute:@"onChat"];
     [self setChatTableView:nil];
     [self setChatLogButton:nil];
+    _refreshHeaderView = nil;
     [super viewDidUnload];
 }
 
@@ -110,6 +116,18 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    ///调试用
+//    self.chatLogArray = [NSMutableArray arrayWithObjects:@{@"context": @""},@{@"context": @""},@{@"context": @""},nil];
+    
+    if (_refreshHeaderView == nil) {
+        RefreshHeaderView *refreshView = [[RefreshHeaderView alloc] initWithFrame:CGRectMake(0, self.chatTableView.frame.origin.y - self.chatTableView.bounds.size.height, self.chatTableView.bounds.size.width, self.chatTableView.bounds.size.height)];
+        refreshView.delegate = self;
+        [self.chatTableView addSubview:refreshView];
+        _refreshHeaderView = refreshView;
+    }
+    [_refreshHeaderView refreshLastUpdateDate];
+    
     self.nameLabel.text = [NSString stringWithFormat:@"昵称：%@",[self.userDic objectForKey:@"username"]];
     self.roomLabel.text = [NSString stringWithFormat:@"房间：%@",[self.userDic objectForKey:@"channel"]];
     self.numLabel.text = [NSString stringWithFormat:@"人数：%d",self.contactList.count];
@@ -190,7 +208,7 @@
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    NSLog(@"beginedit");
+    NSLog(@"beginEdit");
     return YES;
 }
 
@@ -207,18 +225,20 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSLog(@"self.contactList.count = %d",self.contactList.count);
-
-//    return self.contactList.count;
-//    if (tableView.tag == ONLINE_PLAYER_TABLEVIEW) {
+    if (self.onlinePlayerTableView == tableView)
         return self.contactList.count;
-//    } else {
-//        return 2;
+//    else {
+//        if (self.chatLogArray.count <= 10) {
+//            return self.chatLogArray.count;
+//        } else
+//            return 10;
 //    }
-    
+    else
+        return [self.chatLogArray count];
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    if (tableView.tag == ONLINE_PLAYER_TABLEVIEW) {
+    if (self.onlinePlayerTableView == tableView) {
         static NSString *CellIdentifier = @"ContactsTableCell";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         if (cell == nil) {
@@ -230,50 +250,134 @@
         //    在线玩家的名称
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         return cell;
-//    } else if (tableView.tag == CHAT_TABLEVIEW){
-//        static NSString *CellIdentifier = @"ContactsTableCell2";
-//        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-//        if (cell == nil) {
-//            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+    } else {
+        static NSString *CellIdentifier = @"ContactsTableCell2";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        if (cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        }
+//        cell.textLabel.text = @"AB";
+        NSInteger row = indexPath.row;
+        NSLog(@"row = %d", row);
+        NSLog(@"self.chatLogArray = %@",self.chatLogArray);
+        NSLog(@"self.objectatindex = %@",[self.chatLogArray objectAtIndex:row]);
+//        if (self.chatLogArray.count <= 10) {
+//            cell
 //        }
-//        NSInteger row = indexPath.row;
-//        NSLog(@"contactList123=%@",[self.contactList objectAtIndex:row]);
-//        cell.textLabel.text = [[self.contactList objectAtIndex:row] objectForKey:@"username"];
-//        cell.textLabel.text = @"12";
-        //    在线玩家的名称
-//        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-//        return cell;
-//    }
-    
+//        if (row <= 10) {
+//            NSLog(@"self.chatLogArray = %@",self.chatLogArray);
+//            
+//            cell.textLabel.text = [[self.chatLogArray objectAtIndex:row] objectForKey:@"context"];
+//            //    在线玩家的名称
+//            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+//            return cell;
+//        }
+        cell.textLabel.text = [[self.chatLogArray objectAtIndex:row] objectForKey:@"context"];
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        return cell;
+    }
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-//    if (tableView.tag == ONLINE_PLAYER_TABLEVIEW) {
+    if (self.onlinePlayerTableView == tableView) {
         return @"online Player";
-//    } else {
-//        return @"chatLog";
-//    }
+    } else
+        return @"聊天记录";
     
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-//    if (tableView.tag == ONLINE_PLAYER_TABLEVIEW) {
+    if (self.onlinePlayerTableView == tableView) {
         return 44;
-//    } else {
-//        return 12;
-//    }
+    } else
+        return 20;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    if (tableView.tag == ONLINE_PLAYER_TABLEVIEW) {
+    if (self.onlinePlayerTableView == tableView) {
         NSDictionary *cellDic = [self.contactList objectAtIndex:indexPath.row];
         self.target = cellDic;
         NSLog(@"celldic = %@",cellDic);
-//    } else {
-//        NSLog(@"indexPath = %@",indexPath);
-//    }
+    } else
+        NSLog(@"indexPath = %@",indexPath);
+}
+
+#pragma mark -
+#pragma mark Data Source Loading / Reloading Methods
+- (void)reloadTableViewDataSource
+{
+    _reloading = YES;
+}
+
+- (void)doneLoadingTableViewData
+{
+    if ([self.tempArray count] == 0) {
+        NSNumber *userid = [NSNumber numberWithInt:[UserDataManager sharedUserDataManager].user.username];
+        NSNumber *roomid = [NSNumber numberWithInt:[self.userDic objectForKey:@"channel"]];
+        NSDictionary *params = @{@"userid": userid,@"roomid":roomid};
+        NSLog(@"params = %@",params);
+        [self.pomelo requestWithRoute:@"chat.chatHandler.query" andParams:params andCallback:^(NSDictionary * result) {
+            NSLog(@"query:result = %@",result);
+            //        [self.chatLogArray removeAllObjects];
+            //        [self.chatLogArray addObjectsFromArray:[result objectForKey:@"chatlog"]];
+            [self.tempArray addObjectsFromArray:[result objectForKey:@"chatlog"]];
+            NSLog(@"self.chatLogArray=%@",self.chatLogArray);
+            
+            int tempLenth = [self.tempArray count];
+            NSLog(@"tempLenth：%d",tempLenth);
+            int currLenth = [self.chatLogArray count];
+            NSLog(@"currLenth：%d",currLenth);
+            for (int i = currLenth; i <currLenth+10&& i<tempLenth ; i++) {
+                NSLog(@"i:%d",i);
+                NSLog(@"object:%@",[self.tempArray objectAtIndex:i]);
+                [self.chatLogArray addObject:[self.tempArray objectAtIndex:i]];
+                NSLog(@"arr count:%d",[self.chatLogArray count]);
+            }
+            [self.chatTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES ];
+        }]; 
+    } else {
+        int tempLenth = [self.tempArray count];
+        int currLenth = [self.chatLogArray count];
+        for (int i = currLenth; i <currLenth+10&& i<tempLenth ; i++) {
+            [self.chatLogArray addObject:[self.tempArray objectAtIndex:i]];
+        }
+        [self.chatTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES ];
+    }
+    
+    _reloading = NO;
+    [_refreshHeaderView egoRefreshScrollViewDataSourceDidFinishedLoading:self.chatTableView];
+}
+
+#pragma mark -
+#pragma mark UIScrollViewDelegate Methods
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    [_refreshHeaderView egoRefreshScrollViewDidScroll:self.chatTableView];
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    [_refreshHeaderView egoRefreshScrollViewDidEndDragging:self.chatTableView];
+}
+
+#pragma mark -
+#pragma mark RefreshHeaderViewDelegate
+- (void)egoRefreshHeaderDidTriggerRefresh:(RefreshHeaderView *)view
+{
+    [self reloadTableViewDataSource];
+    [self performSelector:@selector(doneLoadingTableViewData) withObject:nil afterDelay:3.0];
+}
+
+- (BOOL)egoRefreshHeaderDataSourceIsLoading:(RefreshHeaderView *)view
+{
+    return _reloading;
+}
+
+- (NSDate *)egoRefreshHeaderDataSourceLastUpdated:(RefreshHeaderView *)view
+{
+    return [NSDate date];
 }
 
 /**

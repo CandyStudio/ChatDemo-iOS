@@ -116,6 +116,7 @@
         default:
             break;
     }
+    _state = theState;
 }
 
 #pragma mark -
@@ -138,6 +139,7 @@
 
 - (void)egoRefreshScrollViewDidScroll:(UIScrollView *)scrollView
 {
+    NSLog(@"egoRefreshScrollViewDidScroll");
     if (_state == PullRefreshStateLoading) {
 		
 		CGFloat offset = MAX(scrollView.contentOffset.y * -1, 0);

@@ -13,14 +13,15 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import "Pomelo.h"
-@class RefreshHeaderView;
+#import "RefreshHeaderView.h"
 /*!
     @class ChatViewController
     @superclass UIViewController
  */
-@interface ChatViewController : UIViewController<UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate>
+@interface ChatViewController : UIViewController<UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,RefreshHeaderViewDelegate>
 
 @property (strong, nonatomic) RefreshHeaderView *refreshHeaderView;
+@property (assign, nonatomic) BOOL reloading;
 /**
  *chatTextField
  */
@@ -76,6 +77,11 @@
  */
 @property (weak, nonatomic) IBOutlet UIButton *chatLogButton;
 @property (strong, nonatomic) NSMutableDictionary *userDic;
+@property (strong, nonatomic) NSMutableArray *chatLogArray;
+@property (strong, nonatomic) NSMutableArray *tempArray;
+
+- (void)reloadTableViewDataSource;
+- (void)doneLoadingTableViewData;
 @end
 //方法的规范注释
 /*!

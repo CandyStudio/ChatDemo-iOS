@@ -23,6 +23,14 @@
 		B31BF86616E8856900561E33 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B31BF86516E8856900561E33 /* CFNetwork.framework */; };
 		B31BF86816E8857100561E33 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B31BF86716E8857100561E33 /* libicucore.dylib */; };
 		B32AD45816F30A170030B46A /* RefreshHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = B32AD45716F30A170030B46A /* RefreshHeaderView.m */; };
+		B32AD46216F340BD0030B46A /* blackArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = B32AD45A16F340BD0030B46A /* blackArrow.png */; };
+		B32AD46316F340BD0030B46A /* blackArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B32AD45B16F340BD0030B46A /* blackArrow@2x.png */; };
+		B32AD46416F340BD0030B46A /* blueArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = B32AD45C16F340BD0030B46A /* blueArrow.png */; };
+		B32AD46516F340BD0030B46A /* blueArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B32AD45D16F340BD0030B46A /* blueArrow@2x.png */; };
+		B32AD46616F340BD0030B46A /* grayArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = B32AD45E16F340BD0030B46A /* grayArrow.png */; };
+		B32AD46716F340BD0030B46A /* grayArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B32AD45F16F340BD0030B46A /* grayArrow@2x.png */; };
+		B32AD46816F340BD0030B46A /* whiteArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = B32AD46016F340BD0030B46A /* whiteArrow.png */; };
+		B32AD46916F340BD0030B46A /* whiteArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B32AD46116F340BD0030B46A /* whiteArrow@2x.png */; };
 		B3D097C516E8284000E99380 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C416E8284000E99380 /* UIKit.framework */; };
 		B3D097C716E8284000E99380 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C616E8284000E99380 /* Foundation.framework */; };
 		B3D097C916E8284000E99380 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C816E8284000E99380 /* CoreGraphics.framework */; };
@@ -72,6 +80,14 @@
 		B31BF86716E8857100561E33 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
 		B32AD45616F30A170030B46A /* RefreshHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefreshHeaderView.h; sourceTree = "<group>"; };
 		B32AD45716F30A170030B46A /* RefreshHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RefreshHeaderView.m; sourceTree = "<group>"; };
+		B32AD45A16F340BD0030B46A /* blackArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blackArrow.png; sourceTree = "<group>"; };
+		B32AD45B16F340BD0030B46A /* blackArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blackArrow@2x.png"; sourceTree = "<group>"; };
+		B32AD45C16F340BD0030B46A /* blueArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blueArrow.png; sourceTree = "<group>"; };
+		B32AD45D16F340BD0030B46A /* blueArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blueArrow@2x.png"; sourceTree = "<group>"; };
+		B32AD45E16F340BD0030B46A /* grayArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = grayArrow.png; sourceTree = "<group>"; };
+		B32AD45F16F340BD0030B46A /* grayArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grayArrow@2x.png"; sourceTree = "<group>"; };
+		B32AD46016F340BD0030B46A /* whiteArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whiteArrow.png; sourceTree = "<group>"; };
+		B32AD46116F340BD0030B46A /* whiteArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "whiteArrow@2x.png"; sourceTree = "<group>"; };
 		B3D097C016E8284000E99380 /* PokerChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PokerChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D097C416E8284000E99380 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B3D097C616E8284000E99380 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -180,6 +196,21 @@
 			path = PokerChat/Addition;
 			sourceTree = SOURCE_ROOT;
 		};
+		B32AD45916F340BC0030B46A /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				B32AD45A16F340BD0030B46A /* blackArrow.png */,
+				B32AD45B16F340BD0030B46A /* blackArrow@2x.png */,
+				B32AD45C16F340BD0030B46A /* blueArrow.png */,
+				B32AD45D16F340BD0030B46A /* blueArrow@2x.png */,
+				B32AD45E16F340BD0030B46A /* grayArrow.png */,
+				B32AD45F16F340BD0030B46A /* grayArrow@2x.png */,
+				B32AD46016F340BD0030B46A /* whiteArrow.png */,
+				B32AD46116F340BD0030B46A /* whiteArrow@2x.png */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
 		B3D097B516E8284000E99380 = {
 			isa = PBXGroup;
 			children = (
@@ -218,6 +249,7 @@
 				B3D097E216E8289000E99380 /* UI */,
 				B32AD45516F309CE0030B46A /* Addition */,
 				B31BF83F16E884F900561E33 /* Util */,
+				B32AD45916F340BC0030B46A /* Resource */,
 				B3D097D316E8284100E99380 /* AppDelegate.h */,
 				B3D097D416E8284100E99380 /* AppDelegate.m */,
 				B31BF83916E8825900561E33 /* LoginViewController.h */,
@@ -324,6 +356,14 @@
 				B3D097EA16E829C500E99380 /* ChatViewController.xib in Resources */,
 				B31BF83D16E8825A00561E33 /* LoginViewController.xib in Resources */,
 				B3DF334016F1CA2000E9C4D9 /* RoomViewController.xib in Resources */,
+				B32AD46216F340BD0030B46A /* blackArrow.png in Resources */,
+				B32AD46316F340BD0030B46A /* blackArrow@2x.png in Resources */,
+				B32AD46416F340BD0030B46A /* blueArrow.png in Resources */,
+				B32AD46516F340BD0030B46A /* blueArrow@2x.png in Resources */,
+				B32AD46616F340BD0030B46A /* grayArrow.png in Resources */,
+				B32AD46716F340BD0030B46A /* grayArrow@2x.png in Resources */,
+				B32AD46816F340BD0030B46A /* whiteArrow.png in Resources */,
+				B32AD46916F340BD0030B46A /* whiteArrow@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

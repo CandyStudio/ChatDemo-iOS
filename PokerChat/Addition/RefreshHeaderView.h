@@ -17,7 +17,7 @@ typedef enum
 
 @class RefreshHeaderView;
 
-@protocol RefreshHeaderViewDelegat<NSObject>
+@protocol RefreshHeaderViewDelegate<NSObject>
 
 - (void)egoRefreshHeaderDidTriggerRefresh:(RefreshHeaderView *)view;
 - (BOOL)egoRefreshHeaderDataSourceIsLoading:(RefreshHeaderView *)view;
@@ -27,8 +27,16 @@ typedef enum
 @end
 
 @interface RefreshHeaderView : UIView
+{
 
-@property (weak, nonatomic) id<RefreshHeaderViewDelegat>delegate;
+    PullRefreshState _state;
+    UILabel *_lastUpdateLabel;
+    UILabel *_statusLabel;
+    CALayer *_arrowImage;
+    UIActivityIndicatorView *_activityView;
+}
+
+@property (weak, nonatomic) id<RefreshHeaderViewDelegate>delegate;
 @property (assign, nonatomic) PullRefreshState state;
 @property (strong, nonatomic) UILabel *lastUpdateLabel;
 @property (strong, nonatomic) UILabel *statusLabel;

@@ -59,15 +59,40 @@ typedef enum
 #pragma mark -
 #pragma mark New Login And Register Method
 
-- (void)connectServerWithUsername:(NSString *)theUsername andPassword:thePassword
+//TODO:LOGIN:
+- (void)enterCenterRoom:(NSDictionary *)data
+{
+    RoomViewController *roomViewController = [[RoomViewController alloc] initWithNibName:@"RoomViewController" bundle:nil];
+    roomViewController.pomelo = self.pomelo;
+    roomViewController.roomlistArray = [NSMutableArray arrayWithArray:[data objectForKey:@"roomlist"]];
+    [self.navigationController pushViewController:roomViewController animated:YES];
+}
+
+- (void)entryWithNormalLogin:(NSDictionary *)data userName:(NSString *)theUsername andPassword:(NSString *)thePassword
+{
+    NSString *host = [data objectForKey:@"host"];
+    NSInteger port = [[data objectForKey:@"port"] intValue];
+    [self.pomelo connectToHost:host onPort:port withCallback:^(Pomelo *p) {
+        NSDictionary *parmas = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,@"username":[UserDataManager sharedUserDataManager].user.username};
+        [p requestWithRoute:@"connector.entryHandler.enter" andParams:parmas andCallback:^(NSDictionary *result) {
+            [self enterCenterRoom:result];
+        }];
+    }];
+}
+
+- (void)connectServerWithUsername:(NSString *)theUsername password:(NSString *)thePassword andUserRole:(UserRole )theRole
 {
     [self.pomelo connectToHost:@"10.0.1.44" onPort:3014 withCallback:^(Pomelo *p) {
         NSDictionary *params = @{@"username": theUsername,@"password":thePassword};
-//        NSLogv(<#NSString *format#>, <#va_list args#>)
         [self.pomelo requestWithRoute:@"gate.gateHandler.login" andParams:params andCallback:^(NSDictionary *result) {
             [self.pomelo disconnectWithCallback:^(Pomelo *p) {
 //                NSLocalizedString(result, @"the result after request server");
 //                [self creatUserDataWithResult:result username:theUsername andUserRole:]
+                UserData *userData = [[UserData alloc] initWithDic:result];
+                [UserDataManager sharedUserDataManager].user = userData;
+                [UserDataManager sharedUserDataManager].user.username = theUsername;
+                [UserDataManager sharedUserDataManager].user.role = @(theRole);
+                [self entryWithNormalLogin:result userName:theUsername andPassword:thePassword];
             }];
         }];
     }];
@@ -77,8 +102,49 @@ typedef enum
 {
     NSString *username = _nameTextField.text;
     NSString *password = _channelTextField.text;
+    userRole = UserRoleRegister;
     //TODO:
-//    [self connectServerWithRoute:Username:username andPassword:password];
+    [self connectServerWithUsername:username password:password andUserRole:userRole];
+}
+
+
+//TODO:REGISTER
+- (void)guestRegister
+{
+    NSString *registerUsername = _nameTextField.text;
+    NSString *registerPassword = _channelTextField.text;
+    NSString *againPassword = _onceAgainPassword.text;
+    if ([registerUsername length] >= 4 && [registerUsername length] <= 12) {
+        if ([registerPassword isEqualToString:againPassword]) {
+            if ([registerPassword length] >= 4 && [registerPassword length] <= 12) {
+                NSDictionary *params = @{@"username": registerUsername, @"password":registerPassword, @"role":[NSString stringWithFormat:@"%d",userRole]};
+                [self.pomelo requestWithRoute:@"gate.gateHandler.register" andParams:params andCallback:^(NSDictionary * result) {
+                    NSLog(@"registResult = %@",result);
+                    [self.pomelo disconnectWithCallback:^(Pomelo *p) {
+                        if ([[result objectForKey:@"code"] intValue] == 200) {
+                            NSLog(@"register success ");
+                            UserData *userData = [[UserData alloc] initWithDic:result];
+                            [UserDataManager sharedUserDataManager].user = userData;
+                            [UserDataManager sharedUserDataManager].user.role = @(UserRoleRegister);
+                            [UserDataManager sharedUserDataManager].user.username = _nameTextField.text;
+                        }
+                    }];
+                }];
+            } else {
+                //密码的长度和符合条件
+                UIAlertView *alerView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"密码长度不符合条件" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                [alerView show];
+            }
+        } else {
+            //前后密码不一致
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"前后密码不一致" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+            [alertView show];
+        }
+    } else {
+        //昵称不对
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"昵称不对" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alertView show];
+    }
 }
 
 #pragma mark -
