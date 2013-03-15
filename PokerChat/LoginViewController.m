@@ -19,13 +19,30 @@ typedef enum
     UserRoleAdmin,
 }UserRole;  //user类型
 
+//typedef enum
+//{
+//
+//}GateHandlerType;
+
 #define GUSETPASSWORD @"123456"
+//#define GATEHANDLER_LOGIN @"gate.gateHandler.login"
 
 @interface LoginViewController ()
 {
     UserRole userRole;
 }
 - (void)entryWithData:(NSDictionary *)data;
+
+//////******//////
+//正常登陆
+- (void)normalLogin;
+//游客登陆
+- (void)guestLogin;
+//注册
+- (void)userRegister;
+
+/////******//////
+
 @end
 
 @implementation LoginViewController
@@ -38,6 +55,34 @@ typedef enum
     }
     return self;
 }
+
+#pragma mark -
+#pragma mark New Login And Register Method
+
+- (void)connectServerWithUsername:(NSString *)theUsername andPassword:thePassword
+{
+    [self.pomelo connectToHost:@"10.0.1.44" onPort:3014 withCallback:^(Pomelo *p) {
+        NSDictionary *params = @{@"username": theUsername,@"password":thePassword};
+//        NSLocalizedString(params, @"normal login first connect to server");
+        [self.pomelo requestWithRoute:@"gate.gateHandler.login" andParams:params andCallback:^(NSDictionary *result) {
+            [self.pomelo disconnectWithCallback:^(Pomelo *p) {
+//                NSLocalizedString(result, @"the result after request server");
+//                [self creatUserDataWithResult:result username:theUsername andUserRole:]
+            }];
+        }];
+    }];
+}
+
+- (void)normalLogin
+{
+    NSString *username = _nameTextField.text;
+    NSString *password = _channelTextField.text;
+    //TODO:
+//    [self connectServerWithRoute:Username:username andPassword:password];
+}
+
+#pragma mark -
+
 /**
  *登陆
  */
@@ -69,7 +114,7 @@ typedef enum
 
     [self.pomelo connectToHost:host onPort:port withCallback:^(Pomelo *p) {
         NSLog(@"[UserDataManager sharedUserDataManager].user.userid = %@",[UserDataManager sharedUserDataManager].user.userid);
-        NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid};
+        NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,@"username":[UserDataManager sharedUserDataManager].user.username};
         [p requestWithRoute:@"connector.entryHandler.enter" andParams:params andCallback:^(NSDictionary *result) {
             NSLog(@"loginResult = %@",result);
             [self enterRoom:result];
