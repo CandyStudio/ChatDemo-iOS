@@ -12,6 +12,7 @@
 #import "UserData.h"
 
 @interface ChatViewController ()
+
 /**
  *chatStr 发送的文字
  */
@@ -28,8 +29,7 @@
         self.contactList = [[NSMutableArray alloc] initWithCapacity:1];
         self.userDic = [[NSMutableDictionary alloc] initWithCapacity:0];
         [self.contactList addObject:@{@"username": @"All"}];
-        self.target = @"*";
-        NSLog(@"self.contactList = %@",self.contactList);
+        self.target = @{@"username": @"All",@"userid":@"",@"content":@""};
     }
     return self;
 }
@@ -38,6 +38,7 @@
  */
 - (void)initEvents
 {
+    
     [_pomelo onRoute:@"onChat" withCallback:^(NSDictionary *data) {
         NSLog(@"onChat...");
         NSString *target = [[data objectForKey:@"target"] isEqualToString:@"*"]?@"":@" to you";
@@ -52,11 +53,9 @@
 {
     [_pomelo onRoute:@"onAdd" withCallback:^(NSDictionary *data) {
         NSLog(@"user add -----");
-        NSLog(@"onAdd = %@",data);
-        NSString *name = [data objectForKey:@"username"];
-        
+        NSLog(@"onAdd = %@",data);        
         [self.onlinePlayerTableView beginUpdates];
-        [_contactList addObject:name];
+        [_contactList addObject:data];
         self.numLabel.text = [NSString stringWithFormat:@"人数:%d",_contactList.count];
         NSLog(@"addContactList=%@",_contactList);
         NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:[_contactList count] - 1 inSection:0]];
@@ -65,15 +64,23 @@
     }];
     [_pomelo onRoute:@"onLeave" withCallback:^(NSDictionary *data) {
         NSLog(@"user leave ----");
-        NSString *name = [data objectForKey:@"user"];
-        NSLog(@"leaveContactList=%@",name);
-        if ([_contactList containsObject:name]) {
-            NSUInteger index = [_contactList indexOfObject:name];
-            [_contactList removeObjectAtIndex:index];
-            NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]];
-            [self.onlinePlayerTableView deleteRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationAutomatic];
-            self.numLabel.text = [NSString stringWithFormat:@"人数:%d",_contactList.count];
+        NSLog(@"data = %@",data);
+        NSString *name = [data objectForKey:@"username"];
+        NSLog(@"name = %@",name);
+        NSLog(@"leaveContactList=%@",_contactList);
+        int index = 0;
+        for (index = 0; index <= _contactList.count; index++) {
+            NSLog(@"objectatindex:%@",[[_contactList objectAtIndex:index] objectForKey:@"username"]);
+            if ([[[_contactList objectAtIndex:index] objectForKey:@"username"] isEqualToString:name]) {
+                NSLog(@"index = %d",index);
+                break;
+            }
+            //TODO:Notice here maybe bug!
         }
+        [_contactList removeObjectAtIndex:index];
+        NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]];
+        [self.onlinePlayerTableView deleteRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationAutomatic];
+        self.numLabel.text = [NSString stringWithFormat:@"人数:%d",_contactList.count];
     }];
 }
 /**
@@ -181,6 +188,7 @@
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    NSLog(@"self.contactList.count = %d",self.contactList.count);
     return self.contactList.count;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -191,7 +199,7 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     NSInteger row = indexPath.row;
-    NSLog(@"contactList=%@",[self.contactList objectAtIndex:row]);
+    NSLog(@"contactList123=%@",[self.contactList objectAtIndex:row]);
     cell.textLabel.text = [[self.contactList objectAtIndex:row] objectForKey:@"username"];
 //    在线玩家的名称
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -209,13 +217,14 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *cellStr = [[self.contactList objectAtIndex:indexPath.row] objectForKey:@"All"];
-    NSLog(@"cell = %@",cellStr);
-    if ([cellStr isEqualToString:@"All"]){
-        self.target = @"*";
-    } else {
-        self.target = cellStr;
-    }
+    NSDictionary *cellDic = [self.contactList objectAtIndex:indexPath.row];
+    self.target = cellDic;
+    NSLog(@"celldic = %@",cellDic);
+//    if ([[cellStr ] isEqualToString:@"All"]){
+//        self.target = @"*";
+//    } else {
+//        self.target = cellStr;
+//    }
 }
 
 /**
@@ -226,19 +235,17 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     NSLog(@"should Return");
-    NSDictionary *data = [NSDictionary dictionaryWithObjectsAndKeys:
-                          _chatTextField.text, @"content",
-                          self.target, @"target",[UserDataManager sharedUserDataManager].user.userid,@"userid",
-                          nil];
+    //对所有人userid为空
+    NSDictionary *data = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?@"*":[self.target objectForKey:@"username"],@"userid":[self.target objectForKey:@"userid"]?[self.target objectForKey:@"userid"]:@"",@"content":_chatTextField.text,@"roomid":@"1"};
     NSLog(@"data=%@",data);
     if ([[data objectForKey:@"content"] isEqual:@""]) {
         NSLog(@"输入为空");  //这段逻辑以后可能会用
     } else {
-        if ([self.target isEqualToString:@"*"]) {
+        if ([[self.target objectForKey:@"username"] isEqualToString:@"All"]) {
             [_pomelo notifyWithRoute:@"chat.chatHandler.send" andParams:data];
         } else {
             [_pomelo requestWithRoute:@"chat.chatHandler.send" andParams:data andCallback:^(NSDictionary *result) {
-                [_chatStr appendFormat:@"you says to %@: %@\n",self.target, [data objectForKey:@"content"]];
+                [_chatStr appendFormat:@"you says to %@: %@\n",[self.target objectForKey:@"username"], [data objectForKey:@"content"]];
                 [self updateChat];
             }];
         }

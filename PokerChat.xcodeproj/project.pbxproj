@@ -22,6 +22,7 @@
 		B31BF86416E8856000561E33 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B31BF86316E8856000561E33 /* Security.framework */; };
 		B31BF86616E8856900561E33 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B31BF86516E8856900561E33 /* CFNetwork.framework */; };
 		B31BF86816E8857100561E33 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B31BF86716E8857100561E33 /* libicucore.dylib */; };
+		B32AD45816F30A170030B46A /* RefreshHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = B32AD45716F30A170030B46A /* RefreshHeaderView.m */; };
 		B3D097C516E8284000E99380 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C416E8284000E99380 /* UIKit.framework */; };
 		B3D097C716E8284000E99380 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C616E8284000E99380 /* Foundation.framework */; };
 		B3D097C916E8284000E99380 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C816E8284000E99380 /* CoreGraphics.framework */; };
@@ -69,6 +70,8 @@
 		B31BF86316E8856000561E33 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		B31BF86516E8856900561E33 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		B31BF86716E8857100561E33 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = usr/lib/libicucore.dylib; sourceTree = SDKROOT; };
+		B32AD45616F30A170030B46A /* RefreshHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefreshHeaderView.h; sourceTree = "<group>"; };
+		B32AD45716F30A170030B46A /* RefreshHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RefreshHeaderView.m; sourceTree = "<group>"; };
 		B3D097C016E8284000E99380 /* PokerChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PokerChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D097C416E8284000E99380 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B3D097C616E8284000E99380 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -167,6 +170,16 @@
 			path = SocketRocket;
 			sourceTree = "<group>";
 		};
+		B32AD45516F309CE0030B46A /* Addition */ = {
+			isa = PBXGroup;
+			children = (
+				B32AD45616F30A170030B46A /* RefreshHeaderView.h */,
+				B32AD45716F30A170030B46A /* RefreshHeaderView.m */,
+			);
+			name = Addition;
+			path = PokerChat/Addition;
+			sourceTree = SOURCE_ROOT;
+		};
 		B3D097B516E8284000E99380 = {
 			isa = PBXGroup;
 			children = (
@@ -203,6 +216,7 @@
 			children = (
 				B3DF333216F1B77500E9C4D9 /* Manage */,
 				B3D097E216E8289000E99380 /* UI */,
+				B32AD45516F309CE0030B46A /* Addition */,
 				B31BF83F16E884F900561E33 /* Util */,
 				B3D097D316E8284100E99380 /* AppDelegate.h */,
 				B3D097D416E8284100E99380 /* AppDelegate.m */,
@@ -337,6 +351,7 @@
 				B3DF333516F1B8F000E9C4D9 /* UserData.m in Sources */,
 				B3DF333816F1BBBB00E9C4D9 /* UserDataManager.m in Sources */,
 				B3DF333F16F1CA2000E9C4D9 /* RoomViewController.m in Sources */,
+				B32AD45816F30A170030B46A /* RefreshHeaderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

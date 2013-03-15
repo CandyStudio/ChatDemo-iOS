@@ -73,8 +73,8 @@
             chatViewController.pomelo = self.pomelo;
             chatViewController.userDic = [NSMutableDictionary dictionaryWithDictionary:params];
             [chatViewController.contactList addObjectsFromArray:userList];
-            [chatViewController.contactList removeObject:[UserDataManager sharedUserDataManager].user.username];
-            [chatViewController.contactList removeObject:[UserDataManager sharedUserDataManager].user.userid];
+//            [chatViewController.contactList removeObject:[UserDataManager sharedUserDataManager].user.username];
+//            [chatViewController.contactList removeObject:[UserDataManager sharedUserDataManager].user.userid];
             [self.navigationController pushViewController:chatViewController animated:YES];
             //        [self presentViewController:chatViewController animated:NO completion:nil];
         }];

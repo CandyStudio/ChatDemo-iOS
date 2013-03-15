@@ -61,7 +61,7 @@
 /**
  *target 对话的对象
  */
-@property (weak, nonatomic) NSString *target;
+@property (strong, nonatomic) NSDictionary *target;
 /**
  *保存在线玩家
  */
