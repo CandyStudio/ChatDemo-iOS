@@ -66,16 +66,22 @@
             //成功
             SSLog(@"creat room success:result = %@",result);
             NSDictionary *newRoom = @{@"id": [NSString stringWithFormat:@"%@",[result objectForKey:@"roomid"]],@"name":channel};
-            [self.romeList beginUpdates];
-            [self.roomlistArray addObject:[NSMutableDictionary dictionaryWithDictionary: newRoom]];
-            NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:[_roomlistArray count] - 1 inSection:0]];
-            [self.romeList insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationTop];
-            [self.romeList endUpdates];
+            [self performSelectorOnMainThread:@selector(updateRooms:) withObject:newRoom waitUntilDone:YES];
         } else{
             SSLog(@"Err:%@",[result objectForKey:@"code"]);
         }
     }];
 }
+
+- (void)updateRooms:(NSDictionary *)dict
+{
+    [self.romeList beginUpdates];
+    [self.roomlistArray addObject:[NSMutableDictionary dictionaryWithDictionary: dict]];
+    NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:[_roomlistArray count] - 1 inSection:0]];
+    [self.romeList insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationTop];
+    [self.romeList endUpdates];
+}
+
 
 /**
  *编辑完成

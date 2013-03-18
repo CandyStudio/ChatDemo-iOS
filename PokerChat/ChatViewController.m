@@ -10,6 +10,7 @@
 #import "LoginViewController.h"
 #import "UserDataManager.h"
 #import "UserData.h"
+#import "Pomelo.h"
 
 #define CHAT_TABLEVIEW 100001
 #define ONLINE_PLAYER_TABLEVIEW 100002
@@ -55,7 +56,8 @@
     [_pomelo onRoute:@"onChat" withCallback:^(NSDictionary *data) {
         SSLog(@"onChat...");
         NSString *target = [[data objectForKey:@"target"] isEqualToString:@"*"]?@"":@" to you";
-        [_chatStr appendFormat:@"%@ says%@: %@\n",[data objectForKey:@"from"], target, [data objectForKey:@"msg"]];
+//        [_chatStr appendFormat:@"%@ says%@: %@\n",[data objectForKey:@"from"], target, [data objectForKey:@"msg"]];
+        [_chatLogArray addObject:@{@"context": [data objectForKey:@"msg"]}];
         [self updateChat];
     }];
 }
@@ -68,7 +70,7 @@
         SSLog(@"user add -----");
         [self.onlinePlayerTableView beginUpdates];
         [_contactList addObject:data];
-        self.numLabel.text = [NSString stringWithFormat:@"人数:%d",_contactList.count];
+        self.numLabel.text = [NSString stringWithFormat:@"人数:%d",_contactList.count - 1];
         NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:[_contactList count] - 1 inSection:0]];
         [self.onlinePlayerTableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationTop];
         [self.onlinePlayerTableView endUpdates];        
@@ -87,7 +89,7 @@
         [_contactList removeObjectAtIndex:index];
         NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]];
         [self.onlinePlayerTableView deleteRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationAutomatic];
-        self.numLabel.text = [NSString stringWithFormat:@"人数:%d",_contactList.count];
+        self.numLabel.text = [NSString stringWithFormat:@"人数:%d",_contactList.count - 1];
     }];
 }
 /**
@@ -123,7 +125,7 @@
     
     self.nameLabel.text = [NSString stringWithFormat:@"昵称：%@",[self.userDic objectForKey:@"username"]];
     self.roomLabel.text = [NSString stringWithFormat:@"房间：%@",[self.userDic objectForKey:@"channel"]];
-    self.numLabel.text = [NSString stringWithFormat:@"人数：%d",self.contactList.count];
+    self.numLabel.text = [NSString stringWithFormat:@"人数：%d",self.contactList.count - 1];
     [self initEvents];
     [self init2Events];
 }
@@ -186,8 +188,10 @@
  */
 - (IBAction)exit:(id)sender {
     SSLog(@"exit");
-    [self.pomelo disconnect];
-    [self.navigationController popToRootViewControllerAnimated:YES];
+    [self.pomelo disconnect];//??
+//    [self.navigationController popToRootViewControllerAnimated:YES];
+    [self.navigationController popViewControllerAnimated:YES];
+    //TODO:bug here 需要退出房间接口
 }
 
 - (void)didReceiveMemoryWarning
@@ -199,6 +203,13 @@
 {
     SSLog(@"beginEdit");
     return YES;
+}
+
+#pragma mark -
+#pragma mark SocketIOTransportDelegate
+- (void)onDisconnect:(NSError *)error
+{
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 /**
@@ -216,8 +227,10 @@
     SSLog(@"self.contactList.count = %d",self.contactList.count);
     if (self.onlinePlayerTableView == tableView)
         return [self.contactList count];
-    else
+    else {
+        SSLog(@"chatAcout = %d",[self.chatLogArray count]);
         return [self.chatLogArray count];
+    }
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -360,7 +373,8 @@
             [_pomelo notifyWithRoute:@"chat.chatHandler.send" andParams:data];
         } else {
             [_pomelo requestWithRoute:@"chat.chatHandler.send" andParams:data andCallback:^(NSDictionary *result) {
-                [_chatStr appendFormat:@"you says to %@: %@\n",[self.target objectForKey:@"username"], [data objectForKey:@"content"]];
+                SSLog(@"senderResult = %@",result);
+//                [_chatStr appendFormat:@"you says to %@: %@\n",[self.target objectForKey:@"username"], [data objectForKey:@"content"]];
                 [self updateChat];
             }];
         }
@@ -373,8 +387,22 @@
  */
 - (void)updateChat
 {
-    self.chatTextView.text = _chatStr;
-    [self.chatTextView scrollRectToVisible:CGRectMake(0, _chatTextView.contentSize.height-30, _chatTextView.contentSize.width, 10) animated:YES];
+    //bug here!
+    [self.chatTableView beginUpdates];
+    NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:[_chatLogArray count] - 1 inSection:0]];
+    [self.chatTableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationTop];
+    [self.chatTableView endUpdates];
+    
+//    self.chatTextView.text = _chatStr;
+    [self.chatTableView scrollRectToVisible:CGRectMake(0, _chatTableView.contentSize.height-30, _chatTableView.contentSize.width, 10) animated:YES];
 }
+
+
+
+
+
+
+
+
 
 @end

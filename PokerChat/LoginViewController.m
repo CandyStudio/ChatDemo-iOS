@@ -19,6 +19,13 @@ typedef enum
     UserRoleAdmin,
 }UserRole;  //user类型
 
+#define PASSWORDERROR 0
+#define NOUSERNAME 1
+#define ALREADYHASUSER 2
+#define ALREADYLOGIN 3
+#define SUCCESSLOGIN 200
+
+
 //typedef enum
 //{
 //
@@ -62,6 +69,11 @@ typedef enum
         // Custom initialization
     }
     return self;
+}
+
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
 }
 
 - (void)viewDidLoad
@@ -111,9 +123,66 @@ typedef enum
     [self.pomelo connectToHost:host onPort:port withCallback:^(Pomelo *p) {
         NSDictionary *parmas = @{@"userid":[UserDataManager sharedUserDataManager].user.userid,@"username":theUsername};
         [p requestWithRoute:@"connector.entryHandler.enter" andParams:parmas andCallback:^(NSDictionary *result) {
-            [self enterCenterRoom:result];
+            SSLog(@"enterResult = %@",result);
+            if ([[result objectForKey:@"code"] intValue] == 200) {
+                [self enterCenterRoom:result];
+            } else {
+                [self checkError:[[[result objectForKey:@"err"] objectForKey:@"errorcode"] intValue]];
+            }
         }];
     }];
+}
+
+- (void)checkError:(int)errorType
+{
+    switch (errorType) {
+        case PASSWORDERROR:
+        {   //密码错误
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                message:@"密码错误"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil, nil];
+            [alertView show];
+        }
+            break;
+        case NOUSERNAME:
+        {   //无此用户
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                              message:@"无此用户"
+                                                             delegate:nil
+                                                    cancelButtonTitle:@"OK"
+                                                    otherButtonTitles:nil, nil];
+            [alertView show];
+        }
+            break;
+        case ALREADYHASUSER:
+        {
+            //用户已注册
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                message:@"用户已注册"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil, nil];
+            [alertView show];
+
+        }
+            break;
+        case ALREADYLOGIN:
+        {
+            //用户已经登陆
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                message:@"用户已经登陆"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil, nil];
+            [alertView show];
+        }
+            break;
+            
+        default:
+            break;
+    }
 }
 
 /**
@@ -128,6 +197,7 @@ typedef enum
         NSDictionary *params = @{@"username": theUsername,@"password":thePassword};
         [self.pomelo requestWithRoute:@"gate.gateHandler.login" andParams:params andCallback:^(NSDictionary *result) {
             [self.pomelo disconnectWithCallback:^(Pomelo *p) {
+                SSLog(@"rusult = %@",result);
                 if ([[result objectForKey:@"code"] intValue] == 200) {
                     UserData *userData = [[UserData alloc] initWithDic:result];
                     [UserDataManager sharedUserDataManager].user = userData;
@@ -135,7 +205,8 @@ typedef enum
                     [UserDataManager sharedUserDataManager].user.username = theUsername;
                     [self entryWithLoginData:result userName:theUsername andPassword:thePassword];
                 } else {
-                    SSLog(@"normalLoginErr = %@",[result objectForKey:@"code"]);
+                    SSLog(@"result.logincode = %@",[result objectForKey:@"err"]);
+                    [self checkError:[[[result objectForKey:@"err"] objectForKey:@"errorcode"] intValue]];
                 }
             }];
         }];
@@ -189,6 +260,8 @@ typedef enum
     }
 }
 
+
+
 /**
  *@brief 游客登陆或者玩家注册时调用的方法，用来完成注册
  *@param theName 注册姓名或默认游客姓名
@@ -210,7 +283,7 @@ typedef enum
                     //NEXT:游客登陆
                     [self entryWithLoginData:result userName:theName andPassword:thePassword];
                 } else {
-                    SSLog(@"Err = %@",[result objectForKey:@"code"]);
+                    [self checkError:[[[result objectForKey:@"err"] objectForKey:@"errorcode"] intValue]];
                 }
             }];
         }];

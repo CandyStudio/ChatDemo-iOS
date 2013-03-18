@@ -18,7 +18,7 @@
     @class ChatViewController
     @superclass UIViewController
  */
-@interface ChatViewController : UIViewController<UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,RefreshHeaderViewDelegate>
+@interface ChatViewController : UIViewController<UITextFieldDelegate,UITableViewDataSource,UITableViewDelegate,RefreshHeaderViewDelegate,SocketIOTransportDelegate>
 
 @property (strong, nonatomic) RefreshHeaderView *refreshHeaderView;
 @property (assign, nonatomic) BOOL reloading;
