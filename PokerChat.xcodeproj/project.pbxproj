@@ -31,6 +31,7 @@
 		B32AD46716F340BD0030B46A /* grayArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B32AD45F16F340BD0030B46A /* grayArrow@2x.png */; };
 		B32AD46816F340BD0030B46A /* whiteArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = B32AD46016F340BD0030B46A /* whiteArrow.png */; };
 		B32AD46916F340BD0030B46A /* whiteArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B32AD46116F340BD0030B46A /* whiteArrow@2x.png */; };
+		B32AEBA016F7055C001EC9C1 /* Functions.m in Sources */ = {isa = PBXBuildFile; fileRef = B32AEB9F16F7055C001EC9C1 /* Functions.m */; };
 		B3D097C516E8284000E99380 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C416E8284000E99380 /* UIKit.framework */; };
 		B3D097C716E8284000E99380 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C616E8284000E99380 /* Foundation.framework */; };
 		B3D097C916E8284000E99380 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C816E8284000E99380 /* CoreGraphics.framework */; };
@@ -88,6 +89,8 @@
 		B32AD45F16F340BD0030B46A /* grayArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grayArrow@2x.png"; sourceTree = "<group>"; };
 		B32AD46016F340BD0030B46A /* whiteArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whiteArrow.png; sourceTree = "<group>"; };
 		B32AD46116F340BD0030B46A /* whiteArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "whiteArrow@2x.png"; sourceTree = "<group>"; };
+		B32AEB9E16F7055C001EC9C1 /* Functions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Functions.h; sourceTree = "<group>"; };
+		B32AEB9F16F7055C001EC9C1 /* Functions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Functions.m; sourceTree = "<group>"; };
 		B3D097C016E8284000E99380 /* PokerChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PokerChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D097C416E8284000E99380 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B3D097C616E8284000E99380 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -135,9 +138,7 @@
 		B31BF83F16E884F900561E33 /* Util */ = {
 			isa = PBXGroup;
 			children = (
-				B31BF84016E8853800561E33 /* Pomelo */,
-				B31BF84516E8853800561E33 /* SocketIO */,
-				B31BF85116E8853800561E33 /* SocketRocket */,
+				B32AEB9D16F704C5001EC9C1 /* Socket */,
 			);
 			name = Util;
 			path = PokerChat/Util;
@@ -191,6 +192,8 @@
 			children = (
 				B32AD45616F30A170030B46A /* RefreshHeaderView.h */,
 				B32AD45716F30A170030B46A /* RefreshHeaderView.m */,
+				B32AEB9E16F7055C001EC9C1 /* Functions.h */,
+				B32AEB9F16F7055C001EC9C1 /* Functions.m */,
 			);
 			name = Addition;
 			path = PokerChat/Addition;
@@ -209,6 +212,16 @@
 				B32AD46116F340BD0030B46A /* whiteArrow@2x.png */,
 			);
 			path = Resource;
+			sourceTree = "<group>";
+		};
+		B32AEB9D16F704C5001EC9C1 /* Socket */ = {
+			isa = PBXGroup;
+			children = (
+				B31BF84016E8853800561E33 /* Pomelo */,
+				B31BF84516E8853800561E33 /* SocketIO */,
+				B31BF85116E8853800561E33 /* SocketRocket */,
+			);
+			name = Socket;
 			sourceTree = "<group>";
 		};
 		B3D097B516E8284000E99380 = {
@@ -392,6 +405,7 @@
 				B3DF333816F1BBBB00E9C4D9 /* UserDataManager.m in Sources */,
 				B3DF333F16F1CA2000E9C4D9 /* RoomViewController.m in Sources */,
 				B32AD45816F30A170030B46A /* RefreshHeaderView.m in Sources */,
+				B32AEBA016F7055C001EC9C1 /* Functions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

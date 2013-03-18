@@ -87,7 +87,7 @@ typedef enum
 #pragma mark New Login, GuestLogin And Register Method
 
 /**
- *进入聊天大厅
+ *@brief 进入聊天大厅
  *@param data 请求enter后返回的数据
  */
 - (void)enterCenterRoom:(NSDictionary *)data
@@ -99,7 +99,7 @@ typedef enum
 }
 
 /**
- *请求enter
+ *@brief 请求enter
  *@param data 请求login后返回的结果
  *@param theUsername 玩家名称
  *@param thePassword 玩家密码
@@ -117,7 +117,7 @@ typedef enum
 }
 
 /**
- *login请求
+ *@brief login请求
  *@param theUsername 用户名
  *@param thePassword 密码
  *@param theRole 玩家类型
@@ -135,7 +135,7 @@ typedef enum
                     [UserDataManager sharedUserDataManager].user.username = theUsername;
                     [self entryWithLoginData:result userName:theUsername andPassword:thePassword];
                 } else {
-                    NSLog(@"normalLoginErr = %@",[result objectForKey:@"code"]);
+                    SSLog(@"normalLoginErr = %@",[result objectForKey:@"code"]);
                 }
             }];
         }];
@@ -144,7 +144,7 @@ typedef enum
 
 //TODO:LOGIN:
 /**
- *已注册玩家登陆
+ *@brief已注册玩家登陆
  */
 - (void)normalLogin
 {
@@ -158,7 +158,7 @@ typedef enum
 
 //TODO:REGISTER
 /**
- *玩家注册
+ *@brief玩家注册
  */
 - (void)guestRegister
 {
@@ -190,7 +190,7 @@ typedef enum
 }
 
 /**
- *游客登陆或者玩家注册时调用的方法，用来完成注册
+ *@brief 游客登陆或者玩家注册时调用的方法，用来完成注册
  *@param theName 注册姓名或默认游客姓名
  *@param thePassword 注册密码或默认游客密码123456
  *@param theRole 判断是注册玩家还是游客玩家
@@ -200,7 +200,7 @@ typedef enum
     [self.pomelo connectToHost:@"10.0.1.44" onPort:3014 withCallback:^(Pomelo *p) {
         NSDictionary *params = @{@"username": theName,@"password":thePassword,@"role":[NSString stringWithFormat:@"%d",theRole]};
         [self.pomelo requestWithRoute:@"gate.gateHandler.register" andParams:params andCallback:^(NSDictionary *result) {
-            NSLog(@"registOrGuestResult = %@",result);
+            SSLog(@"registOrGuestResult = %@",result);
             [self.pomelo disconnectWithCallback:^(Pomelo* p) {
                 if ([[result objectForKey:@"code"] intValue] == 200) {
                     UserData *userData = [[UserData alloc] initWithDic:result];
@@ -210,7 +210,7 @@ typedef enum
                     //NEXT:游客登陆
                     [self entryWithLoginData:result userName:theName andPassword:thePassword];
                 } else {
-                    NSLog(@"Err = %@",[result objectForKey:@"code"]);
+                    SSLog(@"Err = %@",[result objectForKey:@"code"]);
                 }
             }];
         }];
@@ -219,7 +219,7 @@ typedef enum
 
 //TODO:GUEST LOGIN
 /**
- *游客登陆
+ *@brief游客登陆
  */
 - (void)guestLogin
 {
@@ -234,7 +234,7 @@ typedef enum
 #pragma mark -
 #pragma mark IBActions
 /**
- *登陆Action
+ *@brief登陆Action
  */
 
 - (IBAction)login:(id)sender
@@ -243,7 +243,7 @@ typedef enum
 }
 
 /**
- *注册Action
+ *@brief注册Action
  */
 - (IBAction)register:(id)sender
 {
@@ -251,14 +251,14 @@ typedef enum
 }
 
 /**
- *游客登陆Action
+ *@brief游客登陆Action
  */
 - (IBAction)guestLogin:(id)sender {
     [self guestLogin];
 }
 
 /**
- *textField完成编辑
+ *@brieftextField完成编辑
  */
 - (IBAction)textFieldDoneEdit:(id)sender
 {

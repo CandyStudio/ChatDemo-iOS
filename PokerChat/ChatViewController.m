@@ -53,7 +53,7 @@
 {
     
     [_pomelo onRoute:@"onChat" withCallback:^(NSDictionary *data) {
-        NSLog(@"onChat...");
+        SSLog(@"onChat...");
         NSString *target = [[data objectForKey:@"target"] isEqualToString:@"*"]?@"":@" to you";
         [_chatStr appendFormat:@"%@ says%@: %@\n",[data objectForKey:@"from"], target, [data objectForKey:@"msg"]];
         [self updateChat];
@@ -65,7 +65,7 @@
 - (void)init2Events
 {
     [_pomelo onRoute:@"onAdd" withCallback:^(NSDictionary *data) {
-        NSLog(@"user add -----");
+        SSLog(@"user add -----");
         [self.onlinePlayerTableView beginUpdates];
         [_contactList addObject:data];
         self.numLabel.text = [NSString stringWithFormat:@"人数:%d",_contactList.count];
@@ -74,12 +74,12 @@
         [self.onlinePlayerTableView endUpdates];        
     }];
     [_pomelo onRoute:@"onLeave" withCallback:^(NSDictionary *data) {
-        NSLog(@"user leave ----");
+        SSLog(@"user leave ----");
         NSString *name = [data objectForKey:@"username"];
         int index = 0;
         for (index = 0; index <= _contactList.count; index++) {
             if ([[[_contactList objectAtIndex:index] objectForKey:@"username"] isEqualToString:name]) {
-                NSLog(@"index = %d",index);
+                SSLog(@"index = %d",index);
                 break;
             }
             //TODO:Notice here maybe bug!
@@ -95,7 +95,7 @@
  */
 - (void)viewDidUnload
 {
-    NSLog(@"viewDidUnload");
+    SSLog(@"viewDidUnload");
     self.chatTextView = nil;
     self.chatTextField = nil;
     self.chatStr = nil;
@@ -132,9 +132,9 @@
  */
 - (IBAction)chatEdit:(id)sender
 {
-    NSLog(@"chatEdit");
+    SSLog(@"chatEdit");
     //animation
-    NSLog(@"chatanimation");
+    SSLog(@"chatanimation");
     float currentX = self.chatBgView.frame.origin.x;
     float currentY = self.chatBgView.frame.origin.y;
     float targetX = 27;
@@ -167,7 +167,7 @@
  *完成编辑后回到原始状态。
  */
 - (IBAction)chatEditEnd:(id)sender {
-    NSLog(@"end");
+    SSLog(@"end");
     [UIView beginAnimations:@"UIBase Move" context:nil];
     [UIView setAnimationDuration:.4];
     self.chatBgView.transform = CGAffineTransformIdentity;
@@ -185,7 +185,7 @@
  *退出
  */
 - (IBAction)exit:(id)sender {
-    NSLog(@"exit");
+    SSLog(@"exit");
     [self.pomelo disconnect];
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
@@ -197,7 +197,7 @@
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    NSLog(@"beginEdit");
+    SSLog(@"beginEdit");
     return YES;
 }
 
@@ -213,7 +213,7 @@
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSLog(@"self.contactList.count = %d",self.contactList.count);
+    SSLog(@"self.contactList.count = %d",self.contactList.count);
     if (self.onlinePlayerTableView == tableView)
         return [self.contactList count];
     else
@@ -265,9 +265,9 @@
     if (self.onlinePlayerTableView == tableView) {
         NSDictionary *cellDic = [self.contactList objectAtIndex:indexPath.row];
         self.target = cellDic;
-        NSLog(@"celldic = %@",cellDic);
+        SSLog(@"celldic = %@",cellDic);
     } else
-        NSLog(@"indexPath = %@",indexPath);
+        SSLog(@"indexPath = %@",indexPath);
 }
 
 #pragma mark -
@@ -286,7 +286,7 @@
         NSNumber *userid = @((int)[UserDataManager sharedUserDataManager].user.userid);
         NSNumber *roomid = @((int)[self.userDic objectForKey:@"channel"]);
         NSDictionary *params = @{@"userid": userid,@"roomid":roomid};
-        NSLog(@"params = %@",params);
+        SSLog(@"params = %@",params);
         [self.pomelo requestWithRoute:@"chat.chatHandler.query" andParams:params andCallback:^(NSDictionary * result) {
             [self.tempArray addObjectsFromArray:[result objectForKey:@"chatlog"]];            
             int tempLenth = [self.tempArray count];
@@ -349,12 +349,12 @@
  */
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    NSLog(@"should Return");
+    SSLog(@"should Return");
     //对所有人userid为空
     NSDictionary *data = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?@"*":[self.target objectForKey:@"username"],@"userid":[self.target objectForKey:@"userid"]?[self.target objectForKey:@"userid"]:@"",@"content":_chatTextField.text,@"roomid":@"1"};
-    NSLog(@"data=%@",data);
+    SSLog(@"data=%@",data);
     if ([[data objectForKey:@"content"] isEqual:@""]) {
-        NSLog(@"输入为空");  
+        SSLog(@"输入为空");  
     } else {
         if ([[self.target objectForKey:@"username"] isEqualToString:@"All"]) {
             [_pomelo notifyWithRoute:@"chat.chatHandler.send" andParams:data];

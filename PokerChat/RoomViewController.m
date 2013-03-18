@@ -64,7 +64,7 @@
                       andCallback:^(NSDictionary *result) {
         if ([[result objectForKey:@"code"] intValue] == 200) {
             //成功
-            NSLog(@"creat room success:result = %@",result);
+            SSLog(@"creat room success:result = %@",result);
             NSDictionary *newRoom = @{@"id": [NSString stringWithFormat:@"%@",[result objectForKey:@"roomid"]],@"name":channel};
             [self.romeList beginUpdates];
             [self.roomlistArray addObject:[NSMutableDictionary dictionaryWithDictionary: newRoom]];
@@ -72,7 +72,7 @@
             [self.romeList insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationTop];
             [self.romeList endUpdates];
         } else{
-            NSLog(@"Err:%@",[result objectForKey:@"code"]);
+            SSLog(@"Err:%@",[result objectForKey:@"code"]);
         }
     }];
 }
@@ -93,12 +93,12 @@
 - (void)enterRoom:(NSString *)channel
 {
     if ([channel length] > 0 && channel != nil) {
-        NSLog(@"[UserDataManager sharedUserDataManager].user.username=%@",[UserDataManager sharedUserDataManager].user.username);
-        NSLog(@"[UserDataManager sharedUserDataManager].user.userid=%@",[UserDataManager sharedUserDataManager].user.userid);
+        SSLog(@"[UserDataManager sharedUserDataManager].user.username=%@",[UserDataManager sharedUserDataManager].user.username);
+        SSLog(@"[UserDataManager sharedUserDataManager].user.userid=%@",[UserDataManager sharedUserDataManager].user.userid);
         NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,@"username":[UserDataManager sharedUserDataManager].user.username,@"channel":channel};
         [self.pomelo requestWithRoute:@"connector.entryHandler.enterRoom" andParams:params andCallback:^(NSDictionary *result) {
             NSArray *userList = [result objectForKey:@"users"];
-            NSLog(@"userlist = %@",userList);
+            SSLog(@"userlist = %@",userList);
             //填数字给tableview。
             ChatViewController *chatViewController = [[ChatViewController alloc] initWithNibName:@"ChatViewController" bundle:nil];
             chatViewController.pomelo = self.pomelo;
@@ -107,7 +107,7 @@
             [self.navigationController pushViewController:chatViewController animated:YES];
         }];
     } else {
-        NSLog(@"房间名不能为空");
+        SSLog(@"房间名不能为空");
     }
 }
 
