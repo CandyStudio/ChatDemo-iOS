@@ -59,6 +59,9 @@
  */
 @property (strong, nonatomic) IBOutlet UITableView *onlinePlayerTableView;
 
+/**
+ *chatTableView 聊天
+ */
 @property (weak, nonatomic) IBOutlet UITableView *chatTableView;
 /**
  *pomelo
@@ -75,9 +78,15 @@
 /**
  *保存个人玩家基本信息。
  */
-@property (weak, nonatomic) IBOutlet UIButton *chatLogButton;
 @property (strong, nonatomic) NSMutableDictionary *userDic;
+/**
+ *显示的聊天记录
+ */
 @property (strong, nonatomic) NSMutableArray *chatLogArray;
+
+/**
+ *接受总的聊天记录
+ */
 @property (strong, nonatomic) NSMutableArray *tempArray;
 
 - (void)reloadTableViewDataSource;

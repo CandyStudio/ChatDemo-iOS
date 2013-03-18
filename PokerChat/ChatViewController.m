@@ -24,6 +24,9 @@
 
 @implementation ChatViewController
 
+
+#pragma mark -
+#pragma mark life cycle
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -63,24 +66,18 @@
 {
     [_pomelo onRoute:@"onAdd" withCallback:^(NSDictionary *data) {
         NSLog(@"user add -----");
-        NSLog(@"onAdd = %@",data);        
         [self.onlinePlayerTableView beginUpdates];
         [_contactList addObject:data];
         self.numLabel.text = [NSString stringWithFormat:@"人数:%d",_contactList.count];
-        NSLog(@"addContactList=%@",_contactList);
         NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:[_contactList count] - 1 inSection:0]];
         [self.onlinePlayerTableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationTop];
         [self.onlinePlayerTableView endUpdates];        
     }];
     [_pomelo onRoute:@"onLeave" withCallback:^(NSDictionary *data) {
         NSLog(@"user leave ----");
-        NSLog(@"data = %@",data);
         NSString *name = [data objectForKey:@"username"];
-        NSLog(@"name = %@",name);
-        NSLog(@"leaveContactList=%@",_contactList);
         int index = 0;
         for (index = 0; index <= _contactList.count; index++) {
-            NSLog(@"objectatindex:%@",[[_contactList objectAtIndex:index] objectForKey:@"username"]);
             if ([[[_contactList objectAtIndex:index] objectForKey:@"username"] isEqualToString:name]) {
                 NSLog(@"index = %d",index);
                 break;
@@ -105,7 +102,6 @@
     self.target = nil;
     [self.pomelo offRoute:@"onChat"];
     [self setChatTableView:nil];
-    [self setChatLogButton:nil];
     _refreshHeaderView = nil;
     [super viewDidUnload];
 }
@@ -117,11 +113,8 @@
 {
     [super viewDidLoad];
     
-    ///调试用
-//    self.chatLogArray = [NSMutableArray arrayWithObjects:@{@"context": @""},@{@"context": @""},@{@"context": @""},nil];
-    
     if (_refreshHeaderView == nil) {
-        RefreshHeaderView *refreshView = [[RefreshHeaderView alloc] initWithFrame:CGRectMake(0, self.chatTableView.frame.origin.y - self.chatTableView.bounds.size.height, self.chatTableView.bounds.size.width, self.chatTableView.bounds.size.height)];
+        RefreshHeaderView *refreshView = [[RefreshHeaderView alloc] initWithFrame:CGRectMake(0,-self.chatTableView.bounds.size.height, self.chatTableView.bounds.size.width, self.chatTableView.bounds.size.height)];
         refreshView.delegate = self;
         [self.chatTableView addSubview:refreshView];
         _refreshHeaderView = refreshView;
@@ -134,18 +127,6 @@
     [self initEvents];
     [self init2Events];
 }
-- (IBAction)chatLogPress:(id)sender
-{
-    NSLog(@"chatLogPress");
-    NSNumber *userid = [NSNumber numberWithInt:[UserDataManager sharedUserDataManager].user.username];
-    NSNumber *roomid = [NSNumber numberWithInt:[self.userDic objectForKey:@"channel"]];
-    NSDictionary *params = @{@"userid": userid,@"roomid":roomid};
-    NSLog(@"params = %@",params);
-    [self.pomelo requestWithRoute:@"chat.chatHandler.query" andParams:params andCallback:^(NSDictionary * result) {
-        NSLog(@"query:result = %@",result);
-    }];
-}
-
 /**
  *键盘打开，chatTextField,chatBgView,chatTextView移动位置动画
  */
@@ -166,6 +147,10 @@
     float textViewCurrentY = self.chatTextView.frame.origin.y;
     float textViewTargetX = 30;
     float textViewTargetY = 119;
+    float chatTableViewCurrentX = self.chatTableView.frame.origin.x;
+    float chatTableViewCurrentY = self.chatTableView.frame.origin.y;
+    float chatTableViewTargetX = 30;
+    float chatTableVeiwTargetY = 119;
     [UIView beginAnimations:@"UIBase Move" context:nil];
     [UIView setAnimationDuration:.3];
     self.chatBgView.transform = CGAffineTransformMakeTranslation(targetX - currentX, targetY - currentY);
@@ -174,6 +159,8 @@
     self.chatTextField.frame = CGRectMake(30, 340, 359, 34);
     self.chatTextView.transform = CGAffineTransformMakeTranslation(textViewTargetX - textViewCurrentX, textViewTargetY - textViewCurrentY);
     self.chatTextView.frame = CGRectMake(30, 119, 359, 220);
+    self.chatTableView.transform = CGAffineTransformMakeTranslation(chatTableViewTargetX - chatTableViewCurrentX, chatTableVeiwTargetY - chatTableViewCurrentY);
+    self.chatTableView.frame = CGRectMake(30, 119, 359, 220);
     [UIView commitAnimations];
 }
 /**
@@ -189,6 +176,8 @@
     [self.chatTextField setFrame:CGRectMake(30, 715, 359, 34)];
     self.chatTextView.transform = CGAffineTransformIdentity;
     [self.chatTextView setFrame:CGRectMake(30, 644, 359, 70)];
+    self.chatTableView.transform = CGAffineTransformIdentity;
+    [self.chatTableView setFrame:CGRectMake(30, 644, 359, 70)];
     [UIView commitAnimations];
 }
 
@@ -226,18 +215,13 @@
 {
     NSLog(@"self.contactList.count = %d",self.contactList.count);
     if (self.onlinePlayerTableView == tableView)
-        return self.contactList.count;
-//    else {
-//        if (self.chatLogArray.count <= 10) {
-//            return self.chatLogArray.count;
-//        } else
-//            return 10;
-//    }
+        return [self.contactList count];
     else
         return [self.chatLogArray count];
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    //onlinePlayerTableView && chatTableView
     if (self.onlinePlayerTableView == tableView) {
         static NSString *CellIdentifier = @"ContactsTableCell";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -245,9 +229,7 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         }
         NSInteger row = indexPath.row;
-        NSLog(@"contactList123=%@",[self.contactList objectAtIndex:row]);
         cell.textLabel.text = [[self.contactList objectAtIndex:row] objectForKey:@"username"];
-        //    在线玩家的名称
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         return cell;
     } else {
@@ -256,22 +238,7 @@
         if (cell == nil) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         }
-//        cell.textLabel.text = @"AB";
         NSInteger row = indexPath.row;
-        NSLog(@"row = %d", row);
-        NSLog(@"self.chatLogArray = %@",self.chatLogArray);
-        NSLog(@"self.objectatindex = %@",[self.chatLogArray objectAtIndex:row]);
-//        if (self.chatLogArray.count <= 10) {
-//            cell
-//        }
-//        if (row <= 10) {
-//            NSLog(@"self.chatLogArray = %@",self.chatLogArray);
-//            
-//            cell.textLabel.text = [[self.chatLogArray objectAtIndex:row] objectForKey:@"context"];
-//            //    在线玩家的名称
-//            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-//            return cell;
-//        }
         cell.textLabel.text = [[self.chatLogArray objectAtIndex:row] objectForKey:@"context"];
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         return cell;
@@ -283,8 +250,7 @@
     if (self.onlinePlayerTableView == tableView) {
         return @"online Player";
     } else
-        return @"聊天记录";
-    
+        return nil;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -292,7 +258,7 @@
     if (self.onlinePlayerTableView == tableView) {
         return 44;
     } else
-        return 20;
+        return 0;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -311,29 +277,22 @@
     _reloading = YES;
 }
 
+/**
+ *下拉刷新，一次只显示10条
+ */
 - (void)doneLoadingTableViewData
 {
     if ([self.tempArray count] == 0) {
-        NSNumber *userid = [NSNumber numberWithInt:[UserDataManager sharedUserDataManager].user.username];
-        NSNumber *roomid = [NSNumber numberWithInt:[self.userDic objectForKey:@"channel"]];
+        NSNumber *userid = @((int)[UserDataManager sharedUserDataManager].user.userid);
+        NSNumber *roomid = @((int)[self.userDic objectForKey:@"channel"]);
         NSDictionary *params = @{@"userid": userid,@"roomid":roomid};
         NSLog(@"params = %@",params);
         [self.pomelo requestWithRoute:@"chat.chatHandler.query" andParams:params andCallback:^(NSDictionary * result) {
-            NSLog(@"query:result = %@",result);
-            //        [self.chatLogArray removeAllObjects];
-            //        [self.chatLogArray addObjectsFromArray:[result objectForKey:@"chatlog"]];
-            [self.tempArray addObjectsFromArray:[result objectForKey:@"chatlog"]];
-            NSLog(@"self.chatLogArray=%@",self.chatLogArray);
-            
+            [self.tempArray addObjectsFromArray:[result objectForKey:@"chatlog"]];            
             int tempLenth = [self.tempArray count];
-            NSLog(@"tempLenth：%d",tempLenth);
             int currLenth = [self.chatLogArray count];
-            NSLog(@"currLenth：%d",currLenth);
             for (int i = currLenth; i <currLenth+10&& i<tempLenth ; i++) {
-                NSLog(@"i:%d",i);
-                NSLog(@"object:%@",[self.tempArray objectAtIndex:i]);
                 [self.chatLogArray addObject:[self.tempArray objectAtIndex:i]];
-                NSLog(@"arr count:%d",[self.chatLogArray count]);
             }
             [self.chatTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES ];
         }]; 
@@ -385,6 +344,9 @@
  */
 #pragma mark -
 #pragma mark UITextViewDelegate
+/**
+ *key Return键发送
+ */
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     NSLog(@"should Return");
@@ -392,7 +354,7 @@
     NSDictionary *data = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?@"*":[self.target objectForKey:@"username"],@"userid":[self.target objectForKey:@"userid"]?[self.target objectForKey:@"userid"]:@"",@"content":_chatTextField.text,@"roomid":@"1"};
     NSLog(@"data=%@",data);
     if ([[data objectForKey:@"content"] isEqual:@""]) {
-        NSLog(@"输入为空");  //这段逻辑以后可能会用
+        NSLog(@"输入为空");  
     } else {
         if ([[self.target objectForKey:@"username"] isEqualToString:@"All"]) {
             [_pomelo notifyWithRoute:@"chat.chatHandler.send" andParams:data];

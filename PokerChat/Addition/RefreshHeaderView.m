@@ -78,7 +78,7 @@
 {
     switch (theState) {
         case PullRefreshStatePulling:
-            _statusLabel.text = NSLocalizedString(@"Release to refresh...", @"Release to refresh status");
+            _statusLabel.text = NSLocalizedString(@"释放刷新...", @"Release to refresh status");
             [CATransaction begin];
             [CATransaction setAnimationDuration:FLIP_ANIMATION_DURATION];
 			_arrowImage.transform = CATransform3DMakeRotation((M_PI / 180.0) * 180.0f, 0.0f, 0.0f, 1.0f);
@@ -93,7 +93,7 @@
 				[CATransaction commit];
 			}
 			
-			_statusLabel.text = NSLocalizedString(@"Pull down to refresh...", @"Pull down to refresh status");
+			_statusLabel.text = NSLocalizedString(@"拉取历史记录...", @"Pull down to refresh status");
 			[_activityView stopAnimating];
 			[CATransaction begin];
 			[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
@@ -104,7 +104,7 @@
 			            
             break;
         case PullRefreshStateLoading:
-            _statusLabel.text = NSLocalizedString(@"Loading...", @"Loading Status");
+            _statusLabel.text = NSLocalizedString(@"加载...", @"Loading Status");
 			[_activityView startAnimating];
 			[CATransaction begin];
 			[CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
@@ -139,7 +139,6 @@
 
 - (void)egoRefreshScrollViewDidScroll:(UIScrollView *)scrollView
 {
-    NSLog(@"egoRefreshScrollViewDidScroll");
     if (_state == PullRefreshStateLoading) {
 		
 		CGFloat offset = MAX(scrollView.contentOffset.y * -1, 0);
