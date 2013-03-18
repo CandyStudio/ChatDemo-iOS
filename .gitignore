@@ -4,3 +4,7 @@
 *.xcuserstate
 
 PokerChat.xcodeproj/project.xcworkspace/xcuserdata/vienta.xcuserdatad/UserInterfaceState.xcuserstate
+
+*.xcscheme
+
+PokerChat.xcodeproj/xcuserdata/xiaochuan.xcuserdatad/xcschemes/xcschememanagement.plist
