@@ -71,7 +71,7 @@
         SSLog(@"user add -----");
         [self.onlinePlayerTableView beginUpdates];
         [_contactList addObject:data];
-        self.numLabel.text = [NSString stringWithFormat:@"人数:%d",_contactList.count - 1];
+        self.numLabel.text = [NSString stringWithFormat:@"房间人数:%d",_contactList.count - 1];
         NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:[_contactList count] - 1 inSection:0]];
         [self.onlinePlayerTableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationTop];
         [self.onlinePlayerTableView endUpdates];        
@@ -124,7 +124,7 @@
     [_refreshHeaderView refreshLastUpdateDate];
     
     self.nameLabel.text = [NSString stringWithFormat:@"用户昵称：%@",[self.userDic objectForKey:@"username"]];
-    self.roomLabel.text = [NSString stringWithFormat:@"房间名称：%@",[self.userDic objectForKey:@"channel"]];
+    self.roomLabel.text = [NSString stringWithFormat:@"房间名称：%@",[UserDataManager sharedUserDataManager].user.channelName];
     self.numLabel.text = [NSString stringWithFormat:@"房间人数：%d",self.contactList.count - 1];
     [self initEvents];
     [self init2Events];
@@ -263,7 +263,9 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         }
         NSInteger row = indexPath.row;
-        cell.textLabel.text = [[self.chatLogArray objectAtIndex:row] objectForKey:@"context"];
+        NSString *str = [NSString stringWithFormat:@"id_%@:%@",[[self.chatLogArray objectAtIndex:row] objectForKey:@"id"],[[self.chatLogArray objectAtIndex:row] objectForKey:@"context"]];
+//        cell.textLabel.text = [[self.chatLogArray objectAtIndex:row] objectForKey:@"context"];
+        cell.textLabel.text = str;
         cell.textLabel.font = [UIFont fontWithName:@"monaca" size:12];
         cell.accessoryType = UITableViewCellAccessoryNone;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -320,9 +322,6 @@
             for (int i = currLenth; i <currLenth+10&& i<tempLenth ; i++) {
                 [self.chatLogArray addObject:[self.tempArray objectAtIndex:i]];
             }
-            
-            
-            
             [self.chatTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES ];
         }]; 
     } else {

@@ -193,7 +193,7 @@ typedef enum
  */
 - (void)connectServerWithUsername:(NSString *)theUsername password:(NSString *)thePassword andUserRole:(UserRole )theRole
 {
-    [self.pomelo connectToHost:@"10.0.1.44" onPort:3014 withCallback:^(Pomelo *p) {
+    [self.pomelo connectToHost:@"10.0.1.44" onPort:60322 withCallback:^(Pomelo *p) {
         NSDictionary *params = @{@"username": theUsername,@"password":thePassword};
         [self.pomelo requestWithRoute:@"gate.gateHandler.login" andParams:params andCallback:^(NSDictionary *result) {
             [self.pomelo disconnectWithCallback:^(Pomelo *p) {

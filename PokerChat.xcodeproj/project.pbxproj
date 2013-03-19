@@ -32,6 +32,8 @@
 		B32AD46816F340BD0030B46A /* whiteArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = B32AD46016F340BD0030B46A /* whiteArrow.png */; };
 		B32AD46916F340BD0030B46A /* whiteArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B32AD46116F340BD0030B46A /* whiteArrow@2x.png */; };
 		B32AEBA016F7055C001EC9C1 /* Functions.m in Sources */ = {isa = PBXBuildFile; fileRef = B32AEB9F16F7055C001EC9C1 /* Functions.m */; };
+		B3B91C8E16F872E500189248 /* CreatRoomView.m in Sources */ = {isa = PBXBuildFile; fileRef = B3B91C8D16F872E500189248 /* CreatRoomView.m */; };
+		B3B91C9016F8734D00189248 /* CreatRoomView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3B91C8F16F8734D00189248 /* CreatRoomView.xib */; };
 		B3D097C516E8284000E99380 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C416E8284000E99380 /* UIKit.framework */; };
 		B3D097C716E8284000E99380 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C616E8284000E99380 /* Foundation.framework */; };
 		B3D097C916E8284000E99380 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097C816E8284000E99380 /* CoreGraphics.framework */; };
@@ -96,6 +98,9 @@
 		B32AD46116F340BD0030B46A /* whiteArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "whiteArrow@2x.png"; sourceTree = "<group>"; };
 		B32AEB9E16F7055C001EC9C1 /* Functions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Functions.h; sourceTree = "<group>"; };
 		B32AEB9F16F7055C001EC9C1 /* Functions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Functions.m; sourceTree = "<group>"; };
+		B3B91C8C16F872E500189248 /* CreatRoomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreatRoomView.h; sourceTree = SOURCE_ROOT; };
+		B3B91C8D16F872E500189248 /* CreatRoomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreatRoomView.m; sourceTree = SOURCE_ROOT; };
+		B3B91C8F16F8734D00189248 /* CreatRoomView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CreatRoomView.xib; sourceTree = SOURCE_ROOT; };
 		B3D097C016E8284000E99380 /* PokerChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PokerChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3D097C416E8284000E99380 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B3D097C616E8284000E99380 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -336,6 +341,9 @@
 				B3E5C86816F8343900739CE5 /* RoomListTableViewCell.h */,
 				B3E5C86916F8343900739CE5 /* RoomListTableViewCell.m */,
 				B3E5C86B16F8345400739CE5 /* RoomListTableViewCell.xib */,
+				B3B91C8C16F872E500189248 /* CreatRoomView.h */,
+				B3B91C8D16F872E500189248 /* CreatRoomView.m */,
+				B3B91C8F16F8734D00189248 /* CreatRoomView.xib */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -408,6 +416,7 @@
 				B32AD46916F340BD0030B46A /* whiteArrow@2x.png in Resources */,
 				B3E5C86716F7F7DF00739CE5 /* RegisterView.xib in Resources */,
 				B3E5C86C16F8345400739CE5 /* RoomListTableViewCell.xib in Resources */,
+				B3B91C9016F8734D00189248 /* CreatRoomView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,6 +449,7 @@
 				B3E5C86016F7EEF200739CE5 /* PopupView.m in Sources */,
 				B3E5C86316F7F76800739CE5 /* RegisterView.m in Sources */,
 				B3E5C86A16F8343900739CE5 /* RoomListTableViewCell.m in Sources */,
+				B3B91C8E16F872E500189248 /* CreatRoomView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

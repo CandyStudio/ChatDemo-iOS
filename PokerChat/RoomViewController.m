@@ -92,6 +92,7 @@
                               } else{
                                   SSLog(@"Err:%@",[result objectForKey:@"code"]);
                               }
+                                self.creatRoomTextField.text = @"";
                           }];
     }
 }
@@ -136,6 +137,9 @@
         NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,@"username":[UserDataManager sharedUserDataManager].user.username,@"channel":channel};
         [self.pomelo requestWithRoute:@"connector.entryHandler.enterRoom" andParams:params andCallback:^(NSDictionary *result) {
             NSArray *userList = [result objectForKey:@"users"];
+            [UserDataManager sharedUserDataManager].user.channelName = channel;
+            SSLog(@"enterRoomChannel = %@",channel);
+            
             SSLog(@"userlist = %@",userList);
             //填数字给tableview。
             ChatViewController *chatViewController = [[ChatViewController alloc] initWithNibName:@"ChatViewController" bundle:nil];
@@ -143,7 +147,7 @@
             chatViewController.userDic = [NSMutableDictionary dictionaryWithDictionary:params];
             [chatViewController.contactList addObjectsFromArray:userList];
             [self.navigationController pushViewController:chatViewController animated:YES];
-            chatViewController = nil;
+            self.creatRoomTextField.text = @"";
         }];
     } else {
         SSLog(@"房间名不能为空");
@@ -171,17 +175,37 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     NSInteger row = indexPath.row;
-    cell.textLabel.text = [[self.roomlistArray objectAtIndex:row] objectForKey:@"name"];
+    NSString *str = [NSString stringWithFormat:@"%@                %@                                             %@",
+                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"id"],
+                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"name"],
+                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"count"]];
+    
+    cell.textLabel.text = str;
+    
     cell.accessoryType = UITableViewCellAccessoryNone;
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.selectionStyle = UITableViewCellSelectionStyleBlue;
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *str = [[self.roomlistArray objectAtIndex:indexPath.row] objectForKey:@"id"];
-    [self enterRoom:str];
+    NSString *str = [[self.roomlistArray objectAtIndex:indexPath.row] objectForKey:@"name"];
+    [self performSelectorOnMainThread:@selector(enterRoom:) withObject:str waitUntilDone:YES];
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return @"房间ID         房间名称                                            房间人数";
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 30;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
+{
+    return @"在线人数:";
+}
 
 @end
