@@ -393,6 +393,8 @@ typedef enum
 - (void)userRegisterWithName:(NSString *)theName andPassword:(NSString *)thePassword
 {
     userRole = UserRoleRegister;
+    SSLog(@"theName = %@",theName);
+    SSLog(@"thePassword = %@",thePassword);
     [self guestLoginOrRegisterWithUsername:theName password:thePassword andUserRole:userRole];
 }
 

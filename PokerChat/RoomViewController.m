@@ -120,6 +120,7 @@
 - (IBAction)exitToLogin:(id)sender
 {
     [self.navigationController popToRootViewControllerAnimated:YES];
+    [self.pomelo disconnect];
 }
 
 #pragma mark -
@@ -142,6 +143,7 @@
             chatViewController.userDic = [NSMutableDictionary dictionaryWithDictionary:params];
             [chatViewController.contactList addObjectsFromArray:userList];
             [self.navigationController pushViewController:chatViewController animated:YES];
+            chatViewController = nil;
         }];
     } else {
         SSLog(@"房间名不能为空");

@@ -56,6 +56,8 @@
         if ([registerPassword isEqualToString:againPassword]) {
             if ([registerPassword length] >= 4 && [registerPassword length] <= 12) {
                 //所有的都符合 进入delegate
+                SSLog(@"registerName=%@",registerName);
+                SSLog(@"registerPassword=%@",registerPassword);
                 if (self.delegate && [self.delegate respondsToSelector:@selector(userRegisterWithName:andPassword:)]) {
                     [self.delegate userRegisterWithName:_registerNameTextField.text andPassword:_registerPasswordTextField.text];
                 }

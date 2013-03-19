@@ -42,9 +42,9 @@
 
 - (void)close
 {
-    [self willClose];
+//    [self willClose];
     [self removeFromSuperview];
-    [self didClose];
+//    [self didClose];
 }
 
 #pragma mark -

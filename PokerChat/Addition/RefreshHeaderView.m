@@ -9,7 +9,7 @@
 #import "RefreshHeaderView.h"
 
 #define TEXT_COLOR	 [UIColor colorWithRed:87.0/255.0 green:108.0/255.0 blue:137.0/255.0 alpha:1.0]
-#define FLIP_ANIMATION_DURATION 0.18f
+#define FLIP_ANIMATION_DURATION 0.1f
 
 @interface RefreshHeaderView(Private)
 - (void)setState:(PullRefreshState)state;

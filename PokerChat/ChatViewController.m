@@ -85,12 +85,11 @@
                 SSLog(@"index = %d",index);
                 break;
             }
-            //TODO:Notice here maybe bug!
         }
         [_contactList removeObjectAtIndex:index];
         NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:index inSection:0]];
         [self.onlinePlayerTableView deleteRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationAutomatic];
-        self.numLabel.text = [NSString stringWithFormat:@"人数:%d",_contactList.count - 1];
+        self.numLabel.text = [NSString stringWithFormat:@"房间人数:%d",_contactList.count - 1];
     }];
 }
 /**
@@ -124,9 +123,9 @@
     }
     [_refreshHeaderView refreshLastUpdateDate];
     
-    self.nameLabel.text = [NSString stringWithFormat:@"昵称：%@",[self.userDic objectForKey:@"username"]];
-    self.roomLabel.text = [NSString stringWithFormat:@"房间：%@",[self.userDic objectForKey:@"channel"]];
-    self.numLabel.text = [NSString stringWithFormat:@"人数：%d",self.contactList.count - 1];
+    self.nameLabel.text = [NSString stringWithFormat:@"用户昵称：%@",[self.userDic objectForKey:@"username"]];
+    self.roomLabel.text = [NSString stringWithFormat:@"房间名称：%@",[self.userDic objectForKey:@"channel"]];
+    self.numLabel.text = [NSString stringWithFormat:@"房间人数：%d",self.contactList.count - 1];
     [self initEvents];
     [self init2Events];
 }
@@ -188,18 +187,17 @@
  *退出
  */
 - (IBAction)exit:(id)sender {
-    SSLog(@"exit");
     NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,
                              @"username":[UserDataManager sharedUserDataManager].user.username};
-    [self.pomelo requestWithRoute:@"chat.chatHandler.quit" andParams:params andCallback:^(NSDictionary *result) {
+    [self.pomelo requestWithRoute:@"connector.entryHandler.quit" andParams:params andCallback:^(NSDictionary *result) {
         SSLog(@"quitResult=%@",result);
         if ([[result objectForKey:@"code"] intValue] == 200) {
             [self.navigationController popViewControllerAnimated:YES];
+            [self.pomelo offRoute:@"onChat"];
+            [self.pomelo offRoute:@"onAdd"];
+            [self.pomelo offRoute:@"onLeave"];
         }
     }];
-//    [self.pomelo disconnect];//??
-//    [self.navigationController popToRootViewControllerAnimated:YES];
-    //TODO:bug here 需要退出房间接口
 }
 
 - (void)dealloc
@@ -322,6 +320,9 @@
             for (int i = currLenth; i <currLenth+10&& i<tempLenth ; i++) {
                 [self.chatLogArray addObject:[self.tempArray objectAtIndex:i]];
             }
+            
+            
+            
             [self.chatTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES ];
         }]; 
     } else {
@@ -380,7 +381,6 @@
     SSLog(@"should Return");
     //对所有人userid为空
     NSDictionary *data = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?@"*":[self.target objectForKey:@"username"],@"userid":[self.target objectForKey:@"userid"]?[self.target objectForKey:@"userid"]:@"",@"content":_chatTextField.text,@"roomid":@"1"};
-    SSLog(@"data=%@",data);
     if ([[data objectForKey:@"content"] isEqual:@""]) {
         SSLog(@"输入为空");  
     } else {
@@ -406,7 +406,6 @@
     [self.chatTableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationBottom];
     [self.chatTableView endUpdates];
     
-//    self.chatTextView.text = _chatStr;
     [self.chatTableView scrollRectToVisible:CGRectMake(0, _chatTableView.contentSize.height-30, _chatTableView.contentSize.width, 50) animated:YES];
 }
 
