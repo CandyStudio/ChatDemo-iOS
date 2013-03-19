@@ -12,8 +12,9 @@
 
 @property (nonatomic, strong) NSNumber *userid;
 @property (nonatomic, strong) NSNumber *role;
-
+@property (nonatomic, copy) NSString *userpassword;
 @property (nonatomic, copy) NSString *username;
+@property (nonatomic, strong) NSDictionary *resultDict;
 
 - (UserData *)initWithDic:(NSDictionary *)dic;
 @end

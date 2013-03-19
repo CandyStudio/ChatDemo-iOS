@@ -7,10 +7,10 @@
 //
 
 #import "LoginViewController.h"
-#import "ChatViewController.h"
 #import "UserData.h"
 #import "UserDataManager.h"
 #import "RoomViewController.h"
+#import "RegisterView.h"
 
 typedef enum
 {
@@ -222,8 +222,31 @@ typedef enum
     NSString *username = _nameTextField.text;
     NSString *password = _channelTextField.text;
     userRole = UserRoleRegister;
-    //TODO:
-    [self connectServerWithUsername:username password:password andUserRole:userRole];
+    if ([username isEqualToString:@""] && [password isEqualToString:@""]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Tip"
+                                                        message:@"请输入名称和密码"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
+    } else if ([username isEqualToString:@""]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Tip"
+                                                        message:@"请输入名称"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
+    } else if ([password isEqualToString:@""]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Tip"
+                                                        message:@"请输入密码"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
+    } else {
+        //TODO:
+        [self connectServerWithUsername:username password:password andUserRole:userRole];
+    }
 }
 
 
@@ -245,17 +268,29 @@ typedef enum
                 [self guestLoginOrRegisterWithUsername:registerUsername password:registerPassword andUserRole:userRole];
             } else {
                 //密码的长度和符合条件
-                UIAlertView *alerView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"密码长度不符合条件" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                UIAlertView *alerView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                   message:@"密码长度不符合条件"
+                                                                  delegate:nil
+                                                         cancelButtonTitle:@"OK"
+                                                         otherButtonTitles:nil, nil];
                 [alerView show];
             }
         } else {
             //前后密码不一致
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"前后密码不一致" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                message:@"前后密码不一致"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil, nil];
             [alertView show];
         }
     } else {
         //昵称不对
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"昵称不符合要求" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                            message:@"昵称不符合要求"
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil, nil];
         [alertView show];
     }
 }
@@ -280,8 +315,19 @@ typedef enum
                     [UserDataManager sharedUserDataManager].user = userData;
                     [UserDataManager sharedUserDataManager].user.role = @(theRole);
                     [UserDataManager sharedUserDataManager].user.username = theName;
-                    //NEXT:游客登陆
-                    [self entryWithLoginData:result userName:theName andPassword:thePassword];
+                    [UserDataManager sharedUserDataManager].user.userpassword = thePassword;
+                    [UserDataManager sharedUserDataManager].user.resultDict = result;
+                    if (theRole == UserRoleRegister) {
+                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Congratulation"
+                                                                        message:@"注册成功"
+                                                                       delegate:self
+                                                              cancelButtonTitle:@"OK"
+                                                              otherButtonTitles:nil, nil];
+                        [alert show];
+                    } else {
+                        //NEXT:游客登陆
+                        [self entryWithLoginData:result userName:theName andPassword:thePassword];
+                    }                   
                 } else {
                     [self checkError:[[[result objectForKey:@"err"] objectForKey:@"errorcode"] intValue]];
                 }
@@ -320,7 +366,11 @@ typedef enum
  */
 - (IBAction)register:(id)sender
 {
-    [self guestRegister];
+//    [self guestRegister];
+    //弹出注册框
+    RegisterView *registerView = [RegisterView createRegisterViewWithDelegate:self];
+    [self.view addSubview:registerView];
+    registerView.frame = CGRectMake(30, 60, 960, 600);
 }
 
 /**
@@ -336,6 +386,24 @@ typedef enum
 - (IBAction)textFieldDoneEdit:(id)sender
 {
     [sender resignFirstResponder];
+}
+
+#pragma mark -
+#pragma mark RegisterViewDelegate
+- (void)userRegisterWithName:(NSString *)theName andPassword:(NSString *)thePassword
+{
+    userRole = UserRoleRegister;
+    [self guestLoginOrRegisterWithUsername:theName password:thePassword andUserRole:userRole];
+}
+
+#pragma mark -
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSLog(@"cancel alertView");
+    [self entryWithLoginData:[UserDataManager sharedUserDataManager].user.resultDict
+                    userName:[UserDataManager sharedUserDataManager].user.username
+                 andPassword:[UserDataManager sharedUserDataManager].user.userpassword];
 }
 
 

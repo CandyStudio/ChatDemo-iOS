@@ -12,11 +12,13 @@
 
 #import <UIKit/UIKit.h>
 #import "Pomelo.h"
+
+#import "RegisterView.h"
 /*!
     @class LoingViewController
     @superclass UIViewController
  */
-@interface LoginViewController : UIViewController
+@interface LoginViewController : UIViewController<RegisterViewDelegate,UIAlertViewDelegate>
 /**
  *nameText
  */

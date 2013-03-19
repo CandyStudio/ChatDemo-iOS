@@ -13,6 +13,10 @@
 @property (weak, nonatomic) IBOutlet UITextField *creatRoomTextField;
 @property (weak, nonatomic) IBOutlet UIButton *creatRoomButton;
 @property (weak, nonatomic) IBOutlet UITableView *romeList;
+@property (weak, nonatomic) IBOutlet UIButton *exitBtn;
+@property (weak, nonatomic) IBOutlet UILabel *usernameLbl;
+@property (weak, nonatomic) IBOutlet UILabel *useridLbl;
+@property (weak, nonatomic) IBOutlet UIImageView *userheadImgView;
 @property (strong,nonatomic) NSMutableArray *roomlistArray;
 @property (strong,nonatomic) Pomelo *pomelo;
 @end

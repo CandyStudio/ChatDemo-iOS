@@ -57,7 +57,8 @@
         SSLog(@"onChat...");
         NSString *target = [[data objectForKey:@"target"] isEqualToString:@"*"]?@"":@" to you";
 //        [_chatStr appendFormat:@"%@ says%@: %@\n",[data objectForKey:@"from"], target, [data objectForKey:@"msg"]];
-        [_chatLogArray addObject:@{@"context": [data objectForKey:@"msg"]}];
+//        [_chatLogArray addObject:@{@"context": [data objectForKey:@"msg"]}];
+        [_chatLogArray addObject:@{@"context": [NSString stringWithFormat:@"%@ says%@:%@",[data objectForKey:@"from"],target,[data objectForKey:@"msg"]]}];
         [self updateChat];
     }];
 }
@@ -188,10 +189,22 @@
  */
 - (IBAction)exit:(id)sender {
     SSLog(@"exit");
-    [self.pomelo disconnect];//??
+    NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,
+                             @"username":[UserDataManager sharedUserDataManager].user.username};
+    [self.pomelo requestWithRoute:@"chat.chatHandler.quit" andParams:params andCallback:^(NSDictionary *result) {
+        SSLog(@"quitResult=%@",result);
+        if ([[result objectForKey:@"code"] intValue] == 200) {
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+    }];
+//    [self.pomelo disconnect];//??
 //    [self.navigationController popToRootViewControllerAnimated:YES];
-    [self.navigationController popViewControllerAnimated:YES];
     //TODO:bug here 需要退出房间接口
+}
+
+- (void)dealloc
+{
+    SSLog(@"dealloc");
 }
 
 - (void)didReceiveMemoryWarning
@@ -243,7 +256,7 @@
         }
         NSInteger row = indexPath.row;
         cell.textLabel.text = [[self.contactList objectAtIndex:row] objectForKey:@"username"];
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.accessoryType = UITableViewCellAccessoryNone;
         return cell;
     } else {
         static NSString *CellIdentifier = @"ContactsTableCell2";
@@ -253,7 +266,9 @@
         }
         NSInteger row = indexPath.row;
         cell.textLabel.text = [[self.chatLogArray objectAtIndex:row] objectForKey:@"context"];
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        cell.textLabel.font = [UIFont fontWithName:@"monaca" size:12];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
     }
 }
@@ -374,8 +389,6 @@
         } else {
             [_pomelo requestWithRoute:@"chat.chatHandler.send" andParams:data andCallback:^(NSDictionary *result) {
                 SSLog(@"senderResult = %@",result);
-//                [_chatStr appendFormat:@"you says to %@: %@\n",[self.target objectForKey:@"username"], [data objectForKey:@"content"]];
-                [self updateChat];
             }];
         }
     }
@@ -390,11 +403,11 @@
     //bug here!
     [self.chatTableView beginUpdates];
     NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:[_chatLogArray count] - 1 inSection:0]];
-    [self.chatTableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationTop];
+    [self.chatTableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationBottom];
     [self.chatTableView endUpdates];
     
 //    self.chatTextView.text = _chatStr;
-    [self.chatTableView scrollRectToVisible:CGRectMake(0, _chatTableView.contentSize.height-30, _chatTableView.contentSize.width, 10) animated:YES];
+    [self.chatTableView scrollRectToVisible:CGRectMake(0, _chatTableView.contentSize.height-30, _chatTableView.contentSize.width, 50) animated:YES];
 }
 
 

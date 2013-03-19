@@ -48,6 +48,11 @@
 		B3DF333816F1BBBB00E9C4D9 /* UserDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF333716F1BBBB00E9C4D9 /* UserDataManager.m */; };
 		B3DF333F16F1CA2000E9C4D9 /* RoomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF333D16F1CA2000E9C4D9 /* RoomViewController.m */; };
 		B3DF334016F1CA2000E9C4D9 /* RoomViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3DF333E16F1CA2000E9C4D9 /* RoomViewController.xib */; };
+		B3E5C86016F7EEF200739CE5 /* PopupView.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E5C85F16F7EEF200739CE5 /* PopupView.m */; };
+		B3E5C86316F7F76800739CE5 /* RegisterView.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E5C86216F7F76800739CE5 /* RegisterView.m */; };
+		B3E5C86716F7F7DF00739CE5 /* RegisterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E5C86616F7F7DF00739CE5 /* RegisterView.xib */; };
+		B3E5C86A16F8343900739CE5 /* RoomListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E5C86916F8343900739CE5 /* RoomListTableViewCell.m */; };
+		B3E5C86C16F8345400739CE5 /* RoomListTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E5C86B16F8345400739CE5 /* RoomListTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -115,6 +120,14 @@
 		B3DF333C16F1CA2000E9C4D9 /* RoomViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomViewController.h; sourceTree = "<group>"; };
 		B3DF333D16F1CA2000E9C4D9 /* RoomViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomViewController.m; sourceTree = "<group>"; };
 		B3DF333E16F1CA2000E9C4D9 /* RoomViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomViewController.xib; sourceTree = "<group>"; };
+		B3E5C85E16F7EEF200739CE5 /* PopupView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopupView.h; sourceTree = "<group>"; };
+		B3E5C85F16F7EEF200739CE5 /* PopupView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopupView.m; sourceTree = "<group>"; };
+		B3E5C86116F7F76800739CE5 /* RegisterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegisterView.h; sourceTree = SOURCE_ROOT; };
+		B3E5C86216F7F76800739CE5 /* RegisterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegisterView.m; sourceTree = SOURCE_ROOT; };
+		B3E5C86616F7F7DF00739CE5 /* RegisterView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RegisterView.xib; sourceTree = SOURCE_ROOT; };
+		B3E5C86816F8343900739CE5 /* RoomListTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomListTableViewCell.h; sourceTree = SOURCE_ROOT; };
+		B3E5C86916F8343900739CE5 /* RoomListTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomListTableViewCell.m; sourceTree = SOURCE_ROOT; };
+		B3E5C86B16F8345400739CE5 /* RoomListTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomListTableViewCell.xib; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +207,8 @@
 				B32AD45716F30A170030B46A /* RefreshHeaderView.m */,
 				B32AEB9E16F7055C001EC9C1 /* Functions.h */,
 				B32AEB9F16F7055C001EC9C1 /* Functions.m */,
+				B3E5C85E16F7EEF200739CE5 /* PopupView.h */,
+				B3E5C85F16F7EEF200739CE5 /* PopupView.m */,
 			);
 			name = Addition;
 			path = PokerChat/Addition;
@@ -296,6 +311,7 @@
 		B3D097E216E8289000E99380 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				B3E5C85D16F7EE3F00739CE5 /* View */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -309,6 +325,19 @@
 				B3DF333716F1BBBB00E9C4D9 /* UserDataManager.m */,
 			);
 			path = Manage;
+			sourceTree = "<group>";
+		};
+		B3E5C85D16F7EE3F00739CE5 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B3E5C86116F7F76800739CE5 /* RegisterView.h */,
+				B3E5C86216F7F76800739CE5 /* RegisterView.m */,
+				B3E5C86616F7F7DF00739CE5 /* RegisterView.xib */,
+				B3E5C86816F8343900739CE5 /* RoomListTableViewCell.h */,
+				B3E5C86916F8343900739CE5 /* RoomListTableViewCell.m */,
+				B3E5C86B16F8345400739CE5 /* RoomListTableViewCell.xib */,
+			);
+			name = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -377,6 +406,8 @@
 				B32AD46716F340BD0030B46A /* grayArrow@2x.png in Resources */,
 				B32AD46816F340BD0030B46A /* whiteArrow.png in Resources */,
 				B32AD46916F340BD0030B46A /* whiteArrow@2x.png in Resources */,
+				B3E5C86716F7F7DF00739CE5 /* RegisterView.xib in Resources */,
+				B3E5C86C16F8345400739CE5 /* RoomListTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,6 +437,9 @@
 				B3DF333F16F1CA2000E9C4D9 /* RoomViewController.m in Sources */,
 				B32AD45816F30A170030B46A /* RefreshHeaderView.m in Sources */,
 				B32AEBA016F7055C001EC9C1 /* Functions.m in Sources */,
+				B3E5C86016F7EEF200739CE5 /* PopupView.m in Sources */,
+				B3E5C86316F7F76800739CE5 /* RegisterView.m in Sources */,
+				B3E5C86A16F8343900739CE5 /* RoomListTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

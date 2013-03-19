@@ -30,10 +30,20 @@
     return self;
 }
 
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    [self.view addSubview:_userheadImgView];
+    [self.view addSubview:_usernameLbl];
+    [self.view addSubview:_useridLbl];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    _usernameLbl.text = [NSString stringWithFormat:@"昵称:%@",[UserDataManager sharedUserDataManager].user.username];
+    _useridLbl.text = [NSString stringWithFormat:@"ID:%@",[UserDataManager sharedUserDataManager].user.userid];
 }
 
 - (void)didReceiveMemoryWarning
@@ -46,6 +56,10 @@
     [self setCreatRoomTextField:nil];
     [self setCreatRoomButton:nil];
     [self setRomeList:nil];
+    [self setExitBtn:nil];
+    [self setUsernameLbl:nil];
+    [self setUseridLbl:nil];
+    [self setUserheadImgView:nil];
     [super viewDidUnload];
 }
 
@@ -58,19 +72,28 @@
     NSString *channel = _creatRoomTextField.text;
     NSString *username = [UserDataManager sharedUserDataManager].user.username;
     NSNumber *userid = [UserDataManager sharedUserDataManager].user.userid;
-    NSDictionary *params = @{@"channel": channel,@"username":username,@"userid":userid};
-    [self.pomelo requestWithRoute:@"connector.entryHandler.createRoom"
-                        andParams:params
-                      andCallback:^(NSDictionary *result) {
-        if ([[result objectForKey:@"code"] intValue] == 200) {
-            //成功
-            SSLog(@"creat room success:result = %@",result);
-            NSDictionary *newRoom = @{@"id": [NSString stringWithFormat:@"%@",[result objectForKey:@"roomid"]],@"name":channel};
-            [self performSelectorOnMainThread:@selector(updateRooms:) withObject:newRoom waitUntilDone:YES];
-        } else{
-            SSLog(@"Err:%@",[result objectForKey:@"code"]);
-        }
-    }];
+    if ([channel isEqualToString:@""]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                        message:@"房间名不能为空"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
+    } else {
+        NSDictionary *params = @{@"channel": channel,@"username":username,@"userid":userid};
+        [self.pomelo requestWithRoute:@"connector.entryHandler.createRoom"
+                            andParams:params
+                          andCallback:^(NSDictionary *result) {
+                              if ([[result objectForKey:@"code"] intValue] == 200) {
+                                  //成功
+                                  SSLog(@"creat room success:result = %@",result);
+                                  NSDictionary *newRoom = @{@"id": [NSString stringWithFormat:@"%@",[result objectForKey:@"roomid"]],@"name":channel};
+                                  [self performSelectorOnMainThread:@selector(updateRooms:) withObject:newRoom waitUntilDone:YES];
+                              } else{
+                                  SSLog(@"Err:%@",[result objectForKey:@"code"]);
+                              }
+                          }];
+    }
 }
 
 - (void)updateRooms:(NSDictionary *)dict
@@ -89,6 +112,14 @@
 - (IBAction)editEnd:(id)sender
 {
     [sender becomeFirstResponder];
+}
+
+/**
+ *退到登陆界面
+ */
+- (IBAction)exitToLogin:(id)sender
+{
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 #pragma mark -
@@ -139,7 +170,8 @@
     }
     NSInteger row = indexPath.row;
     cell.textLabel.text = [[self.roomlistArray objectAtIndex:row] objectForKey:@"name"];
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.accessoryType = UITableViewCellAccessoryNone;
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
 

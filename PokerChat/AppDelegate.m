@@ -7,7 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import "ChatViewController.h"
 #import "LoginViewController.h"
 
 @implementation AppDelegate

@@ -16,6 +16,8 @@
         self.userid = [dic objectForKey:@"userid"];
         self.role = [dic objectForKey:@"role"];
         self.username = [dic objectForKey:@"username"];
+        self.userpassword = [dic objectForKey:@"password"];
+        self.resultDict = dic;
     }
     return self;
 }
