@@ -312,7 +312,10 @@
 {
     if ([self.tempArray count] == 0) {
         NSNumber *userid = @((int)[UserDataManager sharedUserDataManager].user.userid);
-        NSNumber *roomid = @((int)[self.userDic objectForKey:@"channel"]);
+//        NSNumber *roomid = @((int)[self.userDic objectForKey:@"roomid"]);
+        NSNumber *roomid = [self.userDic objectForKey:@"roomid"];
+        SSLog(@"roomid=%@",roomid);
+        SSLog(@"roomidroomid=%@",self.userDic);
         NSDictionary *params = @{@"userid": userid,@"roomid":roomid};
         SSLog(@"params = %@",params);
         [self.pomelo requestWithRoute:@"chat.chatHandler.query" andParams:params andCallback:^(NSDictionary * result) {
@@ -379,7 +382,7 @@
 {
     SSLog(@"should Return");
     //对所有人userid为空
-    NSDictionary *data = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?@"*":[self.target objectForKey:@"username"],@"userid":[self.target objectForKey:@"userid"]?[self.target objectForKey:@"userid"]:@"",@"content":_chatTextField.text,@"roomid":@"1"};
+    NSDictionary *data = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?@"*":[self.target objectForKey:@"username"],@"userid":[self.target objectForKey:@"userid"]?[self.target objectForKey:@"userid"]:@"",@"content":_chatTextField.text,@"roomid":[self.userDic objectForKey:@"roomid"]};
     if ([[data objectForKey:@"content"] isEqual:@""]) {
         SSLog(@"输入为空");  
     } else {
@@ -388,6 +391,7 @@
         } else {
             [_pomelo requestWithRoute:@"chat.chatHandler.send" andParams:data andCallback:^(NSDictionary *result) {
                 SSLog(@"senderResult = %@",result);
+                [self updateChat];
             }];
         }
     }
@@ -407,13 +411,5 @@
     
     [self.chatTableView scrollRectToVisible:CGRectMake(0, _chatTableView.contentSize.height-30, _chatTableView.contentSize.width, 50) animated:YES];
 }
-
-
-
-
-
-
-
-
 
 @end

@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "Pomelo.h"
+#import "CreatRoomView.h"
 
-@interface RoomViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
+@interface RoomViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate,CreatRoomViewDelegate>
 @property (weak, nonatomic) IBOutlet UITextField *creatRoomTextField;
 @property (weak, nonatomic) IBOutlet UIButton *creatRoomButton;
 @property (weak, nonatomic) IBOutlet UITableView *romeList;

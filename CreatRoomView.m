@@ -10,6 +10,9 @@
 
 @implementation CreatRoomView
 
+
+#pragma mark -
+#pragma mark life cycle
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
@@ -19,13 +22,42 @@
     return self;
 }
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
++ (CreatRoomView *)creatRoomViewWithDelegate:(id)theDelegate
 {
-    // Drawing code
+    NSArray *arr = [[NSBundle mainBundle] loadNibNamed:@"CreatRoomView" owner:nil options:nil];
+    CreatRoomView *view = [arr objectAtIndex:0];
+    view.delegate = theDelegate;
+    return view;
 }
-*/
+
+- (IBAction)clickCreatRoom:(id)sender
+{
+    NSString *creatChannelName = _creatRoomTextField.text;
+    if ([creatChannelName isEqualToString:@""]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                        message:@"房间名不能为空"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
+    } else {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(creatRoomWithChannelName:)]) {
+            [self.delegate creatRoomWithChannelName:creatChannelName];
+        }
+    }
+}
+
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    [self addSubview:_confirmBtn];
+    [self addSubview:_creatRoomLbl];
+    [self addSubview:_backBtn];
+    [self addSubview:_creatRoomTextField];
+}
+
+#pragma mark -
+#pragma mark Public Methods
+
 
 @end

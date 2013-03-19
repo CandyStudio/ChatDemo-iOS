@@ -69,32 +69,35 @@
  */
 - (IBAction)creatRoom:(id)sender
 {
-    NSString *channel = _creatRoomTextField.text;
-    NSString *username = [UserDataManager sharedUserDataManager].user.username;
-    NSNumber *userid = [UserDataManager sharedUserDataManager].user.userid;
-    if ([channel isEqualToString:@""]) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
-                                                        message:@"房间名不能为空"
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil, nil];
-        [alert show];
-    } else {
-        NSDictionary *params = @{@"channel": channel,@"username":username,@"userid":userid};
-        [self.pomelo requestWithRoute:@"connector.entryHandler.createRoom"
-                            andParams:params
-                          andCallback:^(NSDictionary *result) {
-                              if ([[result objectForKey:@"code"] intValue] == 200) {
-                                  //成功
-                                  SSLog(@"creat room success:result = %@",result);
-                                  NSDictionary *newRoom = @{@"id": [NSString stringWithFormat:@"%@",[result objectForKey:@"roomid"]],@"name":channel};
-                                  [self performSelectorOnMainThread:@selector(updateRooms:) withObject:newRoom waitUntilDone:YES];
-                              } else{
-                                  SSLog(@"Err:%@",[result objectForKey:@"code"]);
-                              }
-                                self.creatRoomTextField.text = @"";
-                          }];
-    }
+    CreatRoomView *popCreatRoomView = [CreatRoomView creatRoomViewWithDelegate:self];
+    popCreatRoomView.center = self.view.center;
+    [self.view addSubview:popCreatRoomView];
+//    NSString *channel = _creatRoomTextField.text;
+//    NSString *username = [UserDataManager sharedUserDataManager].user.username;
+//    NSNumber *userid = [UserDataManager sharedUserDataManager].user.userid;
+//    if ([channel isEqualToString:@""]) {
+//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+//                                                        message:@"房间名不能为空"
+//                                                       delegate:nil
+//                                              cancelButtonTitle:@"OK"
+//                                              otherButtonTitles:nil, nil];
+//        [alert show];
+//    } else {
+//        NSDictionary *params = @{@"channel": channel,@"username":username,@"userid":userid};
+//        [self.pomelo requestWithRoute:@"connector.entryHandler.createRoom"
+//                            andParams:params
+//                          andCallback:^(NSDictionary *result) {
+//                              if ([[result objectForKey:@"code"] intValue] == 200) {
+//                                  //成功
+//                                  SSLog(@"creat room success:result = %@",result);
+//                                  NSDictionary *newRoom = @{@"id": [NSString stringWithFormat:@"%@",[result objectForKey:@"roomid"]],@"name":channel};
+//                                  [self performSelectorOnMainThread:@selector(updateRooms:) withObject:newRoom waitUntilDone:YES];
+//                              } else{
+//                                  SSLog(@"Err:%@",[result objectForKey:@"code"]);
+//                              }
+//                                self.creatRoomTextField.text = @"";
+//                          }];
+//    }
 }
 
 - (void)updateRooms:(NSDictionary *)dict
@@ -129,29 +132,26 @@
 /**
  * 进入聊天房间
  */
-- (void)enterRoom:(NSString *)channel
+- (void)enterRoom:(NSDictionary *)roomData
 {
-    if ([channel length] > 0 && channel != nil) {
         SSLog(@"[UserDataManager sharedUserDataManager].user.username=%@",[UserDataManager sharedUserDataManager].user.username);
         SSLog(@"[UserDataManager sharedUserDataManager].user.userid=%@",[UserDataManager sharedUserDataManager].user.userid);
-        NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,@"username":[UserDataManager sharedUserDataManager].user.username,@"channel":channel};
+        NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,@"username":[UserDataManager sharedUserDataManager].user.username,@"channel":[roomData objectForKey:@"name"]};
         [self.pomelo requestWithRoute:@"connector.entryHandler.enterRoom" andParams:params andCallback:^(NSDictionary *result) {
             NSArray *userList = [result objectForKey:@"users"];
-            [UserDataManager sharedUserDataManager].user.channelName = channel;
-            SSLog(@"enterRoomChannel = %@",channel);
+            [UserDataManager sharedUserDataManager].user.channelName = [roomData objectForKey:@"name"];
+            SSLog(@"enterRoomChannel = %@", [roomData objectForKey:@"name"]);
             
             SSLog(@"userlist = %@",userList);
             //填数字给tableview。
             ChatViewController *chatViewController = [[ChatViewController alloc] initWithNibName:@"ChatViewController" bundle:nil];
             chatViewController.pomelo = self.pomelo;
             chatViewController.userDic = [NSMutableDictionary dictionaryWithDictionary:params];
+            [chatViewController.userDic setObject:[roomData objectForKey:@"id"] forKey:@"roomid"];
             [chatViewController.contactList addObjectsFromArray:userList];
             [self.navigationController pushViewController:chatViewController animated:YES];
             self.creatRoomTextField.text = @"";
         }];
-    } else {
-        SSLog(@"房间名不能为空");
-    }
 }
 
 
@@ -189,7 +189,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *str = [[self.roomlistArray objectAtIndex:indexPath.row] objectForKey:@"name"];
+    NSDictionary *str = [self.roomlistArray objectAtIndex:indexPath.row];
+    SSLog(@"sdfa=%@",str);
     [self performSelectorOnMainThread:@selector(enterRoom:) withObject:str waitUntilDone:YES];
 }
 
@@ -206,6 +207,30 @@
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
     return @"在线人数:";
+}
+
+#pragma mark -
+#pragma mark CreatRoomDelegate
+- (void)creatRoomWithChannelName:(NSString *)theChannelName
+{
+    NSString *channel = theChannelName;
+    NSString *username = [UserDataManager sharedUserDataManager].user.username;
+    NSNumber *userid = [UserDataManager sharedUserDataManager].user.userid;
+  
+    NSDictionary *params = @{@"channel": channel,@"username":username,@"userid":userid};
+    [self.pomelo requestWithRoute:@"connector.entryHandler.createRoom"
+                        andParams:params
+                      andCallback:^(NSDictionary *result) {
+                          if ([[result objectForKey:@"code"] intValue] == 200) {
+                              //成功
+                              SSLog(@"creat room success:result = %@",result);
+                              NSDictionary *newRoom = @{@"id": [NSString stringWithFormat:@"%@",[result objectForKey:@"roomid"]],@"name":channel};
+                              [self performSelectorOnMainThread:@selector(updateRooms:) withObject:newRoom waitUntilDone:YES];
+                          } else{
+                              SSLog(@"Err:%@",[result objectForKey:@"code"]);
+                          }
+                          self.creatRoomTextField.text = @"";
+                      }];
 }
 
 @end
