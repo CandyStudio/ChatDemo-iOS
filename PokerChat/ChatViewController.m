@@ -312,7 +312,6 @@
 {
     if ([self.tempArray count] == 0) {
         NSNumber *userid = @((int)[UserDataManager sharedUserDataManager].user.userid);
-//        NSNumber *roomid = @((int)[self.userDic objectForKey:@"roomid"]);
         NSNumber *roomid = [self.userDic objectForKey:@"roomid"];
         SSLog(@"roomid=%@",roomid);
         SSLog(@"roomidroomid=%@",self.userDic);
@@ -391,6 +390,8 @@
         } else {
             [_pomelo requestWithRoute:@"chat.chatHandler.send" andParams:data andCallback:^(NSDictionary *result) {
                 SSLog(@"senderResult = %@",result);
+                NSString *str = [NSString stringWithFormat:@"you say to %@:%@",[self.target objectForKey:@"username"],_chatTextField.text];
+                [_chatLogArray addObject:str];
                 [self updateChat];
             }];
         }
