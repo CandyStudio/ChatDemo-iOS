@@ -61,14 +61,17 @@
         SSLog(@"onChat...");
         SSLog(@"onChatData = %@",data);
         //是自己就不说
-        if (![[data objectForKey:@"from_user_id"] isEqualToString:[[UserDataManager sharedUserDataManager].user.userid stringValue]]) {
-            NSNumber *tid = [data objectForKey:@"tid"];
-            NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:data];
-            [dict setObject:tid forKey:@"id"];
-            [self.tempArray addObject:dict];
-            [_chatLogArray addObject:dict];
-            [self updateChat];
-        }
+        SSLog(@"[[UserDataManager sharedUserDataManager].user.userid stringValue] = %@",[[UserDataManager sharedUserDataManager].user.userid stringValue]);
+        SSLog(@"[data objectForKey: = %@",[data objectForKey:@"from_user_id"]);
+       if  ( !([[data objectForKey:@"from_user_id"] intValue] == [[UserDataManager sharedUserDataManager].user.userid intValue]))
+       {
+           NSNumber *tid = [data objectForKey:@"tid"];
+           NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:data];
+           [dict setObject:tid forKey:@"id"];
+           [self.tempArray addObject:dict];
+           [_chatLogArray addObject:dict];
+           [self updateChat];
+       }
     }];
 }
 /**
