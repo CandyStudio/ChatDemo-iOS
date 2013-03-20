@@ -16,7 +16,9 @@
 @end
 
 @implementation RoomViewController
-
+{
+    NSDictionary *tmpDict;
+}
 
 #pragma mark -
 #pragma mark life cycle
@@ -76,11 +78,18 @@
 
 - (void)updateRooms:(NSDictionary *)dict
 {
+    SSLog(@"dict = %@",dict);
     [self.romeList beginUpdates];
     [self.roomlistArray addObject:[NSMutableDictionary dictionaryWithDictionary: dict]];
     NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:[_roomlistArray count] - 1 inSection:0]];
     [self.romeList insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationTop];
     [self.romeList endUpdates];
+  
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"创建成功"
+                                                    message:@"进入房间"
+                                                   delegate:self
+                                          cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+    [alert show];
 }
 
 
@@ -206,6 +215,14 @@
                           }
                           self.creatRoomTextField.text = @"";
                       }];
+}
+
+#pragma mark -
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    
+//    [self enterRoom:dict];
 }
 
 @end

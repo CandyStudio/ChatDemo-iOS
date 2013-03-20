@@ -354,6 +354,7 @@
             for (int i = tempLenth-1; i >tempLenth-11&& i>=0 ; i--) {
                 [self.chatLogArray addObject:[self.tempArray objectAtIndex:i]];
             }
+
             [self.chatLogArray sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
                 if ([[obj1 objectForKey:@"id"] intValue]<[[obj2 objectForKey:@"id"] intValue]) {
                     return NSOrderedAscending;
@@ -363,6 +364,7 @@
                     return NSOrderedDescending;
                 }
             }];
+
             [self.chatTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES ];
             self.hasLoad = YES;
         }]; 

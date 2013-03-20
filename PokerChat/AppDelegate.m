@@ -65,8 +65,8 @@
     SSLog(@"PomeloDidDisconnect:withError:%@",error);
     SSLog(@"error code %d", [error code]);
     if ([error code] != -2) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
-                                                        message:[NSString stringWithFormat:@"Error Code = %d",[error code]]
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error = %d",[error code]]
+                                                        message:[NSString stringWithFormat:@"%@",error]
                                                        delegate:self
                                               cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
         [alert show];
