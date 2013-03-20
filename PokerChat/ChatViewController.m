@@ -15,6 +15,9 @@
 #define CHAT_TABLEVIEW 100001
 #define ONLINE_PLAYER_TABLEVIEW 100002
 
+#define CHATLOGTYPE_ALL  0
+#define CHATLOGTYPE_SINGLE  1
+
 @interface ChatViewController ()
 
 /**
@@ -55,11 +58,13 @@
     
     [_pomelo onRoute:@"onChat" withCallback:^(NSDictionary *data) {
         SSLog(@"onChat...");
+        SSLog(@"onChatData = %@",data);
         NSString *target = [[data objectForKey:@"target"] isEqualToString:@"*"]?@"":@" to you";
 //        [_chatStr appendFormat:@"%@ says%@: %@\n",[data objectForKey:@"from"], target, [data objectForKey:@"msg"]];
 //        [_chatLogArray addObject:@{@"context": [data objectForKey:@"msg"]}];
-        [_chatLogArray addObject:@{@"context": [NSString stringWithFormat:@"%@ says%@:%@",[data objectForKey:@"from"],target,[data objectForKey:@"msg"]]}];
-        [self updateChat];
+        
+//        [_chatLogArray addObject:@{@"context": [NSString stringWithFormat:@"%@ says%@:%@",[data objectForKey:@"from"],target,[data objectForKey:@"msg"]]}];
+//        [self updateChat];
     }];
 }
 /**
@@ -69,6 +74,7 @@
 {
     [_pomelo onRoute:@"onAdd" withCallback:^(NSDictionary *data) {
         SSLog(@"user add -----");
+        SSLog(@"onAddData = %@",data);
         [self.onlinePlayerTableView beginUpdates];
         [_contactList addObject:data];
         self.numLabel.text = [NSString stringWithFormat:@"房间人数:%d",_contactList.count - 1];
@@ -78,6 +84,7 @@
     }];
     [_pomelo onRoute:@"onLeave" withCallback:^(NSDictionary *data) {
         SSLog(@"user leave ----");
+        SSLog(@"onLeave = %@",data);
         NSString *name = [data objectForKey:@"username"];
         int index = 0;
         for (index = 0; index <= _contactList.count; index++) {
@@ -92,6 +99,7 @@
         self.numLabel.text = [NSString stringWithFormat:@"房间人数:%d",_contactList.count - 1];
     }];
 }
+
 /**
  *内存不够时清理
  */
@@ -263,8 +271,9 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         }
         NSInteger row = indexPath.row;
-        NSString *str = [NSString stringWithFormat:@"id_%@:%@",[[self.chatLogArray objectAtIndex:row] objectForKey:@"id"],[[self.chatLogArray objectAtIndex:row] objectForKey:@"context"]];
-//        cell.textLabel.text = [[self.chatLogArray objectAtIndex:row] objectForKey:@"context"];
+        SSLog(@"self.chatLogArr = %@",self.chatLogArray);
+//        NSString *str = [NSString stringWithFormat:@"id_%@:%@",[[self.chatLogArray objectAtIndex:row] objectForKey:@"id"],[[self.chatLogArray objectAtIndex:row] objectForKey:@"context"]];
+        NSString *str = [NSString stringWithFormat:@"%@",[[_chatLogArray objectAtIndex:row] objectForKey:@"context"]];
         cell.textLabel.text = str;
         cell.textLabel.font = [UIFont fontWithName:@"monaca" size:12];
         cell.accessoryType = UITableViewCellAccessoryNone;
@@ -318,7 +327,8 @@
         NSDictionary *params = @{@"userid": userid,@"roomid":roomid};
         SSLog(@"params = %@",params);
         [self.pomelo requestWithRoute:@"chat.chatHandler.query" andParams:params andCallback:^(NSDictionary * result) {
-            [self.tempArray addObjectsFromArray:[result objectForKey:@"chatlog"]];            
+            [self.tempArray addObjectsFromArray:[result objectForKey:@"chatlog"]];
+            SSLog(@"self.tempArray = %@",self.tempArray);
             int tempLenth = [self.tempArray count];
             int currLenth = [self.chatLogArray count];
             for (int i = currLenth; i <currLenth+10&& i<tempLenth ; i++) {
@@ -381,18 +391,67 @@
 {
     SSLog(@"should Return");
     //对所有人userid为空
-    NSDictionary *data = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?@"*":[self.target objectForKey:@"username"],@"userid":[self.target objectForKey:@"userid"]?[self.target objectForKey:@"userid"]:@"",@"content":_chatTextField.text,@"roomid":[self.userDic objectForKey:@"roomid"]};
-    if ([[data objectForKey:@"content"] isEqual:@""]) {
+    NSNumber *type = @([[self.target objectForKey:@"username"] isEqualToString:@"All"]?CHATLOGTYPE_ALL:CHATLOGTYPE_SINGLE);
+    SSLog(@"target type = %@",type);
+    NSDictionary *params = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?@"*":[self.target objectForKey:@"username"],
+                             @"userid":[self.target objectForKey:@"userid"]?[self.target objectForKey:@"userid"]:@"",
+                             @"content":_chatTextField.text,
+                             @"roomid":[self.userDic objectForKey:@"roomid"],
+                             @"type":type
+                             };
+    if ([[params objectForKey:@"content"] isEqual:@""]) {
         SSLog(@"输入为空");  
     } else {
         if ([[self.target objectForKey:@"username"] isEqualToString:@"All"]) {
-            [_pomelo notifyWithRoute:@"chat.chatHandler.send" andParams:data];
+            [_pomelo notifyWithRoute:@"chat.chatHandler.send" andParams:params];
         } else {
-            [_pomelo requestWithRoute:@"chat.chatHandler.send" andParams:data andCallback:^(NSDictionary *result) {
+            [_pomelo requestWithRoute:@"chat.chatHandler.send" andParams:params andCallback:^(NSDictionary *result) {
                 SSLog(@"senderResult = %@",result);
-                NSString *str = [NSString stringWithFormat:@"you say to %@:%@",[self.target objectForKey:@"username"],_chatTextField.text];
-                [_chatLogArray addObject:str];
-                [self updateChat];
+                if ([[result objectForKey:@"code"] intValue] == 200) {
+                    SSLog(@"send own msg");
+                    [_chatLogArray addObject:[result objectForKey:@"chat"]];
+//                    NSNumber *chatid = [result objectForKey:@"chatid"];
+//                    SSLog(@"chatid = %@",chatid);
+//                    NSNumber *fromUserid = [UserDataManager sharedUserDataManager].user.userid;
+//                    SSLog(@"fromUserid = %@",fromUserid);
+//                    NSString *fromUsername = [UserDataManager sharedUserDataManager].user.username;
+//                    SSLog(@"fromUsername = %@",fromUsername);
+//                    NSNumber *toUserid = [self.target objectForKey:@"userid"];
+//                    SSLog(@"toUserid = %@",toUserid);
+//                    NSString *toUsername = [self.target objectForKey:@"username"];
+//                    SSLog(@"toUsername = %@",toUsername);
+//                    NSNumber *chatLogType = @CHATLOGTYPE_SINGLE;
+//                    SSLog(@"chatLogType = %@",chatLogType);
+//                    //time 非后台传的
+//                    NSDateFormatter *dateFormatre = [[NSDateFormatter alloc] init];
+//                    [dateFormatre setDateFormat:@"yy-MM-dd HH:mm:ss"];
+//                    NSDate *curDate = [NSDate date];
+//                    NSString *createtime = [dateFormatre stringFromDate:curDate];
+//                    SSLog(@"createtime = %@",createtime);
+//                    
+//                    NSString *roomid = [self.userDic objectForKey:@"roomid"];
+//                    SSLog(@"roomid = %@",roomid);
+//                    
+//                    NSDictionary *chatDict = @{@"context": _chatTextField.text,
+//                                               @"createtime":createtime,
+//                                               @"from_user_id":fromUserid,
+//                                               @"from_user_name":fromUsername,
+//                                               @"id":chatid,
+//                                               @"room_id":roomid,
+//                                               @"to_user_id":toUserid,
+//                                               @"to_user_name":toUsername,
+//                                               @"type":chatLogType};
+//                    SSLog(@"chatDict = %@",chatDict);
+//                    [_chatLogArray addObject:chatDict];
+                    [self updateChat];
+                } else {
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                    message:@"发送失败"
+                                                                   delegate:self
+                                                          cancelButtonTitle:@"OK"
+                                                          otherButtonTitles:nil, nil];
+                    [alert show];
+                }
             }];
         }
     }

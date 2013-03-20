@@ -214,10 +214,9 @@
 - (void)creatRoomWithChannelName:(NSString *)theChannelName
 {
     NSString *channel = theChannelName;
-    NSString *username = [UserDataManager sharedUserDataManager].user.username;
     NSNumber *userid = [UserDataManager sharedUserDataManager].user.userid;
   
-    NSDictionary *params = @{@"channel": channel,@"username":username,@"userid":userid};
+    NSDictionary *params = @{@"channel": channel,@"userid":userid};
     [self.pomelo requestWithRoute:@"connector.entryHandler.createRoom"
                         andParams:params
                       andCallback:^(NSDictionary *result) {

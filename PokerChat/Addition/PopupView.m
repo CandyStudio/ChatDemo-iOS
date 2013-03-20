@@ -35,9 +35,9 @@
 #pragma mark public methods
 - (IBAction)clickClose:(id)sender
 {
-    [self willClose];
+//    [self willClose];
     [self removeFromSuperview];
-    [self didClose];
+//    [self didClose];
 }
 
 - (void)close
