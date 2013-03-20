@@ -325,8 +325,8 @@
 			isa = PBXGroup;
 			children = (
 				B3DF333316F1B8F000E9C4D9 /* UserData.h */,
-				B3DF333416F1B8F000E9C4D9 /* UserData.m */,
 				B3DF333616F1BBBB00E9C4D9 /* UserDataManager.h */,
+				B3DF333416F1B8F000E9C4D9 /* UserData.m */,
 				B3DF333716F1BBBB00E9C4D9 /* UserDataManager.m */,
 			);
 			path = Manage;

@@ -46,6 +46,11 @@
 - (IBAction)registerConfirmTapped:(id)sender
 {
     SSLog(@"registerTap");
+    [self confirmRegister];
+}
+
+- (void)confirmRegister
+{
     NSString *registerName = _registerNameTextField.text;
     NSString *registerPassword = _registerPasswordTextField.text;
     NSString *againPassword = _confirmPasswordTextField.text;
@@ -61,7 +66,6 @@
                 if (self.delegate && [self.delegate respondsToSelector:@selector(userRegisterWithName:andPassword:)]) {
                     [self.delegate userRegisterWithName:_registerNameTextField.text andPassword:_registerPasswordTextField.text];
                 }
-                [self close];
             } else {
                 //密码长度不合要求
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
@@ -89,5 +93,35 @@
                                                   otherButtonTitles:nil, nil];
         [alertView show];
     }
+
 }
+
+- (IBAction)textFieldEditEnd:(id)sender
+{
+    SSLog(@"registtextFieldEditEnd");
+    UITextField *selectTextField = (id)sender;
+    if (selectTextField == _registerNameTextField) {
+        SSLog(@"registtextFieldEditEnd1");
+        [_registerPasswordTextField becomeFirstResponder];
+    } else if (selectTextField == _registerPasswordTextField) {
+        SSLog(@"registtextFieldEditEnd2");
+        [_registerPasswordTextField resignFirstResponder];
+        [_confirmPasswordTextField becomeFirstResponder];
+    } else if (selectTextField == _confirmPasswordTextField) {
+        SSLog(@"registtextFieldEditEnd3");
+        [self confirmRegister];
+        [_confirmPasswordTextField resignFirstResponder];
+    }
+}
+#pragma mark -
+#pragma mark UITextFieldDelegate
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    if (textField == _confirmPasswordTextField) {
+        SSLog(@"conf");
+    }
+    return YES;
+}
+
 @end

@@ -13,7 +13,7 @@
 - (void)userRegisterWithName:(NSString *)theName andPassword:(NSString *)thePassword;
 @end
 
-@interface RegisterView : PopupView
+@interface RegisterView : PopupView<UITextFieldDelegate>
 
 @property (assign, nonatomic) id<RegisterViewDelegate> delegate;
 @property (weak, nonatomic) IBOutlet UITextField *registerNameTextField;

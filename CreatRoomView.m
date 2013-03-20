@@ -32,6 +32,15 @@
 
 - (IBAction)clickCreatRoom:(id)sender
 {
+    [self creatRoom];
+}
+- (IBAction)editEndCreatRoom:(id)sender
+{
+    [self creatRoom];
+}
+
+- (void)creatRoom
+{
     NSString *creatChannelName = _creatRoomTextField.text;
     if ([creatChannelName isEqualToString:@""]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
@@ -60,5 +69,12 @@
 #pragma mark -
 #pragma mark Public Methods
 
+
+#pragma mark -
+#pragma mark UITextFieldDelegate
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    return YES;
+}
 
 @end

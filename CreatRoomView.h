@@ -13,7 +13,7 @@
 - (void)creatRoomWithChannelName:(NSString *)theChannelName;
 @end
 
-@interface CreatRoomView : PopupView
+@interface CreatRoomView : PopupView<UITextFieldDelegate>
 
 @property (assign, nonatomic) id<CreatRoomViewDelegate>delegate;
 @property (weak, nonatomic) IBOutlet UILabel *creatRoomLbl;

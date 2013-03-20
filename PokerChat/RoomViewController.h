@@ -19,5 +19,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *useridLbl;
 @property (weak, nonatomic) IBOutlet UIImageView *userheadImgView;
 @property (strong,nonatomic) NSMutableArray *roomlistArray;
+@property (strong,nonatomic) NSMutableDictionary *onlineDict;
 @property (strong,nonatomic) Pomelo *pomelo;
 @end

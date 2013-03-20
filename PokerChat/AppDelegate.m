@@ -54,5 +54,41 @@
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+#pragma mark -
+#pragma mark -SocketIODelegate
+- (void)PomeloDidConnect:(Pomelo *)pomelo
+{
+    SSLog(@"PomeloDidConnect ownown:%@",pomelo);
+}
+- (void)PomeloDidDisconnect:(Pomelo *)pomelo withError:(NSError *)error
+{
+    SSLog(@"PomeloDidDisconnect:withError:%@",error);
+    SSLog(@"error code %d", [error code]);
+    if ([error code] != -2) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                        message:[NSString stringWithFormat:@"Error Code = %d",[error code]]
+                                                       delegate:self
+                                              cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alert show];
+    }
+   
+}
+- (void)Pomelo:(Pomelo *)pomelo didReceiveMessage:(NSArray *)message
+{
+    SSLog(@"didReceiveMessage %@",message);
+}
+
+
+#pragma mark -
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+//    [self.pomelo disconnectWithCallback:^(id callback) {
+//        SSLog(@"callback=%@",callback);
+//    }];
+    [self.navController popToRootViewControllerAnimated:YES];
+}
+
+
 
 @end

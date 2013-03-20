@@ -37,6 +37,7 @@ typedef enum
 @interface LoginViewController ()
 {
     UserRole userRole;
+    RegisterView *registerView;
 }
 
 /**
@@ -79,6 +80,20 @@ typedef enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"memUsername"]) {
+        _nameTextField.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"memUsername"];
+        _nameSwitch.on = YES;
+    } else {
+        _nameSwitch.on = NO;
+    }
+    
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:@"memUserPassword"]) {
+        _channelTextField.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"memUserPassword"];
+        _passwordSwitch.on = YES;
+    } else {
+        _passwordSwitch.on = NO;
+    }    
     // Do any additional setup after loading the view from its nib.
     
 }
@@ -92,7 +107,8 @@ typedef enum
 - (void)viewDidUnload {
     [self setRegisterButton:nil];
     [self setGuestButton:nil];
-    [self setOnceAgainPassword:nil];
+    [self setNameSwitch:nil];
+    [self setPasswordSwitch:nil];
     [super viewDidUnload];
 }
 
@@ -108,6 +124,34 @@ typedef enum
     RoomViewController *roomViewController = [[RoomViewController alloc] initWithNibName:@"RoomViewController" bundle:nil];
     roomViewController.pomelo = self.pomelo;
     roomViewController.roomlistArray = [NSMutableArray arrayWithArray:[data objectForKey:@"roomlist"]];
+    roomViewController.onlineDict = [NSMutableDictionary dictionaryWithObject:[data objectForKey:@"onlineuser"] forKey:@"onlineuser"];
+    switch (_nameSwitch.on) {
+        case 1:
+            [[NSUserDefaults standardUserDefaults] setObject:[UserDataManager sharedUserDataManager].user.username
+                                                      forKey:@"memUsername"];
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"nameSwitchState"];
+
+            break;
+        case 0:
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"memUsername"];
+            [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"nameSwitchState"];
+            break;
+        default:
+            break;
+    }
+    switch (_passwordSwitch.on) {
+        case 1:
+            [[NSUserDefaults standardUserDefaults] setObject:[UserDataManager sharedUserDataManager].user.userpassword
+                                                      forKey:@"memUserPassword"];
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"passwordSwitchState"];
+            break;
+        case 0:
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"memUserPassword"];
+            [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"passwordSwitchState"];
+            break;
+        default:
+            break;
+    }
     [self.navigationController pushViewController:roomViewController animated:YES];
 }
 
@@ -204,6 +248,7 @@ typedef enum
                     [UserDataManager sharedUserDataManager].user = userData;
                     [UserDataManager sharedUserDataManager].user.role = @(theRole);
                     [UserDataManager sharedUserDataManager].user.username = theUsername;
+                    [UserDataManager sharedUserDataManager].user.userpassword = thePassword;
                     [self entryWithLoginData:result userName:theUsername andPassword:thePassword];
                 } else {
                     SSLog(@"result.logincode = %@",[result objectForKey:@"err"]);
@@ -255,46 +300,45 @@ typedef enum
 /**
  *@brief玩家注册
  */
-- (void)guestRegister
-{
-    NSString *registerUsername = _nameTextField.text;
-    NSString *registerPassword = _channelTextField.text;
-    NSString *againPassword = _onceAgainPassword.text;
-    userRole = UserRoleRegister;
-    //注册名字的要求
-    if ([registerUsername length] >= 4 && [registerUsername length] <= 12) {
-        //密码要求
-        if ([registerPassword isEqualToString:againPassword]) {
-            if ([registerPassword length] >= 4 && [registerPassword length] <= 12) {
-                [self guestLoginOrRegisterWithUsername:registerUsername password:registerPassword andUserRole:userRole];
-            } else {
-                //密码的长度和符合条件
-                UIAlertView *alerView = [[UIAlertView alloc] initWithTitle:@"Error"
-                                                                   message:@"密码长度不符合条件"
-                                                                  delegate:nil
-                                                         cancelButtonTitle:@"OK"
-                                                         otherButtonTitles:nil, nil];
-                [alerView show];
-            }
-        } else {
-            //前后密码不一致
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
-                                                                message:@"前后密码不一致"
-                                                               delegate:nil
-                                                      cancelButtonTitle:@"OK"
-                                                      otherButtonTitles:nil, nil];
-            [alertView show];
-        }
-    } else {
-        //昵称不对
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
-                                                            message:@"昵称不符合要求"
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil, nil];
-        [alertView show];
-    }
-}
+//- (void)guestRegister
+//{
+//    NSString *registerUsername = _nameTextField.text;
+//    NSString *registerPassword = _channelTextField.text;
+//    userRole = UserRoleRegister;
+//    //注册名字的要求
+//    if ([registerUsername length] >= 4 && [registerUsername length] <= 12) {
+//        //密码要求
+//        if ([registerPassword isEqualToString:againPassword]) {
+//            if ([registerPassword length] >= 4 && [registerPassword length] <= 12) {
+//                [self guestLoginOrRegisterWithUsername:registerUsername password:registerPassword andUserRole:userRole];
+//            } else {
+//                //密码的长度和符合条件
+//                UIAlertView *alerView = [[UIAlertView alloc] initWithTitle:@"Error"
+//                                                                   message:@"密码长度不符合条件"
+//                                                                  delegate:nil
+//                                                         cancelButtonTitle:@"OK"
+//                                                         otherButtonTitles:nil, nil];
+//                [alerView show];
+//            }
+//        } else {
+//            //前后密码不一致
+//            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+//                                                                message:@"前后密码不一致"
+//                                                               delegate:nil
+//                                                      cancelButtonTitle:@"OK"
+//                                                      otherButtonTitles:nil, nil];
+//            [alertView show];
+//        }
+//    } else {
+//        //昵称不对
+//        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+//                                                            message:@"昵称不符合要求"
+//                                                           delegate:nil
+//                                                  cancelButtonTitle:@"OK"
+//                                                  otherButtonTitles:nil, nil];
+//        [alertView show];
+//    }
+//}
 
 
 
@@ -306,7 +350,7 @@ typedef enum
  */
 - (void)guestLoginOrRegisterWithUsername:(NSString *)theName password:(NSString *)thePassword andUserRole:(UserRole)theRole
 {
-    [self.pomelo connectToHost:@"10.0.1.44" onPort:3014 withCallback:^(Pomelo *p) {
+    [self.pomelo connectToHost:@"10.0.1.23" onPort:3014 withCallback:^(Pomelo *p) {
         NSDictionary *params = @{@"username": theName,@"password":thePassword,@"role":[NSString stringWithFormat:@"%d",theRole]};
         [self.pomelo requestWithRoute:@"gate.gateHandler.register" andParams:params andCallback:^(NSDictionary *result) {
             SSLog(@"registOrGuestResult = %@",result);
@@ -369,9 +413,9 @@ typedef enum
 {
 //    [self guestRegister];
     //弹出注册框
-    RegisterView *registerView = [RegisterView createRegisterViewWithDelegate:self];
+    registerView = [RegisterView createRegisterViewWithDelegate:self];
     [self.view addSubview:registerView];
-    registerView.frame = CGRectMake(30, 60, 960, 600);
+    registerView.frame = CGRectMake(0, 0, 1024, 768);
 }
 
 /**
@@ -386,7 +430,70 @@ typedef enum
  */
 - (IBAction)textFieldDoneEdit:(id)sender
 {
-    [sender resignFirstResponder];
+    SSLog(@"textFieldDoneEdit");
+    UITextField *selectTextField = (id)sender;
+    if (selectTextField == _nameTextField) {
+        SSLog(@"textFieldDoneEditName");
+        [_channelTextField becomeFirstResponder];
+    } else if (selectTextField == _channelTextField) {
+        SSLog(@"textFieldDoneEditChannel");
+        [_channelTextField resignFirstResponder];
+        [self normalLogin];
+    }
+}
+- (IBAction)switchClick:(id)sender
+{
+    SSLog(@"switchClick");
+    UISwitch *memSwitch = (id)sender;
+    if (memSwitch == _nameSwitch) {
+        SSLog(@"memSwithOffOrOn=%d",memSwitch.on);
+        switch (memSwitch.on) {
+            case 1:
+                [[NSUserDefaults standardUserDefaults] setObject:[UserDataManager sharedUserDataManager].user.username
+                                                          forKey:@"memUsername"];
+                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"nameSwitchState"];
+                break;
+            case 0:
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"memUsername"];
+                [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"nameSwitchState"];
+                break;
+                
+            default:
+                break;
+        }
+    } else if (memSwitch == _passwordSwitch) {
+        SSLog(@"memSwithOffOrOn=%d",memSwitch.on);
+        switch (memSwitch.on) {
+            case 1:
+                [[NSUserDefaults standardUserDefaults] setObject:[UserDataManager sharedUserDataManager].user.userpassword
+                                                          forKey:@"memUserPassword"];
+                [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"passwordSwitchState"];
+                break;
+            case 0:
+                [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"memUserPassword"];
+                [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"passwordSwitchState"];
+                
+                break;
+                
+            default:
+                break;
+        }
+    }
+}
+
+#pragma mark -
+#pragma UITextFieldViewDelegate
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    if (textField == _nameTextField) {
+//        [_nameTextField resignFirstResponder];
+        SSLog(@"textFieldShouldReturnName");
+        [_channelTextField becomeFirstResponder];
+    } else if (textField == _channelTextField) {
+        SSLog(@"textFieldShouldReturnChannel");
+        [_channelTextField resignFirstResponder];
+    }
+    return YES;
 }
 
 #pragma mark -
@@ -404,6 +511,7 @@ typedef enum
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     NSLog(@"cancel alertView");
+    [registerView close];
     [self entryWithLoginData:[UserDataManager sharedUserDataManager].user.resultDict
                     userName:[UserDataManager sharedUserDataManager].user.username
                  andPassword:[UserDataManager sharedUserDataManager].user.userpassword];

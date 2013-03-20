@@ -72,32 +72,6 @@
     CreatRoomView *popCreatRoomView = [CreatRoomView creatRoomViewWithDelegate:self];
     popCreatRoomView.center = self.view.center;
     [self.view addSubview:popCreatRoomView];
-//    NSString *channel = _creatRoomTextField.text;
-//    NSString *username = [UserDataManager sharedUserDataManager].user.username;
-//    NSNumber *userid = [UserDataManager sharedUserDataManager].user.userid;
-//    if ([channel isEqualToString:@""]) {
-//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
-//                                                        message:@"房间名不能为空"
-//                                                       delegate:nil
-//                                              cancelButtonTitle:@"OK"
-//                                              otherButtonTitles:nil, nil];
-//        [alert show];
-//    } else {
-//        NSDictionary *params = @{@"channel": channel,@"username":username,@"userid":userid};
-//        [self.pomelo requestWithRoute:@"connector.entryHandler.createRoom"
-//                            andParams:params
-//                          andCallback:^(NSDictionary *result) {
-//                              if ([[result objectForKey:@"code"] intValue] == 200) {
-//                                  //成功
-//                                  SSLog(@"creat room success:result = %@",result);
-//                                  NSDictionary *newRoom = @{@"id": [NSString stringWithFormat:@"%@",[result objectForKey:@"roomid"]],@"name":channel};
-//                                  [self performSelectorOnMainThread:@selector(updateRooms:) withObject:newRoom waitUntilDone:YES];
-//                              } else{
-//                                  SSLog(@"Err:%@",[result objectForKey:@"code"]);
-//                              }
-//                                self.creatRoomTextField.text = @"";
-//                          }];
-//    }
 }
 
 - (void)updateRooms:(NSDictionary *)dict
@@ -206,7 +180,7 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
-    return @"在线人数:";
+    return [NSString stringWithFormat:@"在线人数:%@",[self.onlineDict objectForKey:@"onlineuser"]];
 }
 
 #pragma mark -
@@ -223,7 +197,9 @@
                           if ([[result objectForKey:@"code"] intValue] == 200) {
                               //成功
                               SSLog(@"creat room success:result = %@",result);
-                              NSDictionary *newRoom = @{@"id": [NSString stringWithFormat:@"%@",[result objectForKey:@"roomid"]],@"name":channel};
+                              NSDictionary *newRoom = @{@"id": [NSString stringWithFormat:@"%@",[result objectForKey:@"roomid"]],
+                                                        @"name":channel,
+                                                        @"count":@0};
                               [self performSelectorOnMainThread:@selector(updateRooms:) withObject:newRoom waitUntilDone:YES];
                           } else{
                               SSLog(@"Err:%@",[result objectForKey:@"code"]);

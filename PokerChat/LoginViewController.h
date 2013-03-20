@@ -18,7 +18,7 @@
     @class LoingViewController
     @superclass UIViewController
  */
-@interface LoginViewController : UIViewController<RegisterViewDelegate,UIAlertViewDelegate>
+@interface LoginViewController : UIViewController<RegisterViewDelegate,UIAlertViewDelegate,UITextFieldDelegate>
 /**
  *nameText
  */
@@ -46,10 +46,8 @@
  */
 @property (weak, nonatomic) IBOutlet UIButton *guestButton;
 
-/**
- *确认密码按钮
- */
-@property (weak, nonatomic) IBOutlet UITextField *onceAgainPassword;
+@property (weak, nonatomic) IBOutlet UISwitch *nameSwitch;
 
+@property (weak, nonatomic) IBOutlet UISwitch *passwordSwitch;
 
 @end
