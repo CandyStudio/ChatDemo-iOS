@@ -212,7 +212,7 @@
                                                         @"name":channel,
                                                         @"count":@0};
                               [self performSelectorOnMainThread:@selector(updateRooms:) withObject:newRoom waitUntilDone:YES];
-                          } else{
+                          } else {
                               SSLog(@"Err:%@",[result objectForKey:@"code"]);
                           }
                           self.creatRoomTextField.text = @"";
