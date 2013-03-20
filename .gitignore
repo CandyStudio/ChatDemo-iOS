@@ -8,3 +8,5 @@ PokerChat.xcodeproj/project.xcworkspace/xcuserdata/vienta.xcuserdatad/UserInterf
 *.xcscheme
 
 PokerChat.xcodeproj/xcuserdata/xiaochuan.xcuserdatad/xcschemes/xcschememanagement.plist
+
+*.xcbkptlist
