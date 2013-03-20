@@ -47,6 +47,7 @@
          210 679 359 70
          */
         self.convertArray = [[NSMutableArray alloc] initWithCapacity:0];
+        self.hasLoad = NO;
         
     }
     return self;
@@ -60,6 +61,7 @@
     [_pomelo onRoute:@"onChat" withCallback:^(NSDictionary *data) {
         SSLog(@"onChat...");
         SSLog(@"onChatData = %@",data);
+        [self.tempArray addObject:data];
         [_chatLogArray addObject:data];
         [self updateChat];
     }];
@@ -327,7 +329,7 @@
  */
 - (void)doneLoadingTableViewData
 {
-    if ([self.tempArray count] == 0) {
+    if (!self.hasLoad) {
         NSNumber *userid = @((int)[UserDataManager sharedUserDataManager].user.userid);
         NSNumber *roomid = [self.userDic objectForKey:@"roomid"];
         SSLog(@"roomid=%@",roomid);
@@ -336,32 +338,54 @@
         SSLog(@"params = %@",params);
         [self.pomelo requestWithRoute:@"chat.chatHandler.query" andParams:params andCallback:^(NSDictionary * result) {
             [self.tempArray addObjectsFromArray:[result objectForKey:@"chatlog"]];
+            
+            [self.tempArray sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+                if ([[obj1 objectForKey:@"id"] intValue]<[[obj2 objectForKey:@"id"] intValue]) {
+                    return NSOrderedAscending;
+                }
+                else
+                {
+                    return NSOrderedDescending;
+                }
+            }];
             SSLog(@"self.tempArray = %@",self.tempArray);
-            int tempLenth = [self.tempArray count];
-            int currLenth = [self.chatLogArray count];
-            for (int i = currLenth; i <currLenth+10&& i<tempLenth ; i++) {
+            [self.chatLogArray removeAllObjects];
+            int tempLenth = [self.tempArray count];            
+            for (int i = tempLenth-1; i >tempLenth-11&& i>=0 ; i--) {
                 [self.chatLogArray addObject:[self.tempArray objectAtIndex:i]];
             }
-            
-//            for (int i = 0; i < [self.chatLogArray count]; i++) {
-//                for (int j = 0; j < [self.chatLogArray count] + 1; j++) {
-//                    if ([[[self.chatLogArray objectAtIndex:j]
-//                        objectForKey:@"id"] intValue]> [[[self.chatLogArray objectAtIndex:j+1] objectForKey:@"id"] intValue]) {
-//                        id tmp = [self.chatLogArray objectAtIndex:j];
-//                        [self.chatLogArray objectAtIndex:<#(NSUInteger)#>]
-//                    }
-//                }
-//            }
-
-            
+            [self.chatLogArray sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+                if ([[obj1 objectForKey:@"id"] intValue]<[[obj2 objectForKey:@"id"] intValue]) {
+                    return NSOrderedAscending;
+                }
+                else
+                {
+                    return NSOrderedDescending;
+                }
+            }];
             [self.chatTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES ];
+            self.hasLoad = YES;
         }]; 
     } else {
         int tempLenth = [self.tempArray count];
         int currLenth = [self.chatLogArray count];
-        for (int i = currLenth; i <currLenth+10&& i<tempLenth ; i++) {
-            [self.chatLogArray addObject:[self.tempArray objectAtIndex:i]];
+        int start = tempLenth -currLenth;
+        NSMutableArray *tempArr = [NSMutableArray arrayWithCapacity:10];
+        for (int i=start-1; i>start-11&&i>=0; i--) {
+            [tempArr addObject:[self.tempArray objectAtIndex:i]];
         }
+        [tempArr sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            if ([[obj1 objectForKey:@"id"] intValue]<[[obj2 objectForKey:@"id"] intValue]) {
+                return NSOrderedAscending;
+            }
+            else
+            {
+                return NSOrderedDescending;
+            }
+        }];
+        [tempArr addObjectsFromArray:self.chatLogArray];
+        self.chatLogArray = tempArr;
+        
         [self.chatTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES ];
     }
     
@@ -435,6 +459,7 @@
                 if ([[result objectForKey:@"code"] intValue] == 200) {
                     SSLog(@"send own msg");
                     [_chatLogArray addObject:[result objectForKey:@"chat"]];
+                    [self.tempArray addObject:[result objectForKey:@"chat"]];
                     //TODO:刷新数组
                     [self updateChat];
                 } else {

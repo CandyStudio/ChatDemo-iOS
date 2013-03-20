@@ -89,6 +89,10 @@
  */
 @property (strong, nonatomic) NSMutableArray *tempArray;
 
+/**
+ *已经load过
+ */
+@property (assign,nonatomic) BOOL hasLoad;
 - (void)reloadTableViewDataSource;
 - (void)doneLoadingTableViewData;
 @end
