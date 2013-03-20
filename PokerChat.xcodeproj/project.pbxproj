@@ -46,6 +46,7 @@
 		B3D097E916E829C500E99380 /* ChatViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3D097E716E829C500E99380 /* ChatViewController.m */; };
 		B3D097EA16E829C500E99380 /* ChatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3D097E816E829C500E99380 /* ChatViewController.xib */; };
 		B3D097FE16E84AD200E99380 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B3D097FD16E84AD200E99380 /* QuartzCore.framework */; };
+		B3DC5CB216F9F7FB008AC81A /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DC5CB116F9F7FB008AC81A /* Base64.m */; };
 		B3DF333516F1B8F000E9C4D9 /* UserData.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF333416F1B8F000E9C4D9 /* UserData.m */; };
 		B3DF333816F1BBBB00E9C4D9 /* UserDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF333716F1BBBB00E9C4D9 /* UserDataManager.m */; };
 		B3DF333F16F1CA2000E9C4D9 /* RoomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF333D16F1CA2000E9C4D9 /* RoomViewController.m */; };
@@ -118,6 +119,8 @@
 		B3D097E716E829C500E99380 /* ChatViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatViewController.m; sourceTree = "<group>"; };
 		B3D097E816E829C500E99380 /* ChatViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChatViewController.xib; sourceTree = "<group>"; };
 		B3D097FD16E84AD200E99380 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B3DC5CB016F9F7FB008AC81A /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
+		B3DC5CB116F9F7FB008AC81A /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
 		B3DF333316F1B8F000E9C4D9 /* UserData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserData.h; sourceTree = "<group>"; };
 		B3DF333416F1B8F000E9C4D9 /* UserData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserData.m; sourceTree = "<group>"; };
 		B3DF333616F1BBBB00E9C4D9 /* UserDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserDataManager.h; sourceTree = "<group>"; };
@@ -156,6 +159,7 @@
 		B31BF83F16E884F900561E33 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				B3DC5CAF16F9F7FB008AC81A /* Base64 */,
 				B32AEB9D16F704C5001EC9C1 /* Socket */,
 			);
 			name = Util;
@@ -321,6 +325,15 @@
 			path = UI;
 			sourceTree = "<group>";
 		};
+		B3DC5CAF16F9F7FB008AC81A /* Base64 */ = {
+			isa = PBXGroup;
+			children = (
+				B3DC5CB016F9F7FB008AC81A /* Base64.h */,
+				B3DC5CB116F9F7FB008AC81A /* Base64.m */,
+			);
+			path = Base64;
+			sourceTree = "<group>";
+		};
 		B3DF333216F1B77500E9C4D9 /* Manage */ = {
 			isa = PBXGroup;
 			children = (
@@ -450,6 +463,7 @@
 				B3E5C86316F7F76800739CE5 /* RegisterView.m in Sources */,
 				B3E5C86A16F8343900739CE5 /* RoomListTableViewCell.m in Sources */,
 				B3B91C8E16F872E500189248 /* CreatRoomView.m in Sources */,
+				B3DC5CB216F9F7FB008AC81A /* Base64.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

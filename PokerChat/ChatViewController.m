@@ -11,6 +11,7 @@
 #import "UserDataManager.h"
 #import "UserData.h"
 #import "Pomelo.h"
+#import "base64.h"
 
 #define CHAT_TABLEVIEW 100001
 #define ONLINE_PLAYER_TABLEVIEW 100002
@@ -276,6 +277,9 @@
         }
         NSInteger row = indexPath.row;
         cell.textLabel.text = [[self.contactList objectAtIndex:row] objectForKey:@"username"];
+        if (row == 0) {
+            cell.backgroundColor = [UIColor yellowColor];
+        }
         cell.accessoryType = UITableViewCellAccessoryNone;
         return cell;
     } else {
@@ -291,13 +295,13 @@
             cell.textLabel.text = [NSString stringWithFormat:@"id_%@:%@说:%@",
                                    [[_chatLogArray objectAtIndex:row] objectForKey:@"id"],
                                    [[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"],
-                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"context"]];
+                                   [[[_chatLogArray objectAtIndex:row] objectForKey:@"context"] base64DecodedString ]];
         } else {
             cell.textLabel.text = [NSString stringWithFormat:@"id_%@:%@对%@说:%@",
                                    [[_chatLogArray objectAtIndex:row] objectForKey:@"id"],
                                    [[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"],
                                    [[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"],
-                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"context"]];
+                                   [[[_chatLogArray objectAtIndex:row] objectForKey:@"context"]base64DecodedString]];
         }
         cell.textLabel.font = [UIFont fontWithName:@"monaca" size:12];
         cell.accessoryType = UITableViewCellAccessoryNone;
@@ -325,11 +329,18 @@
 {
     if (self.onlinePlayerTableView == tableView) {
         NSDictionary *cellDic = [self.contactList objectAtIndex:indexPath.row];
-        
         self.target = cellDic;
         SSLog(@"celldic = %@",cellDic);
     } else
         SSLog(@"indexPath = %@",indexPath);
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+//    UIColor *color = [UIColor blueColor];
+//    if (indexPath.row == 0) {
+//        cell.backgroundColor = color;
+//    }
 }
 
 #pragma mark -
@@ -457,9 +468,11 @@
     //对所有人userid为空
     NSNumber *type = @([[self.target objectForKey:@"username"] isEqualToString:@"All"]?CHATLOGTYPE_ALL:CHATLOGTYPE_SINGLE);
     SSLog(@"target type = %@",type);
+
+    
     NSDictionary *params = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?@"*":[self.target objectForKey:@"username"],
                              @"userid":[self.target objectForKey:@"userid"]?[self.target objectForKey:@"userid"]:@"",
-                             @"content":_chatTextField.text,
+                             @"content":[_chatTextField.text base64EncodedString ],
                              @"roomid":[self.userDic objectForKey:@"roomid"],
                              @"type":type
                              };
