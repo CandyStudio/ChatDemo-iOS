@@ -24,6 +24,7 @@
  *chatStr 发送的文字
  */
 @property (strong, nonatomic) NSMutableString *chatStr;
+@property (strong, nonatomic) NSMutableArray *convertArray;
 @end
 
 @implementation ChatViewController
@@ -45,7 +46,7 @@
         /*
          210 679 359 70
          */
-       
+        self.convertArray = [[NSMutableArray alloc] initWithCapacity:0];
         
     }
     return self;
@@ -76,12 +77,13 @@
         self.numLabel.text = [NSString stringWithFormat:@"房间人数:%d",_contactList.count - 1];
         NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:[_contactList count] - 1 inSection:0]];
         [self.onlinePlayerTableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationTop];
-        [self.onlinePlayerTableView endUpdates];        
+        [self.onlinePlayerTableView endUpdates];
     }];
     [_pomelo onRoute:@"onLeave" withCallback:^(NSDictionary *data) {
         SSLog(@"user leave ----");
         SSLog(@"onLeave = %@",data);
         NSString *name = [data objectForKey:@"username"];
+        
         int i =-1;
         int count = [_contactList count];
         for (int index = 0; index < count; index++) {
@@ -249,7 +251,7 @@
     if (self.onlinePlayerTableView == tableView)
         return [self.contactList count];
     else {
-        SSLog(@"chatAcout = %d",[self.chatLogArray count]);
+        SSLog(@"chatLogArray = %@",self.chatLogArray);
         return [self.chatLogArray count];
     }
 }
@@ -276,9 +278,9 @@
         SSLog(@"self.chatLogArr = %@",self.chatLogArray);
         BOOL toTargetAll = [[[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"] isEqualToString:@"*"]; //如果是*表示对所有人说，否则私聊
         if (toTargetAll) {
-            cell.textLabel.text = [NSString stringWithFormat:@"%@说:%@",[[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"],[[_chatLogArray objectAtIndex:row] objectForKey:@"context"]];
+            cell.textLabel.text = [NSString stringWithFormat:@"id_%@:%@说:%@",[[_chatLogArray objectAtIndex:row] objectForKey:@"id"],[[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"],[[_chatLogArray objectAtIndex:row] objectForKey:@"context"]];
         } else {
-            cell.textLabel.text = [NSString stringWithFormat:@"%@对%@说:%@",[[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"],[[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"],[[_chatLogArray objectAtIndex:row] objectForKey:@"context"]];
+            cell.textLabel.text = [NSString stringWithFormat:@"id_%@:%@对%@说:%@",[[_chatLogArray objectAtIndex:row] objectForKey:@"id"],[[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"],[[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"],[[_chatLogArray objectAtIndex:row] objectForKey:@"context"]];
         }
         cell.textLabel.font = [UIFont fontWithName:@"monaca" size:12];
         cell.accessoryType = UITableViewCellAccessoryNone;
@@ -340,6 +342,18 @@
             for (int i = currLenth; i <currLenth+10&& i<tempLenth ; i++) {
                 [self.chatLogArray addObject:[self.tempArray objectAtIndex:i]];
             }
+            
+//            for (int i = 0; i < [self.chatLogArray count]; i++) {
+//                for (int j = 0; j < [self.chatLogArray count] + 1; j++) {
+//                    if ([[[self.chatLogArray objectAtIndex:j]
+//                        objectForKey:@"id"] intValue]> [[[self.chatLogArray objectAtIndex:j+1] objectForKey:@"id"] intValue]) {
+//                        id tmp = [self.chatLogArray objectAtIndex:j];
+//                        [self.chatLogArray objectAtIndex:<#(NSUInteger)#>]
+//                    }
+//                }
+//            }
+
+            
             [self.chatTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES ];
         }]; 
     } else {
@@ -415,14 +429,13 @@
                                               otherButtonTitles:nil, nil];
         [alert show];
     } else {
-        if ([[self.target objectForKey:@"username"] isEqualToString:@"All"]) {
-            [_pomelo notifyWithRoute:@"chat.chatHandler.send" andParams:params];
-        } else {
+    
             [_pomelo requestWithRoute:@"chat.chatHandler.send" andParams:params andCallback:^(NSDictionary *result) {
                 SSLog(@"senderResult = %@",result);
                 if ([[result objectForKey:@"code"] intValue] == 200) {
                     SSLog(@"send own msg");
                     [_chatLogArray addObject:[result objectForKey:@"chat"]];
+                    //TODO:刷新数组
                     [self updateChat];
                 } else {
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
@@ -433,7 +446,6 @@
                     [alert show];
                 }
             }];
-        }
     }
     _chatTextField.text = @"";
     return YES;
