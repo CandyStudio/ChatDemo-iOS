@@ -62,8 +62,11 @@
         SSLog(@"onChatData = %@",data);
         //是自己就不说
         if (![[data objectForKey:@"from_user_id"] isEqualToString:[[UserDataManager sharedUserDataManager].user.userid stringValue]]) {
-            [self.tempArray addObject:data];
-            [_chatLogArray addObject:data];
+            NSNumber *tid = [data objectForKey:@"tid"];
+            NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:data];
+            [dict setObject:tid forKey:@"id"];
+            [self.tempArray addObject:dict];
+            [_chatLogArray addObject:dict];
             [self updateChat];
         }
     }];
