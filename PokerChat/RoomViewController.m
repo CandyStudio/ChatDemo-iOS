@@ -79,6 +79,7 @@
 - (void)updateRooms:(NSDictionary *)dict
 {
     SSLog(@"dict = %@",dict);
+    tmpDict = [NSDictionary dictionaryWithDictionary:dict];
     [self.romeList beginUpdates];
     [self.roomlistArray addObject:[NSMutableDictionary dictionaryWithDictionary: dict]];
     NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:[_roomlistArray count] - 1 inSection:0]];
@@ -222,7 +223,7 @@
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     
-//    [self enterRoom:dict];
+    [self enterRoom:tmpDict];
 }
 
 @end

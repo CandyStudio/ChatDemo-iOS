@@ -454,8 +454,7 @@
                                               cancelButtonTitle:@"OK"
                                               otherButtonTitles:nil, nil];
         [alert show];
-    } else {
-    
+    } else {    
             [_pomelo requestWithRoute:@"chat.chatHandler.send" andParams:params andCallback:^(NSDictionary *result) {
                 SSLog(@"senderResult = %@",result);
                 if ([[result objectForKey:@"code"] intValue] == 200) {
