@@ -57,13 +57,15 @@
  */
 - (void)initEvents
 {
-    
     [_pomelo onRoute:@"onChat" withCallback:^(NSDictionary *data) {
         SSLog(@"onChat...");
         SSLog(@"onChatData = %@",data);
-        [self.tempArray addObject:data];
-        [_chatLogArray addObject:data];
-        [self updateChat];
+        //是自己就不说
+        if (![[data objectForKey:@"from_user_id"] isEqualToString:[[UserDataManager sharedUserDataManager].user.userid stringValue]]) {
+            [self.tempArray addObject:data];
+            [_chatLogArray addObject:data];
+            [self updateChat];
+        }
     }];
 }
 /**
@@ -280,9 +282,16 @@
         SSLog(@"self.chatLogArr = %@",self.chatLogArray);
         BOOL toTargetAll = [[[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"] isEqualToString:@"*"]; //如果是*表示对所有人说，否则私聊
         if (toTargetAll) {
-            cell.textLabel.text = [NSString stringWithFormat:@"id_%@:%@说:%@",[[_chatLogArray objectAtIndex:row] objectForKey:@"id"],[[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"],[[_chatLogArray objectAtIndex:row] objectForKey:@"context"]];
+            cell.textLabel.text = [NSString stringWithFormat:@"id_%@:%@说:%@",
+                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"id"],
+                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"],
+                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"context"]];
         } else {
-            cell.textLabel.text = [NSString stringWithFormat:@"id_%@:%@对%@说:%@",[[_chatLogArray objectAtIndex:row] objectForKey:@"id"],[[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"],[[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"],[[_chatLogArray objectAtIndex:row] objectForKey:@"context"]];
+            cell.textLabel.text = [NSString stringWithFormat:@"id_%@:%@对%@说:%@",
+                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"id"],
+                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"],
+                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"],
+                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"context"]];
         }
         cell.textLabel.font = [UIFont fontWithName:@"monaca" size:12];
         cell.accessoryType = UITableViewCellAccessoryNone;

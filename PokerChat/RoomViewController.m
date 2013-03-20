@@ -18,6 +18,7 @@
 @implementation RoomViewController
 {
     NSDictionary *tmpDict;
+    CreatRoomView *popCreatRoomView;
 }
 
 #pragma mark -
@@ -71,7 +72,7 @@
  */
 - (IBAction)creatRoom:(id)sender
 {
-    CreatRoomView *popCreatRoomView = [CreatRoomView creatRoomViewWithDelegate:self];
+    popCreatRoomView = [CreatRoomView creatRoomViewWithDelegate:self];
     popCreatRoomView.center = self.view.center;
     [self.view addSubview:popCreatRoomView];
 }
@@ -224,6 +225,7 @@
 {
     
     [self enterRoom:tmpDict];
+    [popCreatRoomView close];
 }
 
 @end

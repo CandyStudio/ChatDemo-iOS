@@ -52,7 +52,6 @@
     } else {
         if (self.delegate && [self.delegate respondsToSelector:@selector(creatRoomWithChannelName:)]) {
             [self.delegate creatRoomWithChannelName:creatChannelName];
-            [self close];
         }
     }
 }
