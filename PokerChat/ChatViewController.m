@@ -352,6 +352,9 @@
         NSDictionary *params = @{@"userid": userid,@"roomid":roomid};
         SSLog(@"params = %@",params);
         [self.pomelo requestWithRoute:@"chat.chatHandler.query" andParams:params andCallback:^(NSDictionary * result) {
+            if ([[result objectForKey:@"chatlog"] count]==0) {
+                return ;
+            }
             [self.tempArray addObjectsFromArray:[result objectForKey:@"chatlog"]];
             
             [self.tempArray sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
