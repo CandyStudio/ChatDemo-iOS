@@ -20,6 +20,7 @@
 @property (weak, nonatomic) id<PopupViewDelegate>delegate;
 @property (strong, nonatomic) UIButton *touchBtn;
 @property (assign, nonatomic) BOOL closeAbsorb;
+@property (strong, nonatomic) UIView *parentView;
 
 - (IBAction)clickClose:(id)sender;
 - (IBAction)clickCloseWithAnimation:(id)sender;

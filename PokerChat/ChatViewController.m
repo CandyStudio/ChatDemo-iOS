@@ -6,6 +6,8 @@
 //  Copyright (c) 2013年 Vienta.su. All rights reserved.
 //
 
+////self.target 不在本地base64
+
 #import "ChatViewController.h"
 #import "LoginViewController.h"
 #import "UserDataManager.h"
@@ -41,8 +43,19 @@
         self.contactList = [[NSMutableArray alloc] initWithCapacity:1];
         self.userDic = [[NSMutableDictionary alloc] initWithCapacity:0];
         self.chatLogArray = [[NSMutableArray alloc] initWithCapacity:10];
-        [self.contactList addObject:@{@"username": @"All"}];
-        self.target = @{@"username": @"All",@"userid":@"",@"content":@""};
+//        [self.contactList addObject:@{@"username": [@"All" base64EncodedString],
+//                                        }];
+        [self.contactList addObject:@{@"username": [@"All" base64EncodedString],
+                                        @"userid":@0}];
+//        self.target = @{@"username": [@"All" base64EncodedString],
+//                        @"userid":@0,
+//                        @"content":[@"" base64EncodedString]};
+        self.target = @{@"username": @"All",
+                                @"userid":@0,
+                                @"content":@""};
+//        self.target = @{@"username": [[NSString stringWithFormat:@"%@",@"All"] base64EncodedString],
+//                        @"userid":[NSNumber numberWithInt:0],
+//                        @"content":[[NSString stringWithFormat:@""] base64EncodedString]};
         self.tempArray = [[NSMutableArray alloc] initWithCapacity:10];
         /*
          210 679 359 70
@@ -111,7 +124,7 @@
         }
         
         self.numLabel.text = [NSString stringWithFormat:@"房间人数:%d",_contactList.count - 1];
-        self.target = @{@"username": @"All",@"userid":@"",@"content":@""};
+        self.target = @{@"username": @"All",@"userid":@0,@"content":@""};
     }];
 }
 
@@ -146,8 +159,8 @@
     }
     [_refreshHeaderView refreshLastUpdateDate];
     
-    self.nameLabel.text = [NSString stringWithFormat:@"用户昵称：%@",[self.userDic objectForKey:@"username"]];
-    self.roomLabel.text = [NSString stringWithFormat:@"房间名称：%@",[UserDataManager sharedUserDataManager].user.channelName];
+    self.nameLabel.text = [NSString stringWithFormat:@"用户昵称：%@",[[self.userDic objectForKey:@"username"] base64DecodedString]];
+    self.roomLabel.text = [NSString stringWithFormat:@"房间名称：%@",[[UserDataManager sharedUserDataManager].user.channelName base64DecodedString]];
     self.numLabel.text = [NSString stringWithFormat:@"房间人数：%d",self.contactList.count - 1];
     [self initEvents];
     [self init2Events];
@@ -212,14 +225,15 @@
 - (IBAction)exit:(id)sender {
     NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,
                              @"username":[UserDataManager sharedUserDataManager].user.username};
-    [self.pomelo requestWithRoute:@"connector.entryHandler.quit" andParams:params andCallback:^(NSDictionary *result) {
-        SSLog(@"quitResult=%@",result);
-        if ([[result objectForKey:@"code"] intValue] == 200) {
-            [self.navigationController popViewControllerAnimated:YES];
-            [self.pomelo offRoute:@"onChat"];
-//            [self.pomelo offRoute:@"onAdd"];
-            [self.pomelo offRoute:@"onLeave"];
-        }
+    [self.pomelo requestWithRoute:@"connector.entryHandler.quit"
+                        andParams:params
+                      andCallback:^(NSDictionary *result) {
+                      SSLog(@"quitResult=%@",result);
+          if ([[result objectForKey:@"code"] intValue] == 200) {
+              [self.navigationController popViewControllerAnimated:YES];
+              [self.pomelo offRoute:@"onChat"];
+              [self.pomelo offRoute:@"onLeave"];
+            }
     }];
 }
 
@@ -276,11 +290,15 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         }
         NSInteger row = indexPath.row;
-        cell.textLabel.text = [[self.contactList objectAtIndex:row] objectForKey:@"username"];
+//        UIView *bgView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, cell.bounds.size.width, cell.bounds.size.height)];
+//        bgView.backgroundColor = [UIColor yellowColor];
+//        [cell insertSubview:cell.textLabel aboveSubview:bgView];
+        cell.textLabel.text = [[[self.contactList objectAtIndex:row] objectForKey:@"username"] base64DecodedString];
         if (row == 0) {
             cell.backgroundColor = [UIColor yellowColor];
         }
         cell.accessoryType = UITableViewCellAccessoryNone;
+        
         return cell;
     } else {
         static NSString *CellIdentifier = @"ContactsTableCell2";
@@ -289,18 +307,18 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         }
         NSInteger row = indexPath.row;
-        SSLog(@"self.chatLogArr = %@",self.chatLogArray);
-        BOOL toTargetAll = [[[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"] isEqualToString:@"*"]; //如果是*表示对所有人说，否则私聊
+        SSLog(@"self.chatLogArrto_user_name = %@",[[[self.chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"] base64DecodedString]);
+        BOOL toTargetAll = [[[[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"] base64DecodedString] isEqualToString:@"*"]; //如果是*表示对所有人说，否则私聊
         if (toTargetAll) {
             cell.textLabel.text = [NSString stringWithFormat:@"id_%@:%@说:%@",
                                    [[_chatLogArray objectAtIndex:row] objectForKey:@"id"],
-                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"],
+                                   [[[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"] base64DecodedString],
                                    [[[_chatLogArray objectAtIndex:row] objectForKey:@"context"] base64DecodedString ]];
         } else {
             cell.textLabel.text = [NSString stringWithFormat:@"id_%@:%@对%@说:%@",
                                    [[_chatLogArray objectAtIndex:row] objectForKey:@"id"],
-                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"],
-                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"],
+                                   [[[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"] base64DecodedString],
+                                   [[[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"] base64DecodedString],
                                    [[[_chatLogArray objectAtIndex:row] objectForKey:@"context"]base64DecodedString]];
         }
         cell.textLabel.font = [UIFont fontWithName:@"monaca" size:12];
@@ -329,18 +347,25 @@
 {
     if (self.onlinePlayerTableView == tableView) {
         NSDictionary *cellDic = [self.contactList objectAtIndex:indexPath.row];
-        self.target = cellDic;
         SSLog(@"celldic = %@",cellDic);
+        SSLog(@"self.target for username = %@",[cellDic objectForKey:@"username"]);
+        SSLog(@"base64EncodedString:self.target for username = %@",[[cellDic objectForKey:@"username"] base64DecodedString]);
+        if ([[[cellDic objectForKey:@"username"] base64DecodedString] isEqualToString:@"All"]) {
+            self.target = @{@"username": [[cellDic objectForKey:@"username"] base64DecodedString],
+                            @"userid":@0};
+            SSLog(@"self.targetAll=%@",self.target);
+        } else {
+            self.target = @{@"username": [[cellDic objectForKey:@"username"] base64DecodedString],
+                            @"userid":[cellDic objectForKey:@"userid"]};
+            SSLog(@"self.targetSingle = %@",self.target);
+        }
     } else
         SSLog(@"indexPath = %@",indexPath);
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-//    UIColor *color = [UIColor blueColor];
-//    if (indexPath.row == 0) {
-//        cell.backgroundColor = color;
-//    }
+    
 }
 
 #pragma mark -
@@ -356,13 +381,16 @@
 - (void)doneLoadingTableViewData
 {
     if (!self.hasLoad) {
-        NSNumber *userid = @((int)[UserDataManager sharedUserDataManager].user.userid);
+        NSNumber *userid = [UserDataManager sharedUserDataManager].user.userid;
         NSNumber *roomid = [self.userDic objectForKey:@"roomid"];
         SSLog(@"roomid=%@",roomid);
         SSLog(@"roomidroomid=%@",self.userDic);
         NSDictionary *params = @{@"userid": userid,@"roomid":roomid};
         SSLog(@"params = %@",params);
-        [self.pomelo requestWithRoute:@"chat.chatHandler.query" andParams:params andCallback:^(NSDictionary * result) {
+        [self.pomelo requestWithRoute:@"chat.chatHandler.query"
+                            andParams:params
+                          andCallback:^(NSDictionary * result) {
+                              SSLog(@"chatLogresult = %@",result);
             if ([[result objectForKey:@"chatlog"] count]==0) {
                 return ;
             }
@@ -466,43 +494,49 @@
 {
     SSLog(@"should Return");
     //对所有人userid为空
+    SSLog(@"self.target = %@",self.target);
     NSNumber *type = @([[self.target objectForKey:@"username"] isEqualToString:@"All"]?CHATLOGTYPE_ALL:CHATLOGTYPE_SINGLE);
     SSLog(@"target type = %@",type);
+    SSLog(@"userDic = %@",self.userDic);
+    SSLog(@"_chatTextField.text base64EncodedString = %@",[_chatTextField.text base64EncodedString]);
+    if ([_chatTextField.text base64EncodedString] == NULL) {
+        SSLog(@"输入为空");
+    } else {
+        NSDictionary *params = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?[@"*" base64EncodedString]:[[self.target objectForKey:@"username"] base64EncodedString],
+                                 @"userid":[self.target objectForKey:@"userid"]?[self.target objectForKey:@"userid"]:@0,
+                                 @"content":[_chatTextField.text base64EncodedString],
+                                 @"roomid":[self.userDic objectForKey:@"roomid"],
+                                 @"type":type
+                                 };
+        SSLog(@"shouldReturn Params = %@",params);
+        if ([[self.target objectForKey:@"username"] isEqualToString:[[self.userDic objectForKey:@"username"] base64DecodedString]]) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                            message:@"不能对自己讲话"
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil, nil];
+            [alert show];
 
-    
-    NSDictionary *params = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?@"*":[self.target objectForKey:@"username"],
-                             @"userid":[self.target objectForKey:@"userid"]?[self.target objectForKey:@"userid"]:@"",
-                             @"content":[_chatTextField.text base64EncodedString ],
-                             @"roomid":[self.userDic objectForKey:@"roomid"],
-                             @"type":type
-                             };
-    if ([[params objectForKey:@"content"] isEqual:@""]) {
-        SSLog(@"输入为空");  
-    } else if ([[self.target objectForKey:@"username"] isEqualToString:[self.userDic objectForKey:@"username"]]) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-                                                        message:@"不能对自己讲话"
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil, nil];
-        [alert show];
-    } else {    
-            [_pomelo requestWithRoute:@"chat.chatHandler.send" andParams:params andCallback:^(NSDictionary *result) {
-                SSLog(@"senderResult = %@",result);
-                if ([[result objectForKey:@"code"] intValue] == 200) {
-                    SSLog(@"send own msg");
-                    [_chatLogArray addObject:[result objectForKey:@"chat"]];
-                    [self.tempArray addObject:[result objectForKey:@"chat"]];
-                    //TODO:刷新数组
-                    [self updateChat];
-                } else {
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
-                                                                    message:@"发送失败"
-                                                                   delegate:self
-                                                          cancelButtonTitle:@"OK"
-                                                          otherButtonTitles:nil, nil];
-                    [alert show];
-                }
-            }];
+        } else {
+            [_pomelo requestWithRoute:@"chat.chatHandler.send"
+                            andParams:params
+                          andCallback:^(NSDictionary *result) {
+                              SSLog(@"chatHandler.send = %@",result);
+                              if ([[result objectForKey:@"code"] intValue] == 200) {
+                                  [_chatLogArray addObject:[result objectForKey:@"chat"]];
+                                  [self.tempArray addObject:[result objectForKey:@"chat"]];
+                                  //TODO:刷新数组
+                                  [self updateChat];
+                              } else {
+                                  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                                  message:@"发送失败"
+                                                                                 delegate:self
+                                                                        cancelButtonTitle:@"OK"
+                                                                        otherButtonTitles:nil, nil];
+                                  [alert show];
+                              }
+                          }];
+        }
     }
     _chatTextField.text = @"";
     return YES;

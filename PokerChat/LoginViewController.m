@@ -11,6 +11,7 @@
 #import "UserDataManager.h"
 #import "RoomViewController.h"
 #import "RegisterView.h"
+#import "base64.h"
 
 typedef enum
 {
@@ -82,14 +83,14 @@ typedef enum
     [super viewDidLoad];
     
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"memUsername"]) {
-        _nameTextField.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"memUsername"];
+        _nameTextField.text = [[[NSUserDefaults standardUserDefaults] objectForKey:@"memUsername"] base64DecodedString];
         _nameSwitch.on = YES;
     } else {
         _nameSwitch.on = NO;
     }
     
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"memUserPassword"]) {
-        _channelTextField.text = [[NSUserDefaults standardUserDefaults] objectForKey:@"memUserPassword"];
+        _channelTextField.text = [[[NSUserDefaults standardUserDefaults] objectForKey:@"memUserPassword"] base64DecodedString];
         _passwordSwitch.on = YES;
     } else {
         _passwordSwitch.on = NO;
@@ -127,8 +128,7 @@ typedef enum
     roomViewController.onlineDict = [NSMutableDictionary dictionaryWithObject:[data objectForKey:@"onlineuser"] forKey:@"onlineuser"];
     switch (_nameSwitch.on) {
         case 1:
-            [[NSUserDefaults standardUserDefaults] setObject:[UserDataManager sharedUserDataManager].user.username
-                                                      forKey:@"memUsername"];
+            [[NSUserDefaults standardUserDefaults] setObject:[UserDataManager sharedUserDataManager].user.username forKey:@"memUsername"];
             [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"nameSwitchState"];
 
             break;
@@ -163,11 +163,15 @@ typedef enum
  */
 - (void)entryWithLoginData:(NSDictionary *)data userName:(NSString *)theUsername andPassword:(NSString *)thePassword
 {
+    SSLog(@"data = %@",data);
     NSString *host = [data objectForKey:@"host"];
     NSInteger port = [[data objectForKey:@"port"] intValue];
     [self.pomelo connectToHost:host onPort:port withCallback:^(Pomelo *p) {
-        NSDictionary *parmas = @{@"userid":[UserDataManager sharedUserDataManager].user.userid,@"username":theUsername};
-        [p requestWithRoute:@"connector.entryHandler.enter" andParams:parmas andCallback:^(NSDictionary *result) {
+        NSDictionary *parmas = @{@"userid":[UserDataManager sharedUserDataManager].user.userid,
+                                 @"username":theUsername};
+        [p requestWithRoute:@"connector.entryHandler.enter"
+                  andParams:parmas
+                andCallback:^(NSDictionary *result) {
             SSLog(@"enterResult = %@",result);
             if ([[result objectForKey:@"code"] intValue] == 200) {
                 [self enterCenterRoom:result];
@@ -238,8 +242,9 @@ typedef enum
  */
 - (void)connectServerWithUsername:(NSString *)theUsername password:(NSString *)thePassword andUserRole:(UserRole )theRole
 {
-    [self.pomelo connectToHost:@"10.0.1.44" onPort:3014 withCallback:^(Pomelo *p) {
-        NSDictionary *params = @{@"username": theUsername,@"password":thePassword};
+    [self.pomelo connectToHost:@"10.0.1.23" onPort:3014 withCallback:^(Pomelo *p) {
+        NSDictionary *params = @{@"username": [theUsername base64EncodedString],
+                                 @"password":[thePassword base64EncodedString]};
         [self.pomelo requestWithRoute:@"gate.gateHandler.login" andParams:params andCallback:^(NSDictionary *result) {
             [self.pomelo disconnectWithCallback:^(Pomelo *p) {
                 SSLog(@"rusult = %@",result);
@@ -247,9 +252,11 @@ typedef enum
                     UserData *userData = [[UserData alloc] initWithDic:result];
                     [UserDataManager sharedUserDataManager].user = userData;
                     [UserDataManager sharedUserDataManager].user.role = @(theRole);
-                    [UserDataManager sharedUserDataManager].user.username = theUsername;
-                    [UserDataManager sharedUserDataManager].user.userpassword = thePassword;
-                    [self entryWithLoginData:result userName:theUsername andPassword:thePassword];
+                    [UserDataManager sharedUserDataManager].user.username = [theUsername base64EncodedString];
+                    [UserDataManager sharedUserDataManager].user.userpassword = [thePassword base64EncodedString];
+                    [self entryWithLoginData:result
+                                    userName:[theUsername base64EncodedString]
+                                 andPassword:[thePassword base64EncodedString]];
                 } else {
                     SSLog(@"result.logincode = %@",[result objectForKey:@"err"]);
                     [self checkError:[[[result objectForKey:@"err"] objectForKey:@"errorcode"] intValue]];
@@ -294,54 +301,6 @@ typedef enum
         [self connectServerWithUsername:username password:password andUserRole:userRole];
     }
 }
-
-
-//TODO:REGISTER
-/**
- *@brief玩家注册
- */
-//- (void)guestRegister
-//{
-//    NSString *registerUsername = _nameTextField.text;
-//    NSString *registerPassword = _channelTextField.text;
-//    userRole = UserRoleRegister;
-//    //注册名字的要求
-//    if ([registerUsername length] >= 4 && [registerUsername length] <= 12) {
-//        //密码要求
-//        if ([registerPassword isEqualToString:againPassword]) {
-//            if ([registerPassword length] >= 4 && [registerPassword length] <= 12) {
-//                [self guestLoginOrRegisterWithUsername:registerUsername password:registerPassword andUserRole:userRole];
-//            } else {
-//                //密码的长度和符合条件
-//                UIAlertView *alerView = [[UIAlertView alloc] initWithTitle:@"Error"
-//                                                                   message:@"密码长度不符合条件"
-//                                                                  delegate:nil
-//                                                         cancelButtonTitle:@"OK"
-//                                                         otherButtonTitles:nil, nil];
-//                [alerView show];
-//            }
-//        } else {
-//            //前后密码不一致
-//            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
-//                                                                message:@"前后密码不一致"
-//                                                               delegate:nil
-//                                                      cancelButtonTitle:@"OK"
-//                                                      otherButtonTitles:nil, nil];
-//            [alertView show];
-//        }
-//    } else {
-//        //昵称不对
-//        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
-//                                                            message:@"昵称不符合要求"
-//                                                           delegate:nil
-//                                                  cancelButtonTitle:@"OK"
-//                                                  otherButtonTitles:nil, nil];
-//        [alertView show];
-//    }
-//}
-
-
-
 /**
  *@brief 游客登陆或者玩家注册时调用的方法，用来完成注册
  *@param theName 注册姓名或默认游客姓名
@@ -350,8 +309,10 @@ typedef enum
  */
 - (void)guestLoginOrRegisterWithUsername:(NSString *)theName password:(NSString *)thePassword andUserRole:(UserRole)theRole
 {
-    [self.pomelo connectToHost:@"10.0.1.44" onPort:3014 withCallback:^(Pomelo *p) {
-        NSDictionary *params = @{@"username": theName,@"password":thePassword,@"role":[NSString stringWithFormat:@"%d",theRole]};
+    [self.pomelo connectToHost:@"10.0.1.23" onPort:3014 withCallback:^(Pomelo *p) {
+        NSDictionary *params = @{@"username": [theName base64EncodedString],
+                                 @"password":[thePassword base64EncodedString],
+                                 @"role":@(theRole)};
         [self.pomelo requestWithRoute:@"gate.gateHandler.register" andParams:params andCallback:^(NSDictionary *result) {
             SSLog(@"registOrGuestResult = %@",result);
             [self.pomelo disconnectWithCallback:^(Pomelo* p) {
@@ -359,8 +320,8 @@ typedef enum
                     UserData *userData = [[UserData alloc] initWithDic:result];
                     [UserDataManager sharedUserDataManager].user = userData;
                     [UserDataManager sharedUserDataManager].user.role = @(theRole);
-                    [UserDataManager sharedUserDataManager].user.username = theName;
-                    [UserDataManager sharedUserDataManager].user.userpassword = thePassword;
+                    [UserDataManager sharedUserDataManager].user.username = [theName base64EncodedString];
+                    [UserDataManager sharedUserDataManager].user.userpassword = [thePassword base64EncodedString];
                     [UserDataManager sharedUserDataManager].user.resultDict = result;
                     if (theRole == UserRoleRegister) {
                         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Congratulation"
@@ -371,7 +332,9 @@ typedef enum
                         [alert show];
                     } else {
                         //NEXT:游客登陆
-                        [self entryWithLoginData:result userName:theName andPassword:thePassword];
+                        [self entryWithLoginData:result
+                                        userName:[theName base64EncodedString]
+                                     andPassword:[thePassword base64EncodedString]];
                     }                   
                 } else {
                     [self checkError:[[[result objectForKey:@"err"] objectForKey:@"errorcode"] intValue]];
@@ -393,7 +356,9 @@ typedef enum
     }
     NSString *guestPassword = GUESTPASSWORD;
     userRole = UserRoleGuest;
-    [self guestLoginOrRegisterWithUsername:guestName password:guestPassword andUserRole:userRole];
+    [self guestLoginOrRegisterWithUsername:guestName
+                                  password:guestPassword
+                               andUserRole:userRole];
 }
 #pragma mark -
 #pragma mark IBActions
@@ -413,9 +378,8 @@ typedef enum
 {
 //    [self guestRegister];
     //弹出注册框
-    registerView = [RegisterView createRegisterViewWithDelegate:self];
-    [self.view addSubview:registerView];
-    registerView.frame = CGRectMake(0, 0, 1024, 768);
+    registerView = [RegisterView createRegisterViewWithDelegate:self addParentView:self.view];
+    registerView.parentView = self.view;
 }
 
 /**

@@ -21,7 +21,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *confirmPasswordTextField;
 @property (weak, nonatomic) IBOutlet UIButton *confirmBtn;
 
-+ (RegisterView *)createRegisterViewWithDelegate:(id)theDelegate;
++ (RegisterView *)createRegisterViewWithDelegate:(id)theDelegate addParentView:(id)parentView;
 
 - (IBAction)registerConfirmTapped:(id)sender;
 @end

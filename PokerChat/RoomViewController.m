@@ -10,6 +10,7 @@
 #import "UserDataManager.h"
 #import "UserData.h"
 #import "ChatViewController.h"
+#import "base64.h"
 
 @interface RoomViewController ()
 
@@ -45,7 +46,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    _usernameLbl.text = [NSString stringWithFormat:@"昵称:%@",[UserDataManager sharedUserDataManager].user.username];
+    _usernameLbl.text = [NSString stringWithFormat:@"昵称:%@",[[UserDataManager sharedUserDataManager].user.username base64DecodedString]];
     _useridLbl.text = [NSString stringWithFormat:@"ID:%@",[UserDataManager sharedUserDataManager].user.userid];
 }
 
@@ -119,24 +120,28 @@
  */
 - (void)enterRoom:(NSDictionary *)roomData
 {
-        SSLog(@"[UserDataManager sharedUserDataManager].user.username=%@",[UserDataManager sharedUserDataManager].user.username);
-        SSLog(@"[UserDataManager sharedUserDataManager].user.userid=%@",[UserDataManager sharedUserDataManager].user.userid);
-        NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,@"username":[UserDataManager sharedUserDataManager].user.username,@"channel":[roomData objectForKey:@"name"]};
-        [self.pomelo requestWithRoute:@"connector.entryHandler.enterRoom" andParams:params andCallback:^(NSDictionary *result) {
-            NSArray *userList = [result objectForKey:@"users"];
-            [UserDataManager sharedUserDataManager].user.channelName = [roomData objectForKey:@"name"];
-            SSLog(@"enterRoomChannel = %@", [roomData objectForKey:@"name"]);
-            
-            SSLog(@"userlist = %@",userList);
-            //填数字给tableview。
-            ChatViewController *chatViewController = [[ChatViewController alloc] initWithNibName:@"ChatViewController" bundle:nil];
-            chatViewController.pomelo = self.pomelo;
-            chatViewController.userDic = [NSMutableDictionary dictionaryWithDictionary:params];
-            [chatViewController.userDic setObject:[roomData objectForKey:@"id"] forKey:@"roomid"];
-            [chatViewController.contactList addObjectsFromArray:userList];
-            [self.navigationController pushViewController:chatViewController animated:YES];
-            self.creatRoomTextField.text = @"";
-        }];
+    SSLog(@"roomData= %@",roomData);
+    SSLog(@"[UserDataManager sharedUserDataManager].user.username=%@",[[UserDataManager sharedUserDataManager].user.username base64DecodedString]);
+    SSLog(@"[UserDataManager sharedUserDataManager].user.userid=%@",[UserDataManager sharedUserDataManager].user.userid);
+    NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,
+                             @"username":[UserDataManager sharedUserDataManager].user.username,
+                             @"channel":[roomData objectForKey:@"name"]};
+    SSLog(@"enterRoomparams = %@",params);
+    [self.pomelo requestWithRoute:@"connector.entryHandler.enterRoom" andParams:params andCallback:^(NSDictionary *result) {
+        SSLog(@"result = %@",result);
+        NSArray *userList = [result objectForKey:@"users"];
+        [UserDataManager sharedUserDataManager].user.channelName = [roomData objectForKey:@"name"];
+        SSLog(@"enterRoomChannel = %@", [roomData objectForKey:@"name"]);
+        //填数字给tableview。
+        ChatViewController *chatViewController = [[ChatViewController alloc] initWithNibName:@"ChatViewController" bundle:nil];
+        chatViewController.pomelo = self.pomelo;
+        chatViewController.userDic = [NSMutableDictionary dictionaryWithDictionary:params];
+        [chatViewController.userDic setObject:[roomData objectForKey:@"id"] forKey:@"roomid"];
+        SSLog(@"self.userlist = %@",userList);
+        [chatViewController.contactList addObjectsFromArray:userList];
+        [self.navigationController pushViewController:chatViewController animated:YES];
+        self.creatRoomTextField.text = @"";
+    }];
 }
 
 
@@ -162,7 +167,7 @@
     NSInteger row = indexPath.row;
     NSString *str = [NSString stringWithFormat:@"%@                %@                                             %@",
                      [[self.roomlistArray objectAtIndex:row] objectForKey:@"id"],
-                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"name"],
+                     [[[self.roomlistArray objectAtIndex:row] objectForKey:@"name"] base64DecodedString],
                      [[self.roomlistArray objectAtIndex:row] objectForKey:@"count"]];
     
     cell.textLabel.text = str;
@@ -174,9 +179,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *str = [self.roomlistArray objectAtIndex:indexPath.row];
-    SSLog(@"sdfa=%@",str);
-    [self performSelectorOnMainThread:@selector(enterRoom:) withObject:str waitUntilDone:YES];
+    NSDictionary *selectDict = [self.roomlistArray objectAtIndex:indexPath.row];
+    SSLog(@"sdfa=%@",selectDict);
+    [self performSelectorOnMainThread:@selector(enterRoom:) withObject:selectDict waitUntilDone:YES];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
@@ -201,7 +206,7 @@
     NSString *channel = theChannelName;
     NSNumber *userid = [UserDataManager sharedUserDataManager].user.userid;
   
-    NSDictionary *params = @{@"channel": channel,@"userid":userid};
+    NSDictionary *params = @{@"channel": [channel base64EncodedString],@"userid":userid};
     [self.pomelo requestWithRoute:@"connector.entryHandler.createRoom"
                         andParams:params
                       andCallback:^(NSDictionary *result) {
@@ -209,7 +214,7 @@
                               //成功
                               SSLog(@"creat room success:result = %@",result);
                               NSDictionary *newRoom = @{@"id": [NSString stringWithFormat:@"%@",[result objectForKey:@"roomid"]],
-                                                        @"name":channel,
+                                                        @"name":[channel base64EncodedString],
                                                         @"count":@0};
                               [self performSelectorOnMainThread:@selector(updateRooms:) withObject:newRoom waitUntilDone:YES];
                           } else {

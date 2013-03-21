@@ -5,8 +5,12 @@
 //  Created by 束 永兴 on 13-3-19.
 //  Copyright (c) 2013年 Vienta.su. All rights reserved.
 //
+//
+//
+// 所有本地储存的string 类型 均用base64加密后储存
 
 #import "RegisterView.h"
+#import "base64.h"
 
 @implementation RegisterView
 
@@ -14,11 +18,17 @@
 #pragma mark -
 #pragma mark life cycle
 
-+ (RegisterView *)createRegisterViewWithDelegate:(id)theDelegate
++ (RegisterView *)createRegisterViewWithDelegate:(id)theDelegate addParentView:(UIView *)theParentView;
 {
     NSArray *arr = [[NSBundle mainBundle] loadNibNamed:@"RegisterView" owner:nil options:nil];
     RegisterView *view = [arr objectAtIndex:0];
     view.delegate = theDelegate;
+    view.parentView = theParentView;
+    
+    if (view.parentView && [view.parentView isKindOfClass:[UIView class]]) {
+        [view.parentView addSubview:view];
+    }
+    
     return view;
 }
 
@@ -47,6 +57,8 @@
 {
     SSLog(@"registerTap");
     [self confirmRegister];
+   
+
 }
 
 - (void)confirmRegister
@@ -64,7 +76,8 @@
                 SSLog(@"registerName=%@",registerName);
                 SSLog(@"registerPassword=%@",registerPassword);
                 if (self.delegate && [self.delegate respondsToSelector:@selector(userRegisterWithName:andPassword:)]) {
-                    [self.delegate userRegisterWithName:_registerNameTextField.text andPassword:_registerPasswordTextField.text];
+                    [self.delegate userRegisterWithName:_registerNameTextField.text 
+                                            andPassword:_registerPasswordTextField.text];
                 }
             } else {
                 //密码长度不合要求
@@ -107,6 +120,12 @@
         SSLog(@"registtextFieldEditEnd2");
         [_registerPasswordTextField resignFirstResponder];
         [_confirmPasswordTextField becomeFirstResponder];
+        if (self.parentView && [self.parentView isKindOfClass:[UIView class]]) {
+            CGRect rect = self.frame;
+            self.frame = CGRectMake(0, -60, 1024, 768);
+            SSLog(@"rect = %@",NSStringFromCGRect(rect));
+        }
+
     } else if (selectTextField == _confirmPasswordTextField) {
         SSLog(@"registtextFieldEditEnd3");
         [self confirmRegister];

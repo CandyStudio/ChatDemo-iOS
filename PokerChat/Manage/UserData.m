@@ -15,8 +15,8 @@
     if (self = [super init]) {
         self.userid = [dic objectForKey:@"userid"];
         self.role = [dic objectForKey:@"role"];
-        self.username = [dic objectForKey:@"username"];
-        self.userpassword = [dic objectForKey:@"password"];
+        self.username = [[dic objectForKey:@"username"] base64EncodedString];
+        self.userpassword = [[dic objectForKey:@"password"] base64EncodedString];
         self.resultDict = dic;
     }
     return self;
