@@ -192,13 +192,13 @@
     [UIView beginAnimations:@"UIBase Move" context:nil];
     [UIView setAnimationDuration:.3];
     self.chatBgView.transform = CGAffineTransformMakeTranslation(targetX - currentX, targetY - currentY);
-    self.chatBgView.frame = CGRectMake(27, 118, 365, 256);
+    self.chatBgView.frame = CGRectMake(27, 118, 576, 256);
     self.chatTextField.transform = CGAffineTransformMakeTranslation(textFieldTargetX - textFieldCurrentX, textFieldTargetY - textFieldCurrentY);
-    self.chatTextField.frame = CGRectMake(30, 340, 359, 34);
+    self.chatTextField.frame = CGRectMake(30, 340, 576, 34);
     self.chatTextView.transform = CGAffineTransformMakeTranslation(textViewTargetX - textViewCurrentX, textViewTargetY - textViewCurrentY);
-    self.chatTextView.frame = CGRectMake(30, 119, 359, 220);
+    self.chatTextView.frame = CGRectMake(30, 119, 576, 220);
     self.chatTableView.transform = CGAffineTransformMakeTranslation(chatTableViewTargetX - chatTableViewCurrentX, chatTableVeiwTargetY - chatTableViewCurrentY);
-    self.chatTableView.frame = CGRectMake(30, 119, 359, 220);
+    self.chatTableView.frame = CGRectMake(30, 119, 576, 220);
     [UIView commitAnimations];
 }
 /**
@@ -290,9 +290,6 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         }
         NSInteger row = indexPath.row;
-//        UIView *bgView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, cell.bounds.size.width, cell.bounds.size.height)];
-//        bgView.backgroundColor = [UIColor yellowColor];
-//        [cell insertSubview:cell.textLabel aboveSubview:bgView];
         cell.textLabel.text = [[[self.contactList objectAtIndex:row] objectForKey:@"username"] base64DecodedString];
         if (row == 0) {
             cell.backgroundColor = [UIColor yellowColor];
@@ -302,6 +299,7 @@
         return cell;
     } else {
         static NSString *CellIdentifier = @"ContactsTableCell2";
+        NSString *textStr = nil;
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         if (cell == nil) {
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
@@ -310,20 +308,21 @@
         SSLog(@"self.chatLogArrto_user_name = %@",[[[self.chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"] base64DecodedString]);
         BOOL toTargetAll = [[[[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"] base64DecodedString] isEqualToString:@"*"]; //如果是*表示对所有人说，否则私聊
         if (toTargetAll) {
-            cell.textLabel.text = [NSString stringWithFormat:@"id_%@:%@说:%@",
+            textStr = [NSString stringWithFormat:@"id_%@:%@说:%@",
                                    [[_chatLogArray objectAtIndex:row] objectForKey:@"id"],
                                    [[[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"] base64DecodedString],
                                    [[[_chatLogArray objectAtIndex:row] objectForKey:@"context"] base64DecodedString ]];
         } else {
-            cell.textLabel.text = [NSString stringWithFormat:@"id_%@:%@对%@说:%@",
+            textStr = [NSString stringWithFormat:@"id_%@:%@对%@说:%@",
                                    [[_chatLogArray objectAtIndex:row] objectForKey:@"id"],
                                    [[[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"] base64DecodedString],
                                    [[[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"] base64DecodedString],
                                    [[[_chatLogArray objectAtIndex:row] objectForKey:@"context"]base64DecodedString]];
         }
-        cell.textLabel.font = [UIFont fontWithName:@"monaca" size:12];
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.textLabel.text = textStr;
+        //在heighrow 设置高
+        cell.textLabel.numberOfLines = 0;
+        cell.textLabel.font = [UIFont systemFontOfSize:14];
         return cell;
     }
 }
@@ -368,6 +367,21 @@
     
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (tableView == self.chatTableView) {
+        UITableViewCell *cell = [self tableView:tableView cellForRowAtIndexPath:indexPath];
+        NSString *textStr2 = cell.textLabel.text;
+        SSLog(@"textStr2 = %@",textStr2);
+        CGFloat conentWidth = self.chatTableView.frame.size.width;
+        UIFont *font = [UIFont systemFontOfSize:14];
+        CGSize size = [textStr2 sizeWithFont:font constrainedToSize:CGSizeMake(conentWidth, 1000.0f) lineBreakMode:NSLineBreakByWordWrapping];
+        return size.height + 10;
+    } else {
+        return 44;
+    }
+}
+
 #pragma mark -
 #pragma mark Data Source Loading / Reloading Methods
 - (void)reloadTableViewDataSource
@@ -380,6 +394,7 @@
  */
 - (void)doneLoadingTableViewData
 {
+    //第一刷新
     if (!self.hasLoad) {
         NSNumber *userid = [UserDataManager sharedUserDataManager].user.userid;
         NSNumber *roomid = [self.userDic objectForKey:@"roomid"];

@@ -191,7 +191,7 @@ typedef enum
                                                                 message:@"密码错误"
                                                                delegate:nil
                                                       cancelButtonTitle:@"OK"
-                                                      otherButtonTitles:nil, nil];
+                                                      otherButtonTitles:nil];
             [alertView show];
         }
             break;
@@ -201,7 +201,7 @@ typedef enum
                                                               message:@"无此用户"
                                                              delegate:nil
                                                     cancelButtonTitle:@"OK"
-                                                    otherButtonTitles:nil, nil];
+                                                    otherButtonTitles:nil];
             [alertView show];
         }
             break;
@@ -212,7 +212,7 @@ typedef enum
                                                                 message:@"用户已注册"
                                                                delegate:nil
                                                       cancelButtonTitle:@"OK"
-                                                      otherButtonTitles:nil, nil];
+                                                      otherButtonTitles:nil];
             [alertView show];
 
         }
@@ -224,7 +224,7 @@ typedef enum
                                                                 message:@"用户已经登陆"
                                                                delegate:nil
                                                       cancelButtonTitle:@"OK"
-                                                      otherButtonTitles:nil, nil];
+                                                      otherButtonTitles:nil];
             [alertView show];
         }
             break;
@@ -476,6 +476,9 @@ typedef enum
 {
     NSLog(@"cancel alertView");
     [registerView close];
+    //TODO:不确定在这移除对否
+//    [[NSNotificationCenter defaultCenter] removeObserver:registerView name:UIKeyboardWillShowNotification object:nil];
+//    [[NSNotificationCenter defaultCenter] removeObserver:registerView name:UIKeyboardWillHideNotification object:nil];
     [self entryWithLoginData:[UserDataManager sharedUserDataManager].user.resultDict
                     userName:[UserDataManager sharedUserDataManager].user.username
                  andPassword:[UserDataManager sharedUserDataManager].user.userpassword];

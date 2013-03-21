@@ -39,6 +39,19 @@
     [self addSubview:_registerNameTextField];
     [self addSubview:_registerPasswordTextField];
     [self addSubview:_confirmPasswordTextField];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+- (void)keyboardWillShow:(NSNotification *)nofi
+{
+    SSLog(@"keyboardWillShow");
+}
+
+- (void)keyboardWillHide:(NSNotification *)nofi
+{
+    SSLog(@"keyboardWillHide");
+    self.frame = CGRectMake(0, 0, 1024, 768);
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -49,6 +62,12 @@
     }
     return self;
 }
+- (IBAction)clickBack:(id)sender
+{
+    [super close];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+}
 
 #pragma mark -
 #pragma mark Public methods 
@@ -57,8 +76,6 @@
 {
     SSLog(@"registerTap");
     [self confirmRegister];
-   
-
 }
 
 - (void)confirmRegister
@@ -128,6 +145,7 @@
 
     } else if (selectTextField == _confirmPasswordTextField) {
         SSLog(@"registtextFieldEditEnd3");
+        self.frame = CGRectMake(0, 0, 1024, 768);
         [self confirmRegister];
         [_confirmPasswordTextField resignFirstResponder];
     }
@@ -139,6 +157,15 @@
 {
     if (textField == _confirmPasswordTextField) {
         SSLog(@"conf");
+    }
+    return YES;
+}
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    if (textField == _confirmPasswordTextField) {
+        SSLog(@"_confirmPasswordTextField");
+        self.frame = CGRectMake(0, -60, 1024, 768);
     }
     return YES;
 }
