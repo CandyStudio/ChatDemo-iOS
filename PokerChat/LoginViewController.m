@@ -476,9 +476,6 @@ typedef enum
 {
     NSLog(@"cancel alertView");
     [registerView close];
-    //TODO:不确定在这移除对否
-//    [[NSNotificationCenter defaultCenter] removeObserver:registerView name:UIKeyboardWillShowNotification object:nil];
-//    [[NSNotificationCenter defaultCenter] removeObserver:registerView name:UIKeyboardWillHideNotification object:nil];
     [self entryWithLoginData:[UserDataManager sharedUserDataManager].user.resultDict
                     userName:[UserDataManager sharedUserDataManager].user.username
                  andPassword:[UserDataManager sharedUserDataManager].user.userpassword];

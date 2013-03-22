@@ -62,7 +62,6 @@
          */
         self.convertArray = [[NSMutableArray alloc] initWithCapacity:0];
         self.hasLoad = NO;
-        
     }
     return self;
 }
@@ -82,7 +81,7 @@
            NSNumber *tid = [data objectForKey:@"tid"];
            NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:data];
            [dict setObject:tid forKey:@"id"];
-           [self.tempArray addObject:dict];
+//           [self.tempArray addObject:dict];
            [_chatLogArray addObject:dict];
            [self updateChat];
        }
@@ -144,6 +143,7 @@
     [super viewDidUnload];
 }
 
+
 /**
  *加载进来时布局
  */
@@ -192,13 +192,13 @@
     [UIView beginAnimations:@"UIBase Move" context:nil];
     [UIView setAnimationDuration:.3];
     self.chatBgView.transform = CGAffineTransformMakeTranslation(targetX - currentX, targetY - currentY);
-    self.chatBgView.frame = CGRectMake(27, 118, 576, 256);
+    self.chatBgView.frame = CGRectMake(27, 104, 576, 256);
     self.chatTextField.transform = CGAffineTransformMakeTranslation(textFieldTargetX - textFieldCurrentX, textFieldTargetY - textFieldCurrentY);
-    self.chatTextField.frame = CGRectMake(30, 340, 576, 34);
+    self.chatTextField.frame = CGRectMake(30, 326, 576, 34);
     self.chatTextView.transform = CGAffineTransformMakeTranslation(textViewTargetX - textViewCurrentX, textViewTargetY - textViewCurrentY);
     self.chatTextView.frame = CGRectMake(30, 119, 576, 220);
     self.chatTableView.transform = CGAffineTransformMakeTranslation(chatTableViewTargetX - chatTableViewCurrentX, chatTableVeiwTargetY - chatTableViewCurrentY);
-    self.chatTableView.frame = CGRectMake(30, 119, 576, 220);
+    self.chatTableView.frame = CGRectMake(30, 105, 576, 220);
     [UIView commitAnimations];
 }
 /**
@@ -233,6 +233,7 @@
               [self.navigationController popViewControllerAnimated:YES];
               [self.pomelo offRoute:@"onChat"];
               [self.pomelo offRoute:@"onLeave"];
+              [self.pomelo offRoute:@"onAdd"];
             }
     }];
 }
@@ -276,7 +277,7 @@
     if (self.onlinePlayerTableView == tableView)
         return [self.contactList count];
     else {
-        SSLog(@"chatLogArray = %@",self.chatLogArray);
+        SSLog(@"用于显示多少行的chatLogArray = %@",self.chatLogArray);
         return [self.chatLogArray count];
     }
 }
@@ -346,7 +347,6 @@
 {
     if (self.onlinePlayerTableView == tableView) {
         NSDictionary *cellDic = [self.contactList objectAtIndex:indexPath.row];
-        SSLog(@"celldic = %@",cellDic);
         SSLog(@"self.target for username = %@",[cellDic objectForKey:@"username"]);
         SSLog(@"base64EncodedString:self.target for username = %@",[[cellDic objectForKey:@"username"] base64DecodedString]);
         if ([[[cellDic objectForKey:@"username"] base64DecodedString] isEqualToString:@"All"]) {
@@ -395,6 +395,7 @@
 - (void)doneLoadingTableViewData
 {
     //第一刷新
+ /*
     if (!self.hasLoad) {
         NSNumber *userid = [UserDataManager sharedUserDataManager].user.userid;
         NSNumber *roomid = [self.userDic objectForKey:@"roomid"];
@@ -410,6 +411,13 @@
                 return ;
             }
             [self.tempArray addObjectsFromArray:[result objectForKey:@"chatlog"]];
+                         
+//            ///////////
+//            NSSortDescriptor *sort_by_id = [NSSortDescriptor sortDescriptorWithKey:@"id" ascending:YES];
+//            [self.tempArray sortUsingDescriptors:[NSMutableArray arrayWithObject:sort_by_id]];
+//                              SSLog(@"sortDescriptor = %@",self.tempArray);//按id 升序排列
+//           ///////////
+                              
             
             [self.tempArray sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
                 if ([[obj1 objectForKey:@"id"] intValue]<[[obj2 objectForKey:@"id"] intValue]) {
@@ -463,6 +471,68 @@
         [self.chatTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES ];
     }
     
+    
+//    ///////////
+//    for (int i = 0; i < 10 && [self.tempArray count] >0; i++) {
+//        [self.chatLogArray addObject:[self.tempArray objectAtIndex:i]];
+//        [self.tempArray removeObjectAtIndex:i];
+//    }
+//    [self.chatTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+    
+    */
+//    /**
+    
+    if (!self.hasLoad) {
+        SSLog(@"self.hasLoad = %d",self.hasLoad);
+        NSNumber *userid = [UserDataManager sharedUserDataManager].user.userid;
+        NSNumber *roomid = [self.userDic objectForKey:@"roomid"];
+        NSDictionary *params = @{@"userid": userid,
+                                  @"roomid": roomid};
+        SSLog(@"query paramas = %@",params);
+        [self.pomelo requestWithRoute:@"chat.chatHandler.query"
+                            andParams:params
+                          andCallback:^(NSDictionary *result) {
+                              SSLog(@"query result = %@", result);
+                              if ([[result objectForKey:@"code"] intValue] == 200) {
+                                  if ([[result objectForKey:@"chatlog"] count] == 0) {
+                                      return ;
+                                  }
+                                  //传回来的是降序 所以直接加到tempArray里面
+                                  [self.tempArray addObjectsFromArray:[result objectForKey:@"chatlog"]];
+                                  SSLog(@"tempArray = %@",self.tempArray);
+                                  for (int i = 0; i < 10 && [self.tempArray count] > 0; i++) {
+                                      [self.chatLogArray addObject:[self.tempArray objectAtIndex:0]];
+                                      [self.tempArray removeObjectAtIndex:0];
+                                  }
+                                  //对chatLogArray排列
+                                  NSSortDescriptor *chat_sort_by_id = [NSSortDescriptor sortDescriptorWithKey:@"id" ascending:YES];
+                                  [self.chatLogArray sortUsingDescriptors:[NSMutableArray arrayWithObject:chat_sort_by_id]];
+                                   SSLog(@"升序排序后的chatLogArray = %@",self.chatLogArray);
+                                  [self.chatTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+                              }
+                              self.hasLoad = YES;
+                        
+        }];
+    } else {
+        SSLog(@"self.hasload2 = %d",self.hasLoad);
+        for (int i = 0; i < 10 && [self.tempArray count] > 0; i++) {
+            [self.chatLogArray addObject:[self.tempArray objectAtIndex:0]];
+            [self.tempArray removeObjectAtIndex:0];
+        }
+        
+        NSSortDescriptor *chat_sort_by_id = [NSSortDescriptor sortDescriptorWithKey:@"id" ascending:YES];
+        [self.chatLogArray sortUsingDescriptors:[NSMutableArray arrayWithObject:chat_sort_by_id]];
+        [self.chatTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+    }
+    
+       
+//    NSSortDescriptor *chat_sort_by_id = [NSSortDescriptor sortDescriptorWithKey:@"id"
+//                                                                      ascending:YES];
+//    [self.chatLogArray addObjectsFromArray:[NSMutableArray arrayWithObject:chat_sort_by_id]];
+//    SSLog(@"chat_sort_by_id chatLogArray = %@",self.chatLogArray);
+//    
+//    [self.chatTableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+//    */
     _reloading = NO;
     [_refreshHeaderView egoRefreshScrollViewDataSourceDidFinishedLoading:self.chatTableView];
 }
@@ -539,7 +609,7 @@
                               SSLog(@"chatHandler.send = %@",result);
                               if ([[result objectForKey:@"code"] intValue] == 200) {
                                   [_chatLogArray addObject:[result objectForKey:@"chat"]];
-                                  [self.tempArray addObject:[result objectForKey:@"chat"]];
+//                                  [self.tempArray addObject:[result objectForKey:@"chat"]];
                                   //TODO:刷新数组
                                   [self updateChat];
                               } else {

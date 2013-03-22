@@ -23,7 +23,7 @@
     NSArray *arr = [[NSBundle mainBundle] loadNibNamed:@"RegisterView" owner:nil options:nil];
     RegisterView *view = [arr objectAtIndex:0];
     view.delegate = theDelegate;
-    view.parentView = theParentView;
+    view.parentView = theParentView; 
     
     if (view.parentView && [view.parentView isKindOfClass:[UIView class]]) {
         [view.parentView addSubview:view];
