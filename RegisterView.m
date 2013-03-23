@@ -76,6 +76,13 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
 }
 
+- (void)close
+{
+    [super close];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+}
+
 #pragma mark -
 #pragma mark Public methods 
 
@@ -145,11 +152,8 @@
         [_registerPasswordTextField resignFirstResponder];
         [_confirmPasswordTextField becomeFirstResponder];
         if (self.parentView && [self.parentView isKindOfClass:[UIView class]]) {
-            CGRect rect = self.frame;
             self.frame = CGRectMake(0, -60, 1024, 768);
-            SSLog(@"rect = %@",NSStringFromCGRect(rect));
         }
-
     } else if (selectTextField == _confirmPasswordTextField) {
         SSLog(@"registtextFieldEditEnd3");
         self.frame = CGRectMake(0, 0, 1024, 768);

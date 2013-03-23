@@ -18,7 +18,7 @@
     @class LoingViewController
     @superclass UIViewController
  */
-@interface LoginViewController : UIViewController<RegisterViewDelegate,UIAlertViewDelegate,UITextFieldDelegate>
+@interface LoginViewController : UIViewController<RegisterViewDelegate,UIAlertViewDelegate,UITextFieldDelegate,NSURLConnectionDataDelegate,NSURLConnectionDelegate>
 /**
  *nameText
  */

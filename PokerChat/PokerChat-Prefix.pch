@@ -13,4 +13,8 @@
     #import <Foundation/Foundation.h>
     #import "Functions.h"
     #import "base64.h"
+    #import "UIDevice-Hardware.h"
 #endif
+
+
+#define MacAddress [[UIDevice currentDevice] macaddress]

@@ -11,7 +11,6 @@
 #import "UserDataManager.h"
 #import "RoomViewController.h"
 #import "RegisterView.h"
-#import "base64.h"
 
 typedef enum
 {
@@ -20,17 +19,22 @@ typedef enum
     UserRoleAdmin,
 }UserRole;  //user类型
 
+typedef enum
+{
+    GuestRegisterTypeYes,
+    GuestRegisterTypeNo,
+}GuestRegisterType; //是否是游客注册
+
 #define PASSWORDERROR 0
 #define NOUSERNAME 1
 #define ALREADYHASUSER 2
 #define ALREADYLOGIN 3
 #define SUCCESSLOGIN 200
 
-
-//typedef enum
-//{
-//
-//}GateHandlerType;
+#define API_HOST @"10.0.1.23"
+//#define API_URL @"10.0.1.9"
+//#define API_URL @"10.0.1.44"
+#define API_PORT 3014
 
 #define GUESTPASSWORD @"123456"
 //#define GATEHANDLER_LOGIN @"gate.gateHandler.login"
@@ -40,7 +44,6 @@ typedef enum
     UserRole userRole;
     RegisterView *registerView;
 }
-
 /**
  *正常登陆
  */
@@ -81,28 +84,27 @@ typedef enum
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    [self.view setExclusiveTouch:YES];
+    [self.registerButton setExclusiveTouch:YES];
+    [self.guestButton setExclusiveTouch:YES];
+    [self.loginBtn setExclusiveTouch:YES];
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"memUsername"]) {
         _nameTextField.text = [[[NSUserDefaults standardUserDefaults] objectForKey:@"memUsername"] base64DecodedString];
         _nameSwitch.on = YES;
     } else {
         _nameSwitch.on = NO;
     }
-    
     if ([[NSUserDefaults standardUserDefaults] objectForKey:@"memUserPassword"]) {
         _channelTextField.text = [[[NSUserDefaults standardUserDefaults] objectForKey:@"memUserPassword"] base64DecodedString];
         _passwordSwitch.on = YES;
     } else {
         _passwordSwitch.on = NO;
     }    
-    // Do any additional setup after loading the view from its nib.
-    
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)viewDidUnload {
@@ -193,6 +195,7 @@ typedef enum
                                                       cancelButtonTitle:@"OK"
                                                       otherButtonTitles:nil];
             [alertView show];
+            
         }
             break;
         case NOUSERNAME:
@@ -226,6 +229,7 @@ typedef enum
                                                       cancelButtonTitle:@"OK"
                                                       otherButtonTitles:nil];
             [alertView show];
+            [self.pomelo disconnect];
         }
             break;
             
@@ -242,7 +246,7 @@ typedef enum
  */
 - (void)connectServerWithUsername:(NSString *)theUsername password:(NSString *)thePassword andUserRole:(UserRole )theRole
 {
-    [self.pomelo connectToHost:@"10.0.1.23" onPort:3014 withCallback:^(Pomelo *p) {
+    [self.pomelo connectToHost:API_HOST onPort:API_PORT withCallback:^(Pomelo *p) {
         NSDictionary *params = @{@"username": [theUsername base64EncodedString],
                                  @"password":[thePassword base64EncodedString]};
         [self.pomelo requestWithRoute:@"gate.gateHandler.login" andParams:params andCallback:^(NSDictionary *result) {
@@ -298,7 +302,8 @@ typedef enum
         [alert show];
     } else {
         //TODO:
-        [self connectServerWithUsername:username password:password andUserRole:userRole];
+//        [self connectServerWithUsername:username password:password andUserRole:userRole];
+        //新 借口:
     }
 }
 /**
@@ -309,7 +314,7 @@ typedef enum
  */
 - (void)guestLoginOrRegisterWithUsername:(NSString *)theName password:(NSString *)thePassword andUserRole:(UserRole)theRole
 {
-    [self.pomelo connectToHost:@"10.0.1.23" onPort:3014 withCallback:^(Pomelo *p) {
+    [self.pomelo connectToHost:API_HOST onPort:API_PORT withCallback:^(Pomelo *p) {
         NSDictionary *params = @{@"username": [theName base64EncodedString],
                                  @"password":[thePassword base64EncodedString],
                                  @"role":@(theRole)};
@@ -450,7 +455,6 @@ typedef enum
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     if (textField == _nameTextField) {
-//        [_nameTextField resignFirstResponder];
         SSLog(@"textFieldShouldReturnName");
         [_channelTextField becomeFirstResponder];
     } else if (textField == _channelTextField) {
@@ -467,7 +471,20 @@ typedef enum
     userRole = UserRoleRegister;
     SSLog(@"theName = %@",theName);
     SSLog(@"thePassword = %@",thePassword);
-    [self guestLoginOrRegisterWithUsername:theName password:thePassword andUserRole:userRole];
+//    [self guestLoginOrRegisterWithUsername:theName password:thePassword andUserRole:userRole];
+    [self guestRegisterWithUsername:theName password:thePassword andUserRole:userRole];
+}
+//TODO:新:http注册系统
+- (void)guestRegisterWithUsername:(NSString *)name password:(NSString *)password andUserRole:(UserRole)role
+{
+//    username	string	用户名
+//    password	string	密码
+//    devicetoken	string
+//    macaddress	string	mac地址 如果是游客注册 mac地址必须有
+//    isguest	int	是否是游客注册 0不是，1是
+    NSString *registerBody = [NSString stringWithFormat:@"username=%@&password=%@&devicetoken=%@&macaddress=%@&isguest=%d",name,password,@"",MacAddress,0];
+    NSURL *registerUrl = [NSURL URLWithString:API_HOST];
+    
 }
 
 #pragma mark -
@@ -481,5 +498,5 @@ typedef enum
                  andPassword:[UserDataManager sharedUserDataManager].user.userpassword];
 }
 
-
+///TODO:新的登陆注册系统
 @end

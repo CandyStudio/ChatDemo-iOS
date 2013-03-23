@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B302E23B16FD5495002897BD /* LodingView.m in Sources */ = {isa = PBXBuildFile; fileRef = B302E23A16FD5495002897BD /* LodingView.m */; };
+		B302E23E16FD7CE2002897BD /* UIDevice-Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = B302E23D16FD7CE2002897BD /* UIDevice-Hardware.m */; };
 		B31BF83C16E8825A00561E33 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B31BF83A16E8825A00561E33 /* LoginViewController.m */; };
 		B31BF83D16E8825A00561E33 /* LoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B31BF83B16E8825A00561E33 /* LoginViewController.xib */; };
 		B31BF85916E8853800561E33 /* Pomelo.m in Sources */ = {isa = PBXBuildFile; fileRef = B31BF84216E8853800561E33 /* Pomelo.m */; };
@@ -60,6 +62,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B302E23916FD5495002897BD /* LodingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LodingView.h; sourceTree = "<group>"; };
+		B302E23A16FD5495002897BD /* LodingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LodingView.m; sourceTree = "<group>"; };
+		B302E23C16FD7CE2002897BD /* UIDevice-Hardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice-Hardware.h"; sourceTree = "<group>"; };
+		B302E23D16FD7CE2002897BD /* UIDevice-Hardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice-Hardware.m"; sourceTree = "<group>"; };
 		B31BF83916E8825900561E33 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		B31BF83A16E8825A00561E33 /* LoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
 		B31BF83B16E8825A00561E33 /* LoginViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LoginViewController.xib; sourceTree = "<group>"; };
@@ -220,6 +226,10 @@
 				B32AEB9F16F7055C001EC9C1 /* Functions.m */,
 				B3E5C85E16F7EEF200739CE5 /* PopupView.h */,
 				B3E5C85F16F7EEF200739CE5 /* PopupView.m */,
+				B302E23916FD5495002897BD /* LodingView.h */,
+				B302E23A16FD5495002897BD /* LodingView.m */,
+				B302E23C16FD7CE2002897BD /* UIDevice-Hardware.h */,
+				B302E23D16FD7CE2002897BD /* UIDevice-Hardware.m */,
 			);
 			name = Addition;
 			path = PokerChat/Addition;
@@ -468,6 +478,8 @@
 				B3E5C86A16F8343900739CE5 /* RoomListTableViewCell.m in Sources */,
 				B3B91C8E16F872E500189248 /* CreatRoomView.m in Sources */,
 				B3DC5CB216F9F7FB008AC81A /* Base64.m in Sources */,
+				B302E23B16FD5495002897BD /* LodingView.m in Sources */,
+				B302E23E16FD7CE2002897BD /* UIDevice-Hardware.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

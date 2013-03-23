@@ -334,6 +334,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.onlinePlayerTableView == tableView) {
+        
         NSDictionary *cellDic = [self.contactList objectAtIndex:indexPath.row];
         SSLog(@"self.target for username = %@",[cellDic objectForKey:@"username"]);
         SSLog(@"base64EncodedString:self.target for username = %@",[[cellDic objectForKey:@"username"] base64DecodedString]);
@@ -361,10 +362,11 @@
         UITableViewCell *cell = [self tableView:tableView cellForRowAtIndexPath:indexPath];
         NSString *textStr2 = cell.textLabel.text;
         SSLog(@"textStr2 = %@",textStr2);
-        CGFloat conentWidth = self.chatTableView.frame.size.width;
+        CGFloat conentWidth = self.chatTableView.frame.size.width - 25;
         UIFont *font = [UIFont systemFontOfSize:14];
-        CGSize size = [textStr2 sizeWithFont:font constrainedToSize:CGSizeMake(conentWidth, 1000.0f) lineBreakMode:NSLineBreakByWordWrapping];
-        return size.height + 10;
+        CGSize size = [textStr2 sizeWithFont:font constrainedToSize:CGSizeMake(conentWidth, 5000.0f) lineBreakMode:NSLineBreakByWordWrapping];
+        SSLog(@"textSize = %@",NSStringFromCGSize(size));
+        return size.height + 5;
     } else {
         return 44;
     }
