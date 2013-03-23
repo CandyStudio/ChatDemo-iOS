@@ -85,7 +85,7 @@
         SSLog(@"onAddData = %@",data);
         [self.onlinePlayerTableView beginUpdates];
         [_contactList addObject:data];
-        self.numLabel.text = [NSString stringWithFormat:@"房间人数:%d",_contactList.count - 1];
+        self.numLabel.text = [NSString stringWithFormat:@"人数:%d",_contactList.count - 1];
         NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:[_contactList count] - 1 inSection:0]];
         [self.onlinePlayerTableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationTop];
         [self.onlinePlayerTableView endUpdates];
@@ -110,7 +110,7 @@
             [self.onlinePlayerTableView deleteRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationAutomatic];
         }
         
-        self.numLabel.text = [NSString stringWithFormat:@"房间人数:%d",_contactList.count - 1];
+        self.numLabel.text = [NSString stringWithFormat:@"人数:%d",_contactList.count - 1];
         self.target = @{@"username": @"All",@"userid":@0,@"content":@""};
     }];
 }
@@ -147,9 +147,9 @@
     }
     [_refreshHeaderView refreshLastUpdateDate];
     
-    self.nameLabel.text = [NSString stringWithFormat:@"用户昵称：%@",[[self.userDic objectForKey:@"username"] base64DecodedString]];
-    self.roomLabel.text = [NSString stringWithFormat:@"房间名称：%@",[[UserDataManager sharedUserDataManager].user.channelName base64DecodedString]];
-    self.numLabel.text = [NSString stringWithFormat:@"房间人数：%d",self.contactList.count - 1];
+    self.nameLabel.text = [NSString stringWithFormat:@"用户名：%@",[[self.userDic objectForKey:@"username"] base64DecodedString]];
+    self.roomLabel.text = [NSString stringWithFormat:@"房间名：%@",[[UserDataManager sharedUserDataManager].user.channelName base64DecodedString]];
+    self.numLabel.text = [NSString stringWithFormat:@"人数：%d",self.contactList.count - 1];
     [self initEvents];
     [self init2Events];
 }

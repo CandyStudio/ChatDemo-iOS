@@ -46,7 +46,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    _usernameLbl.text = [NSString stringWithFormat:@"昵称:%@",[[UserDataManager sharedUserDataManager].user.username base64DecodedString]];
+    _usernameLbl.text = [NSString stringWithFormat:@"用户名:%@",[[UserDataManager sharedUserDataManager].user.username base64DecodedString]];
     _useridLbl.text = [NSString stringWithFormat:@"ID:%@",[UserDataManager sharedUserDataManager].user.userid];
 }
 
