@@ -56,6 +56,7 @@
 		B3E5C86716F7F7DF00739CE5 /* RegisterView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E5C86616F7F7DF00739CE5 /* RegisterView.xib */; };
 		B3E5C86A16F8343900739CE5 /* RoomListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E5C86916F8343900739CE5 /* RoomListTableViewCell.m */; };
 		B3E5C86C16F8345400739CE5 /* RoomListTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3E5C86B16F8345400739CE5 /* RoomListTableViewCell.xib */; };
+		C4B39B3816FD82F200C45BB9 /* avatar.png in Resources */ = {isa = PBXBuildFile; fileRef = C4B39B3716FD82F200C45BB9 /* avatar.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -136,6 +137,7 @@
 		B3E5C86816F8343900739CE5 /* RoomListTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomListTableViewCell.h; sourceTree = SOURCE_ROOT; };
 		B3E5C86916F8343900739CE5 /* RoomListTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomListTableViewCell.m; sourceTree = SOURCE_ROOT; };
 		B3E5C86B16F8345400739CE5 /* RoomListTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomListTableViewCell.xib; sourceTree = SOURCE_ROOT; };
+		C4B39B3716FD82F200C45BB9 /* avatar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = avatar.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -226,6 +228,7 @@
 		B32AD45916F340BC0030B46A /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				C4B39B3716FD82F200C45BB9 /* avatar.png */,
 				B32AD45A16F340BD0030B46A /* blackArrow.png */,
 				B32AD45B16F340BD0030B46A /* blackArrow@2x.png */,
 				B32AD45C16F340BD0030B46A /* blueArrow.png */,
@@ -430,6 +433,7 @@
 				B3E5C86716F7F7DF00739CE5 /* RegisterView.xib in Resources */,
 				B3E5C86C16F8345400739CE5 /* RoomListTableViewCell.xib in Resources */,
 				B3B91C9016F8734D00189248 /* CreatRoomView.xib in Resources */,
+				C4B39B3816FD82F200C45BB9 /* avatar.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
