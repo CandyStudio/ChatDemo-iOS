@@ -72,6 +72,7 @@
 - (void)close
 {
     [super close];
+    [self.spinner removeFromSuperview];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
 }
