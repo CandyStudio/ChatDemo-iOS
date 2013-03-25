@@ -302,7 +302,7 @@ typedef enum
         [alert show];
     } else {
         //TODO:
-//        [self connectServerWithUsername:username password:password andUserRole:userRole];
+        [self connectServerWithUsername:username password:password andUserRole:userRole];
         //新 借口:
     }
 }
@@ -471,8 +471,8 @@ typedef enum
     userRole = UserRoleRegister;
     SSLog(@"theName = %@",theName);
     SSLog(@"thePassword = %@",thePassword);
-//    [self guestLoginOrRegisterWithUsername:theName password:thePassword andUserRole:userRole];
-    [self guestRegisterWithUsername:theName password:thePassword andUserRole:userRole];
+    [self guestLoginOrRegisterWithUsername:theName password:thePassword andUserRole:userRole];
+//    [self guestRegisterWithUsername:theName password:thePassword andUserRole:userRole];
 }
 //TODO:新:http注册系统
 - (void)guestRegisterWithUsername:(NSString *)name password:(NSString *)password andUserRole:(UserRole)role
