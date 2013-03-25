@@ -215,7 +215,7 @@
     NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,
                              @"username":[UserDataManager sharedUserDataManager].user.username};
     SSLog(@"params = %@",params);
-    [self.pomelo requestWithRoute:@"chat.chatHandler.quitRoom"
+    [self.pomelo requestWithRoute:@"connector.entryHandler.quit"
                         andParams:params
                       andCallback:^(NSDictionary *result) {
                       SSLog(@"quitResult=%@",result);
