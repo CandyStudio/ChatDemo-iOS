@@ -43,7 +43,7 @@
         self.contactList = [[NSMutableArray alloc] initWithCapacity:1];
         self.userDic = [[NSMutableDictionary alloc] initWithCapacity:0];
         self.chatLogArray = [[NSMutableArray alloc] initWithCapacity:10];
-        [self.contactList addObject:@{@"username": [@"All" base64EncodedString],
+        [self.contactList addObject:@{@"username": @"All",
                                         @"userid":@0}];
         self.target = @{@"username": @"All",
                                 @"userid":@0,
@@ -147,8 +147,8 @@
     }
     [_refreshHeaderView refreshLastUpdateDate];
     
-    self.nameLabel.text = [NSString stringWithFormat:@"用户名：%@",[[self.userDic objectForKey:@"username"] base64DecodedString]];
-    self.roomLabel.text = [NSString stringWithFormat:@"房间名：%@",[[UserDataManager sharedUserDataManager].user.channelName base64DecodedString]];
+    self.nameLabel.text = [NSString stringWithFormat:@"用户名：%@",[self.userDic objectForKey:@"username"] ];
+    self.roomLabel.text = [NSString stringWithFormat:@"房间名：%@",[UserDataManager sharedUserDataManager].user.channelName];
     self.numLabel.text = [NSString stringWithFormat:@"人数：%d",self.contactList.count - 1];
     [self initEvents];
     [self init2Events];
@@ -279,7 +279,7 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         }
         NSInteger row = indexPath.row;
-        cell.textLabel.text = [[[self.contactList objectAtIndex:row] objectForKey:@"username"] base64DecodedString];
+        cell.textLabel.text = [[self.contactList objectAtIndex:row] objectForKey:@"username"];
         if (row == 0) {
             cell.backgroundColor = [UIColor yellowColor];
         }
@@ -294,19 +294,19 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         }
         NSInteger row = indexPath.row;
-        SSLog(@"self.chatLogArrto_user_name = %@",[[[self.chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"] base64DecodedString]);
-        BOOL toTargetAll = [[[[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"] base64DecodedString] isEqualToString:@"*"]; //如果是*表示对所有人说，否则私聊
+        SSLog(@"self.chatLogArrto_user_name = %@",[[self.chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"]);
+        BOOL toTargetAll = [[[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"] isEqualToString:@"*"]; //如果是*表示对所有人说，否则私聊
         if (toTargetAll) {
             textStr = [NSString stringWithFormat:@"id_%@:%@说:%@",
                                    [[_chatLogArray objectAtIndex:row] objectForKey:@"id"],
-                                   [[[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"] base64DecodedString],
-                                   [[[_chatLogArray objectAtIndex:row] objectForKey:@"context"] base64DecodedString ]];
+                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"],
+                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"context"]];
         } else {
             textStr = [NSString stringWithFormat:@"id_%@:%@对%@说:%@",
                                    [[_chatLogArray objectAtIndex:row] objectForKey:@"id"],
-                                   [[[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"] base64DecodedString],
-                                   [[[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"] base64DecodedString],
-                                   [[[_chatLogArray objectAtIndex:row] objectForKey:@"context"]base64DecodedString]];
+                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"from_user_name"],
+                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"],
+                                   [[_chatLogArray objectAtIndex:row] objectForKey:@"context"]];
         }
         cell.textLabel.text = textStr;
         //在heighrow 设置高
@@ -337,13 +337,12 @@
         
         NSDictionary *cellDic = [self.contactList objectAtIndex:indexPath.row];
         SSLog(@"self.target for username = %@",[cellDic objectForKey:@"username"]);
-        SSLog(@"base64EncodedString:self.target for username = %@",[[cellDic objectForKey:@"username"] base64DecodedString]);
-        if ([[[cellDic objectForKey:@"username"] base64DecodedString] isEqualToString:@"All"]) {
-            self.target = @{@"username": [[cellDic objectForKey:@"username"] base64DecodedString],
+        if ([[cellDic objectForKey:@"username"] isEqualToString:@"All"]) {
+            self.target = @{@"username": [cellDic objectForKey:@"username"],
                             @"userid":@0};
             SSLog(@"self.targetAll=%@",self.target);
         } else {
-            self.target = @{@"username": [[cellDic objectForKey:@"username"] base64DecodedString],
+            self.target = @{@"username": [cellDic objectForKey:@"username"],
                             @"userid":[cellDic objectForKey:@"userid"]};
             SSLog(@"self.targetSingle = %@",self.target);
         }
@@ -473,18 +472,18 @@
     NSNumber *type = @([[self.target objectForKey:@"username"] isEqualToString:@"All"]?CHATLOGTYPE_ALL:CHATLOGTYPE_SINGLE);
     SSLog(@"target type = %@",type);
     SSLog(@"userDic = %@",self.userDic);
-    SSLog(@"_chatTextField.text base64EncodedString = %@",[_chatTextField.text base64EncodedString]);
-    if ([_chatTextField.text base64EncodedString] == NULL) {
+    SSLog(@"_chatTextField.text  = %@",_chatTextField.text);
+    if (_chatTextField.text  == NULL) {
         SSLog(@"输入为空");
     } else {
-        NSDictionary *params = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?[@"*" base64EncodedString]:[[self.target objectForKey:@"username"] base64EncodedString],
+        NSDictionary *params = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?@"*":[self.target objectForKey:@"username"],
                                  @"userid":[self.target objectForKey:@"userid"]?[self.target objectForKey:@"userid"]:@0,
-                                 @"content":[_chatTextField.text base64EncodedString],
+                                 @"content":_chatTextField.text,
                                  @"roomid":[self.userDic objectForKey:@"roomid"],
                                  @"type":type
                                  };
         SSLog(@"shouldReturn Params = %@",params);
-        if ([[self.target objectForKey:@"username"] isEqualToString:[[self.userDic objectForKey:@"username"] base64DecodedString]]) {
+        if ([[self.target objectForKey:@"username"] isEqualToString:[self.userDic objectForKey:@"username"]]) {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
                                                             message:@"不能对自己讲话"
                                                            delegate:nil

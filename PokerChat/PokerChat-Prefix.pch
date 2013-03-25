@@ -14,7 +14,21 @@
     #import "Functions.h"
     #import "base64.h"
     #import "UIDevice-Hardware.h"
+    #import "LoadingView.h"
 #endif
 
 
-#define MacAddress [[UIDevice currentDevice] macaddress]
+#define MacAddress [[[UIDevice currentDevice] macaddress] lowercaseString]
+#define Content_Size (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? 2 : 1)
+
+typedef enum
+{
+    UserRoleGuest,
+    UserRoleRegister,
+    UserRoleAdmin,
+}UserRole;  //玩家类型
+typedef enum
+{
+    GuestRegisterTypeYes,
+    GuestRegisterTypeNo,
+}GuestRegisterType; //是否是游客注册

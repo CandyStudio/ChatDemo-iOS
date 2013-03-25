@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface LodingView : UIView
-+ (LodingView *)loadingView;
+@interface LoadingView : UIView
++ (LoadingView *)loadingView;
 @end

@@ -20,6 +20,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *registerPasswordTextField;
 @property (weak, nonatomic) IBOutlet UITextField *confirmPasswordTextField;
 @property (weak, nonatomic) IBOutlet UIButton *confirmBtn;
+@property (strong, nonatomic)LoadingView *spinner;
 
 + (RegisterView *)createRegisterViewWithDelegate:(id)theDelegate addParentView:(id)parentView;
 

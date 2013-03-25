@@ -76,12 +76,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
 }
 
-//- (void)close
-//{
-//    [super close];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
-//    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-//}
+
 
 #pragma mark -
 #pragma mark Public methods 
@@ -109,6 +104,8 @@
                 if (self.delegate && [self.delegate respondsToSelector:@selector(userRegisterWithName:andPassword:)]) {
                     [self.delegate userRegisterWithName:_registerNameTextField.text 
                                             andPassword:_registerPasswordTextField.text];
+                    self.spinner = [LoadingView loadingView];
+                    [self addSubview:self.spinner];
                 }
             } else {
                 //密码长度不合要求

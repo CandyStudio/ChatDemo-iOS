@@ -50,4 +50,6 @@
 
 @property (weak, nonatomic) IBOutlet UISwitch *passwordSwitch;
 
+@property (strong, nonatomic) LoadingView *spinner;
+
 @end

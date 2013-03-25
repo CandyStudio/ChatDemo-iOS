@@ -46,7 +46,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    _usernameLbl.text = [NSString stringWithFormat:@"用户名:%@",[[UserDataManager sharedUserDataManager].user.username base64DecodedString]];
+    _usernameLbl.text = [NSString stringWithFormat:@"用户名:%@",[UserDataManager sharedUserDataManager].user.username];
     _useridLbl.text = [NSString stringWithFormat:@"ID:%@",[UserDataManager sharedUserDataManager].user.userid];
 }
 
@@ -115,6 +115,12 @@
 
 #pragma mark -
 #pragma mark private methods
+
+- (void)showSpinner
+{
+    self.spinner = [LoadingView loadingView];
+    [self.view addSubview:self.spinner];
+}
 /**
  * 进入聊天房间
  */
@@ -129,6 +135,7 @@
     SSLog(@"enterRoomparams = %@",params);
     [self.pomelo requestWithRoute:@"connector.entryHandler.enterRoom" andParams:params andCallback:^(NSDictionary *result) {
         SSLog(@"result = %@",result);
+        [self.spinner removeFromSuperview];
         NSArray *userList = [result objectForKey:@"users"];
         [UserDataManager sharedUserDataManager].user.channelName = [roomData objectForKey:@"name"];
         SSLog(@"enterRoomChannel = %@", [roomData objectForKey:@"name"]);
@@ -154,6 +161,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
+    SSLog(@"self.roomlistArray = %@",self.roomlistArray);
     return [self.roomlistArray count];
 }
 
@@ -167,7 +175,7 @@
     NSInteger row = indexPath.row;
     NSString *str = [NSString stringWithFormat:@"%@                %@                                             %@",
                      [[self.roomlistArray objectAtIndex:row] objectForKey:@"id"],
-                     [[[self.roomlistArray objectAtIndex:row] objectForKey:@"name"] base64DecodedString],
+                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"name"],
                      [[self.roomlistArray objectAtIndex:row] objectForKey:@"count"]];
     
     cell.textLabel.text = str;
@@ -181,6 +189,7 @@
 {
     NSDictionary *selectDict = [self.roomlistArray objectAtIndex:indexPath.row];
     SSLog(@"sdfa=%@",selectDict);
+    [self performSelectorOnMainThread:@selector(showSpinner) withObject:nil waitUntilDone:YES];
     [self performSelectorOnMainThread:@selector(enterRoom:) withObject:selectDict waitUntilDone:YES];
 }
 
@@ -206,7 +215,8 @@
     NSString *channel = theChannelName;
     NSNumber *userid = [UserDataManager sharedUserDataManager].user.userid;
   
-    NSDictionary *params = @{@"channel": [channel base64EncodedString],@"userid":userid};
+    NSDictionary *params = @{@"channel": channel,@"userid":userid};
+    SSLog(@"creatRoomParams = %@",params);
     [self.pomelo requestWithRoute:@"connector.entryHandler.createRoom"
                         andParams:params
                       andCallback:^(NSDictionary *result) {
@@ -214,7 +224,7 @@
                               //成功
                               SSLog(@"creat room success:result = %@",result);
                               NSDictionary *newRoom = @{@"id": [NSString stringWithFormat:@"%@",[result objectForKey:@"roomid"]],
-                                                        @"name":[channel base64EncodedString],
+                                                        @"name":channel,
                                                         @"count":@0};
                               [self performSelectorOnMainThread:@selector(updateRooms:) withObject:newRoom waitUntilDone:YES];
                           } else {

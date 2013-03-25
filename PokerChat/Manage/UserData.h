@@ -16,6 +16,8 @@
 @property (nonatomic, copy) NSString *username;
 @property (nonatomic, strong) NSDictionary *resultDict;
 @property (nonatomic, copy) NSString *channelName;
+@property (nonatomic, assign) UserRole *userRole;
+@property (nonatomic, copy) NSString *userToken;
 
 - (UserData *)initWithDic:(NSDictionary *)dic;
 @end

@@ -21,4 +21,5 @@
 @property (strong,nonatomic) NSMutableArray *roomlistArray;
 @property (strong,nonatomic) NSMutableDictionary *onlineDict;
 @property (strong,nonatomic) Pomelo *pomelo;
+@property (strong,nonatomic) LoadingView *spinner;
 @end
