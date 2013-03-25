@@ -18,7 +18,6 @@
 #define NOUSERNAME 1
 #define ALREADYHASUSER 2
 #define ALREADYLOGIN 3
-#define CODESUCCESS 200
 
 //#define API_HOST @"http://10.0.1.23"
 //#define API_HOST @"http://10.0.1.9"

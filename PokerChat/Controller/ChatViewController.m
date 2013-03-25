@@ -46,8 +46,8 @@
         [self.contactList addObject:@{@"username": @"All",
                                         @"userid":@0}];
         self.target = @{@"username": @"All",
-                                @"userid":@0,
-                                @"content":@""};
+                        @"userid":@0,
+                        @"content":@""};
         self.tempArray = [[NSMutableArray alloc] initWithCapacity:10];
         self.convertArray = [[NSMutableArray alloc] initWithCapacity:0];
         self.hasLoad = NO;
@@ -180,7 +180,7 @@
     [UIView beginAnimations:@"UIBase Move" context:nil];
     [UIView setAnimationDuration:.3];
     self.chatBgView.transform = CGAffineTransformMakeTranslation(targetX - currentX, targetY - currentY);
-    self.chatBgView.frame = CGRectMake(27, 104, 576, 256);
+    self.chatBgView.frame = CGRectMake(28, 104, 578, 256);
     self.chatTextField.transform = CGAffineTransformMakeTranslation(textFieldTargetX - textFieldCurrentX, textFieldTargetY - textFieldCurrentY);
     self.chatTextField.frame = CGRectMake(30, 326, 576, 34);
     self.chatTextView.transform = CGAffineTransformMakeTranslation(textViewTargetX - textViewCurrentX, textViewTargetY - textViewCurrentY);
@@ -197,7 +197,7 @@
     [UIView beginAnimations:@"UIBase Move" context:nil];
     [UIView setAnimationDuration:.4];
     self.chatBgView.transform = CGAffineTransformIdentity;
-    [self.chatBgView setFrame:CGRectMake(27, 643, 576, 106)];
+    [self.chatBgView setFrame:CGRectMake(28, 643, 578, 106)];
     self.chatTextField.transform = CGAffineTransformIdentity;
     [self.chatTextField setFrame:CGRectMake(30, 715, 359, 34)];
     self.chatTextView.transform = CGAffineTransformIdentity;
@@ -205,6 +205,7 @@
     self.chatTableView.transform = CGAffineTransformIdentity;
     [self.chatTableView setFrame:CGRectMake(30, 644, 359, 70)];
     [UIView commitAnimations];
+    [self.chatTableView scrollRectToVisible:CGRectMake(0, _chatTableView.contentSize.height-30, _chatTableView.contentSize.width, 50) animated:YES];
 }
 
 /**
@@ -213,7 +214,8 @@
 - (IBAction)exit:(id)sender {
     NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,
                              @"username":[UserDataManager sharedUserDataManager].user.username};
-    [self.pomelo requestWithRoute:@"connector.entryHandler.quit"
+    SSLog(@"params = %@",params);
+    [self.pomelo requestWithRoute:@"chat.chatHandler.quitRoom"
                         andParams:params
                       andCallback:^(NSDictionary *result) {
                       SSLog(@"quitResult=%@",result);
@@ -294,7 +296,6 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         }
         NSInteger row = indexPath.row;
-        SSLog(@"self.chatLogArrto_user_name = %@",[[self.chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"]);
         BOOL toTargetAll = [[[_chatLogArray objectAtIndex:row] objectForKey:@"to_user_name"] isEqualToString:@"*"]; //如果是*表示对所有人说，否则私聊
         if (toTargetAll) {
             textStr = [NSString stringWithFormat:@"id_%@:%@说:%@",
@@ -385,9 +386,9 @@
 {
      if (!self.hasLoad) {
         NSNumber *userid = [UserDataManager sharedUserDataManager].user.userid;
-        NSNumber *roomid = [self.userDic objectForKey:@"roomid"];
+        NSNumber *channelid = [self.userDic objectForKey:@"channelid"];
         NSDictionary *params = @{@"userid": userid,
-                                  @"roomid": roomid};
+                                  @"channelid": channelid};
         SSLog(@"query paramas = %@",params);
         [self.pomelo requestWithRoute:@"chat.chatHandler.query"
                             andParams:params
@@ -479,7 +480,7 @@
         NSDictionary *params = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?@"*":[self.target objectForKey:@"username"],
                                  @"userid":[self.target objectForKey:@"userid"]?[self.target objectForKey:@"userid"]:@0,
                                  @"content":_chatTextField.text,
-                                 @"roomid":[self.userDic objectForKey:@"roomid"],
+                                 @"channelid":[self.userDic objectForKey:@"channelid"],
                                  @"type":type
                                  };
         SSLog(@"shouldReturn Params = %@",params);

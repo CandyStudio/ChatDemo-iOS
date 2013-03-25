@@ -17,9 +17,10 @@
     #import "LoadingView.h"
 #endif
 
-
+#define CODESUCCESS 200
 #define MacAddress [[[UIDevice currentDevice] macaddress] lowercaseString]
 #define Content_Size (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? 2 : 1)
+
 
 typedef enum
 {

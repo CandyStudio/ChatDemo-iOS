@@ -68,7 +68,8 @@
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error = %d",[error code]]
                                                         message:[NSString stringWithFormat:@"%@",error]
                                                        delegate:self
-                                              cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil, nil];
         [alert show];
     }
    
@@ -83,9 +84,6 @@
 #pragma mark UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-//    [self.pomelo disconnectWithCallback:^(id callback) {
-//        SSLog(@"callback=%@",callback);
-//    }];
     [self.navController popToRootViewControllerAnimated:YES];
 }
 

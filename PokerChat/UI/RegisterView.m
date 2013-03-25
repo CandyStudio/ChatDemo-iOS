@@ -7,7 +7,6 @@
 //
 //
 //
-// 所有本地储存的string 类型 均用base64加密后储存
 
 #import "RegisterView.h"
 #import "base64.h"

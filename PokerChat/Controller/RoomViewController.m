@@ -109,8 +109,17 @@
  */
 - (IBAction)exitToLogin:(id)sender
 {
-    [self.navigationController popToRootViewControllerAnimated:YES];
-    [self.pomelo disconnect];
+    NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,
+                             @"username":[UserDataManager sharedUserDataManager].user.username};
+    SSLog(@"toLoginparams = %@",params);
+    [self.pomelo requestWithRoute:@"connector.entryHandler.quit"
+                        andParams:params
+                      andCallback:^(NSDictionary * result) {
+                          if ([[result objectForKey:@"code"] intValue] == CODESUCCESS) {
+                              [self.navigationController popToRootViewControllerAnimated:YES];
+                              [self.pomelo disconnect];
+                          }
+                      }];
 }
 
 #pragma mark -
@@ -127,11 +136,10 @@
 - (void)enterRoom:(NSDictionary *)roomData
 {
     SSLog(@"roomData= %@",roomData);
-    SSLog(@"[UserDataManager sharedUserDataManager].user.username=%@",[[UserDataManager sharedUserDataManager].user.username base64DecodedString]);
     SSLog(@"[UserDataManager sharedUserDataManager].user.userid=%@",[UserDataManager sharedUserDataManager].user.userid);
     NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,
                              @"username":[UserDataManager sharedUserDataManager].user.username,
-                             @"channel":[roomData objectForKey:@"name"]};
+                             @"channelid":[roomData objectForKey:@"channelid"]};
     SSLog(@"enterRoomparams = %@",params);
     [self.pomelo requestWithRoute:@"connector.entryHandler.enterRoom" andParams:params andCallback:^(NSDictionary *result) {
         SSLog(@"result = %@",result);
@@ -143,8 +151,9 @@
         ChatViewController *chatViewController = [[ChatViewController alloc] initWithNibName:@"ChatViewController" bundle:nil];
         chatViewController.pomelo = self.pomelo;
         chatViewController.userDic = [NSMutableDictionary dictionaryWithDictionary:params];
-        [chatViewController.userDic setObject:[roomData objectForKey:@"id"] forKey:@"roomid"];
+//        [chatViewController.userDic setObject:[roomData objectForKey:@"channelid"] forKey:@"channelid"];
         SSLog(@"self.userlist = %@",userList);
+        SSLog(@"chatViewController.userDic = %@",chatViewController.userDic);
         [chatViewController.contactList addObjectsFromArray:userList];
         [self.navigationController pushViewController:chatViewController animated:YES];
         self.creatRoomTextField.text = @"";
@@ -174,7 +183,7 @@
     }
     NSInteger row = indexPath.row;
     NSString *str = [NSString stringWithFormat:@"%@                %@                                             %@",
-                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"id"],
+                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"channelid"],
                      [[self.roomlistArray objectAtIndex:row] objectForKey:@"name"],
                      [[self.roomlistArray objectAtIndex:row] objectForKey:@"count"]];
     
@@ -223,7 +232,7 @@
                           if ([[result objectForKey:@"code"] intValue] == 200) {
                               //成功
                               SSLog(@"creat room success:result = %@",result);
-                              NSDictionary *newRoom = @{@"id": [NSString stringWithFormat:@"%@",[result objectForKey:@"roomid"]],
+                              NSDictionary *newRoom = @{@"channelid": [NSString stringWithFormat:@"%@",[result objectForKey:@"channelid"]],
                                                         @"name":channel,
                                                         @"count":@0};
                               [self performSelectorOnMainThread:@selector(updateRooms:) withObject:newRoom waitUntilDone:YES];
