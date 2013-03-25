@@ -109,17 +109,8 @@
  */
 - (IBAction)exitToLogin:(id)sender
 {
-    NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,
-                             @"username":[UserDataManager sharedUserDataManager].user.username};
-    SSLog(@"toLoginparams = %@",params);
-    [self.pomelo requestWithRoute:@"connector.entryHandler.quit"
-                        andParams:params
-                      andCallback:^(NSDictionary * result) {
-                          if ([[result objectForKey:@"code"] intValue] == CODESUCCESS) {
-                              [self.navigationController popToRootViewControllerAnimated:YES];
-                              [self.pomelo disconnect];
-                          }
-                      }];
+    [self.navigationController popToRootViewControllerAnimated:YES];
+    [self.pomelo disconnect];
 }
 
 #pragma mark -
