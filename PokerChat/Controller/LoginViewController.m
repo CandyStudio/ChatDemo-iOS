@@ -216,6 +216,7 @@
                                                                delegate:nil
                                                       cancelButtonTitle:@"OK"
                                                       otherButtonTitles:nil];
+            [registerView.spinner removeFromSuperview];
             [alertView show];
 
         }
@@ -301,13 +302,32 @@
                                               otherButtonTitles:nil, nil];
         [alert show];
     } else {
-
         //TODO:旧登陆接口
 //        [self connectServerWithUsername:username password:password andUserRole:userRole];
         //TODO:新登陆接口:
-        [self connectHttpServerWithUsername:username password:password];
-        self.spinner = [LoadingView loadingView];
-        [self.view addSubview:self.spinner];
+        if ([username length] >= 4 && [username length] <= 12) {
+            [self connectHttpServerWithUsername:username password:password];
+            self.spinner = [LoadingView loadingView];
+            [self.view addSubview:self.spinner];
+        } else {
+            if ([username length] < 4) {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Tip"
+                                                                message:@"名称小于2位数"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil, nil];
+                [alert show];
+            }
+            if ([username length] > 12) {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Tip"
+                                                                message:@"名称大于12位数"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil, nil];
+                [alert show];
+            }
+        }
+       
     }
 }
 
@@ -383,17 +403,6 @@
  */
 - (void)guestLogin
 {
-//    NSString *guestName = [NSString stringWithFormat:@"游客%@",@((int)[[NSDate date] timeIntervalSince1970])];
-//    if ([guestName length] > 12) {
-//        [guestName substringToIndex:12];
-//    }
-//    NSString *guestPassword = GUESTPASSWORD;
-//    userRole = UserRoleGuest;
-//    [self guestLoginOrRegisterWithUsername:guestName
-//                                  password:guestPassword
-//                               andUserRole:userRole];
-//    macaddress	string	mac地址
-//    devicetoken	string
     self.spinner = [LoadingView loadingView];
     [self.view addSubview:self.spinner];
 
@@ -429,8 +438,7 @@
  *@brief注册Action
  */
 - (IBAction)register:(id)sender
-{
-//    [self guestRegister];
+{//    [self guestRegister];
     //弹出注册框
     registerView = [RegisterView createRegisterViewWithDelegate:self addParentView:self.view];
     registerView.parentView = self.view;
@@ -528,11 +536,6 @@
 //TODO:新:http注册系统
 - (void)guestRegisterWithUsername:(NSString *)name password:(NSString *)thepassword andUserRole:(UserRole)role
 {
-//    username	string	用户名
-//    password	string	密码
-//    devicetoken	string
-//    macaddress	string	mac地址 如果是游客注册 mac地址必须有
-//    isguest	int	是否是游客注册 0不是，1是
     username = name;
     password = thepassword;
     NSString *registerBody = [NSString stringWithFormat:@"username=%@&password=%@&devicetoken=%@&macaddress=%@&isguest=%d",name,password,@"",MacAddress,0];
@@ -579,6 +582,7 @@
     NSError *jsonParseError = nil;
     NSDictionary *jsonData = [NSJSONSerialization JSONObjectWithData:receiveData options:NSJSONReadingMutableContainers error:&jsonParseError];
     SSLog(@"jsonData = %@",jsonData);
+    
     if ([jsonData objectForKey:@"route"] != nil && [[jsonData objectForKey:@"route"] isEqualToString:@"login"]) {
         //进入新的登陆
         SSLog(@"进入新的登陆");
@@ -588,9 +592,6 @@
         [UserDataManager sharedUserDataManager].user.username = username;
         [UserDataManager sharedUserDataManager].user.userpassword = password;
         SSLog(@"loginid = %@",[jsonData objectForKey:@"userid"]);
-        
-        
-        
         [self connectServerForEnterWithUserid:[[jsonData objectForKey:@"userid"] intValue] andToken:[jsonData objectForKey:@"token"]];
     } else if ([jsonData objectForKey:@"route"] != nil && [[jsonData objectForKey:@"route"] isEqualToString:@"register"]) {
         //进入新的注册
@@ -618,6 +619,8 @@
         [UserDataManager sharedUserDataManager].user = user;
         [UserDataManager sharedUserDataManager].user.userRole = UserRoleGuest;
         [self connectServerForEnterWithUserid:[[jsonData objectForKey:@"userid"] intValue] andToken:[jsonData objectForKey:@"token"]];
+    } else {
+        [self checkError:[[jsonData objectForKey:@"errorcode"] intValue]];
     }
 }
 //TODO:连接pomemo 接入gate.gateHandler.entry接口
@@ -637,10 +640,11 @@
                     SSLog(@"result %@",result);
                     SSLog(@"token%@",theToken);
                     [self entryWithLoginData:result andToken:theToken];
+                } else {
+                    [self checkError:[[[result objectForKey:@"error"] objectForKey:@"errorcode"] intValue]];
                 }
             }];
         }];
-
     }];
 }
 
@@ -660,6 +664,7 @@
                 [self enterCenterRoom:result];
             } else {
                 SSLog(@"connector.entryHandler.entry err");
+                [self checkError:[[[result objectForKey:@"error"] objectForKey:@"errorcode"] intValue]];
             }
         }];
     }];
@@ -673,9 +678,6 @@
     NSLog(@"cancel alertView");
     [registerView close];
     SSLog(@"resultDic = %@",[UserDataManager sharedUserDataManager].user.resultDict);
-//    [self entryWithLoginData:[UserDataManager sharedUserDataManager].user.resultDict
-//                    userName:[UserDataManager sharedUserDataManager].user.username
-//                 andPassword:[UserDataManager sharedUserDataManager].user.userpassword];
     [self connectServerForEnterWithUserid:[[UserDataManager sharedUserDataManager].user.userid intValue]
                                 andToken:[UserDataManager sharedUserDataManager].user.userToken];
 }

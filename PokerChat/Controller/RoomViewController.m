@@ -11,6 +11,7 @@
 #import "UserData.h"
 #import "ChatViewController.h"
 #import "base64.h"
+#import "RoomListTableViewCell.h"
 
 @interface RoomViewController ()
 
@@ -20,6 +21,7 @@
 {
     NSDictionary *tmpDict;
     CreatRoomView *popCreatRoomView;
+    RoomListTableViewCell *roomListCell;
 }
 
 #pragma mark -
@@ -64,6 +66,7 @@
     [self setUsernameLbl:nil];
     [self setUseridLbl:nil];
     [self setUserheadImgView:nil];
+    [self setRefreshBtn:nil];
     [super viewDidUnload];
 }
 
@@ -83,7 +86,8 @@
     SSLog(@"dict = %@",dict);
     tmpDict = [NSDictionary dictionaryWithDictionary:dict];
     [self.romeList beginUpdates];
-    [self.roomlistArray addObject:[NSMutableDictionary dictionaryWithDictionary: dict]];
+//    [self.roomlistArray addObject:[NSMutableDictionary dictionaryWithDictionary: dict]];
+    [self.roomlistArray addObject:tmpDict];
     NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:[_roomlistArray count] - 1 inSection:0]];
     [self.romeList insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationTop];
     [self.romeList endUpdates];
@@ -113,6 +117,22 @@
     [self.pomelo disconnect];
 }
 
+- (IBAction)refresh:(id)sender
+{
+    NSDictionary *params = @{};
+    
+    [self.pomelo requestWithRoute:@"connector.entryHandler.refreshRoomList"
+                        andParams:params andCallback:^(NSDictionary *result) {
+                            SSLog(@"refreshRoomList = %@",result);
+                            if ([[result objectForKey:@"code"] intValue] == CODESUCCESS) {
+                                self.roomlistArray = nil;
+                                self.roomlistArray = [NSMutableArray arrayWithArray:[result objectForKey:@"roomlist"]];
+                                [self.onlineDict setObject:[result objectForKey:@"onlineuser"] forKey:@"onlineuser"];
+                                SSLog(@"roomlistArray = %@,onlinDict= %@",self.roomlistArray,self.onlineDict);
+                                [self.romeList performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+                            }
+                        }];
+}
 #pragma mark -
 #pragma mark private methods
 
@@ -142,7 +162,6 @@
         ChatViewController *chatViewController = [[ChatViewController alloc] initWithNibName:@"ChatViewController" bundle:nil];
         chatViewController.pomelo = self.pomelo;
         chatViewController.userDic = [NSMutableDictionary dictionaryWithDictionary:params];
-//        [chatViewController.userDic setObject:[roomData objectForKey:@"channelid"] forKey:@"channelid"];
         SSLog(@"self.userlist = %@",userList);
         SSLog(@"chatViewController.userDic = %@",chatViewController.userDic);
         [chatViewController.contactList addObjectsFromArray:userList];
@@ -161,28 +180,42 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 {
-    SSLog(@"self.roomlistArray = %@",self.roomlistArray);
     return [self.roomlistArray count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"roomListTabelCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+    //SDK默认的
+//    static NSString *CellIdentifier = @"roomListTabelCell";
+//    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+//    if (cell == nil) {
+//        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+//    }
+//    NSInteger row = indexPath.row;
+//    NSString *str = [NSString stringWithFormat:@"%@                %@                                             %@",
+//                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"channelid"],
+//                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"name"],
+//                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"count"]];
+//    
+//    cell.textLabel.text = str;
+//    
+//    cell.accessoryType = UITableViewCellAccessoryNone;
+//    cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+//    return cell;
+    //定制的
+    static NSString *CellIdentifier = @"RoomListTableViewCellIdentifier";
+    roomListCell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (roomListCell == nil) {
+//        roomListCell = [[RoomListTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        roomListCell = [RoomListTableViewCell creatRoomListCell];
     }
     NSInteger row = indexPath.row;
-    NSString *str = [NSString stringWithFormat:@"%@                %@                                             %@",
-                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"channelid"],
-                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"name"],
-                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"count"]];
-    
-    cell.textLabel.text = str;
-    
-    cell.accessoryType = UITableViewCellAccessoryNone;
-    cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-    return cell;
+    roomListCell.channelidLbl.text = [[self.roomlistArray objectAtIndex:row] objectForKey:@"channelid"];
+    roomListCell.channelNameLbl.text = [[self.roomlistArray objectAtIndex:row] objectForKey:@"name"];
+    roomListCell.channelOnlineNumLbl.text = [NSString stringWithFormat:@"%@",[[self.roomlistArray objectAtIndex:row] objectForKey:@"count"]];
+    roomListCell.accessoryType = UITableViewCellAccessoryNone;
+    roomListCell.selectionStyle = UITableViewCellSelectionStyleBlue;
+    return roomListCell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

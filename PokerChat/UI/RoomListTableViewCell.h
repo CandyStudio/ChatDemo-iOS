@@ -10,4 +10,9 @@
 
 @interface RoomListTableViewCell : UITableViewCell
 
+@property (weak, nonatomic) IBOutlet UILabel *channelidLbl;
+@property (weak, nonatomic) IBOutlet UILabel *channelNameLbl;
+@property (weak, nonatomic) IBOutlet UILabel *channelOnlineNumLbl;
+
++ (RoomListTableViewCell *)creatRoomListCell;
 @end

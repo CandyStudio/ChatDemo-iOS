@@ -224,6 +224,7 @@
               [self.pomelo offRoute:@"onChat"];
               [self.pomelo offRoute:@"onLeave"];
               [self.pomelo offRoute:@"onAdd"];
+              self.chatTableView.delegate = nil;//防止与动画冲突
             }
     }];
 }
@@ -474,7 +475,7 @@
     SSLog(@"target type = %@",type);
     SSLog(@"userDic = %@",self.userDic);
     SSLog(@"_chatTextField.text  = %@",_chatTextField.text);
-    if (_chatTextField.text  == NULL) {
+    if ([_chatTextField.text isEqualToString:@""]) {
         SSLog(@"输入为空");
     } else {
         NSDictionary *params = @{@"target": [[self.target objectForKey:@"username"] isEqualToString:@"All"]?@"*":[self.target objectForKey:@"username"],

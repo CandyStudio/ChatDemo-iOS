@@ -10,6 +10,14 @@
 
 @implementation RoomListTableViewCell
 
++ (RoomListTableViewCell *)creatRoomListCell
+{
+    NSArray *arr = [[NSBundle mainBundle] loadNibNamed:@"RoomListTableViewCell" owner:nil options:nil];
+    RoomListTableViewCell *cell = [arr objectAtIndex:0];
+    cell.selectionStyle = UITableViewCellSelectionStyleBlue;
+    return cell;
+}
+
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
