@@ -12,6 +12,7 @@
 #import "ChatViewController.h"
 #import "base64.h"
 #import "RoomListTableViewCell.h"
+#import "SS_PinYin.h"
 
 @interface RoomViewController ()
 
@@ -22,6 +23,9 @@
     NSDictionary *tmpDict;
     CreatRoomView *popCreatRoomView;
     RoomListTableViewCell *roomListCell;
+    RoomListTableViewHeader *roomListHeader;
+    RoomListTableViewFooter *roomListFooter;
+    int sortChannelid;
 }
 
 #pragma mark -
@@ -47,7 +51,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
     _usernameLbl.text = [NSString stringWithFormat:@"用户名:%@",[UserDataManager sharedUserDataManager].user.username];
     _useridLbl.text = [NSString stringWithFormat:@"ID:%@",[UserDataManager sharedUserDataManager].user.userid];
 }
@@ -55,7 +58,6 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (void)viewDidUnload {
@@ -86,7 +88,6 @@
     SSLog(@"dict = %@",dict);
     tmpDict = [NSDictionary dictionaryWithDictionary:dict];
     [self.romeList beginUpdates];
-//    [self.roomlistArray addObject:[NSMutableDictionary dictionaryWithDictionary: dict]];
     [self.roomlistArray addObject:tmpDict];
     NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:[_roomlistArray count] - 1 inSection:0]];
     [self.romeList insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationTop];
@@ -123,12 +124,10 @@
     
     [self.pomelo requestWithRoute:@"connector.entryHandler.refreshRoomList"
                         andParams:params andCallback:^(NSDictionary *result) {
-                            SSLog(@"refreshRoomList = %@",result);
                             if ([[result objectForKey:@"code"] intValue] == CODESUCCESS) {
                                 self.roomlistArray = nil;
                                 self.roomlistArray = [NSMutableArray arrayWithArray:[result objectForKey:@"roomlist"]];
                                 [self.onlineDict setObject:[result objectForKey:@"onlineuser"] forKey:@"onlineuser"];
-                                SSLog(@"roomlistArray = %@,onlinDict= %@",self.roomlistArray,self.onlineDict);
                                 [self.romeList performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
                             }
                         }];
@@ -146,27 +145,71 @@
  */
 - (void)enterRoom:(NSDictionary *)roomData
 {
-    SSLog(@"roomData= %@",roomData);
-    SSLog(@"[UserDataManager sharedUserDataManager].user.userid=%@",[UserDataManager sharedUserDataManager].user.userid);
     NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,
                              @"username":[UserDataManager sharedUserDataManager].user.username,
                              @"channelid":[roomData objectForKey:@"channelid"]};
-    SSLog(@"enterRoomparams = %@",params);
     [self.pomelo requestWithRoute:@"connector.entryHandler.enterRoom" andParams:params andCallback:^(NSDictionary *result) {
-        SSLog(@"result = %@",result);
         [self.spinner removeFromSuperview];
-        NSArray *userList = [result objectForKey:@"users"];
-        [UserDataManager sharedUserDataManager].user.channelName = [roomData objectForKey:@"name"];
-        SSLog(@"enterRoomChannel = %@", [roomData objectForKey:@"name"]);
-        //填数字给tableview。
-        ChatViewController *chatViewController = [[ChatViewController alloc] initWithNibName:@"ChatViewController" bundle:nil];
-        chatViewController.pomelo = self.pomelo;
-        chatViewController.userDic = [NSMutableDictionary dictionaryWithDictionary:params];
-        SSLog(@"self.userlist = %@",userList);
-        SSLog(@"chatViewController.userDic = %@",chatViewController.userDic);
-        [chatViewController.contactList addObjectsFromArray:userList];
-        [self.navigationController pushViewController:chatViewController animated:YES];
-        self.creatRoomTextField.text = @"";
+        if ([[result objectForKey:@"code"] intValue] == CODESUCCESS) {
+            NSArray *userList = [result objectForKey:@"users"];
+            [UserDataManager sharedUserDataManager].user.channelName = [roomData objectForKey:@"name"];
+            //填数字给tableview。
+            ChatViewController *chatViewController = [[ChatViewController alloc] initWithNibName:@"ChatViewController" bundle:nil];
+            chatViewController.pomelo = self.pomelo;
+            chatViewController.userDic = [NSMutableDictionary dictionaryWithDictionary:params];
+            [chatViewController.contactList addObjectsFromArray:userList];
+            [self.navigationController pushViewController:chatViewController animated:YES];
+            self.creatRoomTextField.text = @"";
+        } else {
+            switch ([[result objectForKey:@"code"] intValue]) {
+                case SERVER_ERROR:
+                {
+                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                        message:@"服务端错误"
+                                                                       delegate:nil
+                                                              cancelButtonTitle:@"OK"
+                                                              otherButtonTitles:nil, nil];
+                    [alertView show];
+                }
+                    break;
+                case PARAM_ERROR:
+                {
+                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                        message:@"参数错误"
+                                                                       delegate:nil
+                                                              cancelButtonTitle:@"OK"
+                                                              otherButtonTitles:nil, nil];
+                    [alertView show];
+                }
+                    break;
+                    
+                case AUTH_FILED:
+                {
+                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                        message:@"验证失败"
+                                                                       delegate:nil
+                                                              cancelButtonTitle:@"OK"
+                                                              otherButtonTitles:nil, nil];
+                    [alertView show];
+                }
+                    break;
+                case AUTH_TIME:
+                {
+                    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                        message:@"验证超时"
+                                                                       delegate:nil
+                                                              cancelButtonTitle:@"OK"
+                                                              otherButtonTitles:nil, nil];
+                    [alertView show];
+                    
+                }
+
+                    
+                default:
+                    break;
+            }
+        }
+        
     }];
 }
 
@@ -185,28 +228,10 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //SDK默认的
-//    static NSString *CellIdentifier = @"roomListTabelCell";
-//    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-//    if (cell == nil) {
-//        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-//    }
-//    NSInteger row = indexPath.row;
-//    NSString *str = [NSString stringWithFormat:@"%@                %@                                             %@",
-//                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"channelid"],
-//                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"name"],
-//                     [[self.roomlistArray objectAtIndex:row] objectForKey:@"count"]];
-//    
-//    cell.textLabel.text = str;
-//    
-//    cell.accessoryType = UITableViewCellAccessoryNone;
-//    cell.selectionStyle = UITableViewCellSelectionStyleBlue;
-//    return cell;
     //定制的
     static NSString *CellIdentifier = @"RoomListTableViewCellIdentifier";
     roomListCell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (roomListCell == nil) {
-//        roomListCell = [[RoomListTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         roomListCell = [RoomListTableViewCell creatRoomListCell];
     }
     NSInteger row = indexPath.row;
@@ -221,24 +246,167 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary *selectDict = [self.roomlistArray objectAtIndex:indexPath.row];
-    SSLog(@"sdfa=%@",selectDict);
     [self performSelectorOnMainThread:@selector(showSpinner) withObject:nil waitUntilDone:YES];
     [self performSelectorOnMainThread:@selector(enterRoom:) withObject:selectDict waitUntilDone:YES];
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    return @"房间ID         房间名称                                            房间人数";
+    roomListHeader = [RoomListTableViewHeader createRoomListTableViewHeader];
+    roomListHeader.delegate = self;
+    return roomListHeader;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    return 30;
+    return 40;
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
-    return [NSString stringWithFormat:@"在线人数:%@",[self.onlineDict objectForKey:@"onlineuser"]];
+    return 80;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    roomListFooter = [RoomListTableViewFooter createRoomListTableViewFooter];
+    roomListFooter.delegate = self;
+    roomListFooter.onlineUserNumLbl.text = [NSString stringWithFormat:@"%@",[self.onlineDict objectForKey:@"onlineuser"]];
+    return roomListFooter;
+}
+
+//设置cell背景色
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [roomListCell setBackgroundColor:[UIColor colorWithRed:50.0/255.0 green:155.0/255.0 blue:222.0/255.0 alpha:1]];
+}
+
+#pragma mark -
+#pragma mark RoomListTableViewHeaderDelegate
+- (void)channelSortByChannelid
+{
+    switch (sortChannelid % 2) {
+        case 0:
+        {
+            NSSortDescriptor *channel_sort_by_channelid = [NSSortDescriptor sortDescriptorWithKey:@"channelid" ascending:NO comparator:^NSComparisonResult(id obj1, id obj2) {
+                if ([obj1 intValue] > [obj2 intValue]) {
+                    return NSOrderedDescending;
+                } else {
+                    return NSOrderedAscending;
+                }
+            }];
+            [self.roomlistArray sortUsingDescriptors:[NSMutableArray arrayWithObject:channel_sort_by_channelid]];
+            [self.romeList performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+            sortChannelid = 1;
+        }
+            break;
+        case 1:
+        {
+            NSSortDescriptor *channel_sort_by_channelid = [NSSortDescriptor sortDescriptorWithKey:@"channelid" ascending:NO comparator:^NSComparisonResult(id obj1, id obj2) {
+                if ([obj1 intValue] < [obj2 intValue]) {
+                    return NSOrderedDescending;
+                } else {
+                    return NSOrderedAscending;
+                }
+            }];
+            [self.roomlistArray sortUsingDescriptors:[NSMutableArray arrayWithObject:channel_sort_by_channelid]];
+            [self.romeList performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+            sortChannelid = 0;
+        }
+            break;
+        default:
+            break;
+    }        
+}
+
+- (void)channelSortByChannelName
+{
+    switch (sortChannelid % 2) {
+        case 0:
+        {
+            NSSortDescriptor *channel_sort_by_channelid = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:NO comparator:^NSComparisonResult(id obj1, id obj2) {
+                if (pinyinFirstLetter([[obj1 lowercaseString] characterAtIndex:0]) > pinyinFirstLetter([[obj2 lowercaseString] characterAtIndex:0])) {
+                    return NSOrderedDescending;
+                } else {
+                    return NSOrderedAscending;
+                }
+                return NSOrderedSame;
+            }];
+            [self.roomlistArray sortUsingDescriptors:[NSMutableArray arrayWithObject:channel_sort_by_channelid]];
+            [self.romeList performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+            sortChannelid = 1;
+        }
+            break;
+        case 1:
+        {
+            NSSortDescriptor *channel_sort_by_channelid = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:NO comparator:^NSComparisonResult(id obj1, id obj2) {
+                if (pinyinFirstLetter([[obj1 lowercaseString] characterAtIndex:0]) < pinyinFirstLetter([[obj2 lowercaseString] characterAtIndex:0])) {
+                    return NSOrderedDescending;
+                } else {
+                    return NSOrderedAscending;
+                }
+            }];
+            [self.roomlistArray sortUsingDescriptors:[NSMutableArray arrayWithObject:channel_sort_by_channelid]];
+            [self.romeList performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+            sortChannelid = 0;
+        }
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)channelSortByChannelOnlineNumber
+{
+    switch (sortChannelid % 2) {
+        case 0:
+        {
+            NSSortDescriptor *channel_sort_by_channelid = [NSSortDescriptor sortDescriptorWithKey:@"count" ascending:NO comparator:^NSComparisonResult(id obj1, id obj2) {
+                if ([obj1 intValue] > [obj2 intValue]) {
+                    return NSOrderedDescending;
+                } else {
+                    return NSOrderedAscending;
+                }
+            }];
+            [self.roomlistArray sortUsingDescriptors:[NSMutableArray arrayWithObject:channel_sort_by_channelid]];
+            [self.romeList performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+            sortChannelid = 1;
+        }
+            break;
+        case 1:
+        {
+            NSSortDescriptor *channel_sort_by_channelid = [NSSortDescriptor sortDescriptorWithKey:@"count" ascending:NO comparator:^NSComparisonResult(id obj1, id obj2) {
+                if ([obj1 intValue] < [obj2 intValue]) {
+                    return NSOrderedDescending;
+                } else {
+                    return NSOrderedAscending;
+                }
+            }];
+            [self.roomlistArray sortUsingDescriptors:[NSMutableArray arrayWithObject:channel_sort_by_channelid]];
+            [self.romeList performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+            sortChannelid = 0;
+        }
+            break;
+        default:
+            break;
+    }
+}
+
+#pragma mark -
+#pragma mark RoomListTableViewFooterDelegate
+- (void)hiddenNoUsersChannel:(BOOL)swithState
+{
+    SSLog(@"hiddenNoUsersChannelSwithState = %d",swithState);
+}
+
+- (void)hiddenAllUsersChannel:(BOOL)swithState
+{
+    SSLog(@"hiddenAllUsersChannelSwithState = %d",swithState);
+}
+
+- (void)quickEnterChannel
+{
+    SSLog(@"quickEnterChannel");
 }
 
 #pragma mark -
@@ -249,13 +417,11 @@
     NSNumber *userid = [UserDataManager sharedUserDataManager].user.userid;
   
     NSDictionary *params = @{@"channel": channel,@"userid":userid};
-    SSLog(@"creatRoomParams = %@",params);
     [self.pomelo requestWithRoute:@"connector.entryHandler.createRoom"
                         andParams:params
                       andCallback:^(NSDictionary *result) {
                           if ([[result objectForKey:@"code"] intValue] == 200) {
                               //成功
-                              SSLog(@"creat room success:result = %@",result);
                               NSDictionary *newRoom = @{@"channelid": [NSString stringWithFormat:@"%@",[result objectForKey:@"channelid"]],
                                                         @"name":channel,
                                                         @"count":@0};

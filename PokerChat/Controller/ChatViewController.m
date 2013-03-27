@@ -214,7 +214,6 @@
 - (IBAction)exit:(id)sender {
     NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,
                              @"username":[UserDataManager sharedUserDataManager].user.username};
-    SSLog(@"params = %@",params);
     [self.pomelo requestWithRoute:@"connector.entryHandler.quit"
                         andParams:params
                       andCallback:^(NSDictionary *result) {
@@ -225,7 +224,52 @@
               [self.pomelo offRoute:@"onLeave"];
               [self.pomelo offRoute:@"onAdd"];
               self.chatTableView.delegate = nil;//防止与动画冲突
-            }
+          } else {
+              switch ([[result objectForKey:@"code"] intValue]) {
+                  case SERVER_ERROR:
+                  {
+                      UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                          message:@"服务端错误"
+                                                                         delegate:nil
+                                                                cancelButtonTitle:@"OK"
+                                                                otherButtonTitles:nil, nil];
+                      [alertView show];
+                  }
+                      break;
+                  case PARAM_ERROR:
+                  {
+                      UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                          message:@"参数错误"
+                                                                         delegate:nil
+                                                                cancelButtonTitle:@"OK"
+                                                                otherButtonTitles:nil, nil];
+                      [alertView show];
+                  }
+                      break;
+                  case AUTH_FILED:
+                  {
+                      UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                          message:@"验证失败"
+                                                                         delegate:nil
+                                                                cancelButtonTitle:@"OK"
+                                                                otherButtonTitles:nil, nil];
+                      [alertView show];
+                  }
+                      break;
+                  case AUTH_TIME:
+                  {
+                      UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                          message:@"验证超时"
+                                                                         delegate:nil
+                                                                cancelButtonTitle:@"OK"
+                                                                otherButtonTitles:nil, nil];
+                      [alertView show];
+                      
+                  }                      
+                  default:
+                      break;
+              }
+          }
     }];
 }
 
@@ -264,17 +308,14 @@
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    SSLog(@"self.contactList.count = %d",self.contactList.count);
     if (self.onlinePlayerTableView == tableView)
         return [self.contactList count];
     else {
-        SSLog(@"用于显示多少行的chatLogArray = %@",self.chatLogArray);
         return [self.chatLogArray count];
     }
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //onlinePlayerTableView && chatTableView
     if (self.onlinePlayerTableView == tableView) {
         static NSString *CellIdentifier = @"ContactsTableCell";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -314,6 +355,8 @@
         //在heighrow 设置高
         cell.textLabel.numberOfLines = 0;
         cell.textLabel.font = [UIFont systemFontOfSize:14];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
     }
 }
@@ -470,11 +513,7 @@
 {
     SSLog(@"should Return");
     //对所有人userid为空
-    SSLog(@"self.target = %@",self.target);
     NSNumber *type = @([[self.target objectForKey:@"username"] isEqualToString:@"All"]?CHATLOGTYPE_ALL:CHATLOGTYPE_SINGLE);
-    SSLog(@"target type = %@",type);
-    SSLog(@"userDic = %@",self.userDic);
-    SSLog(@"_chatTextField.text  = %@",_chatTextField.text);
     if ([_chatTextField.text isEqualToString:@""]) {
         SSLog(@"输入为空");
     } else {

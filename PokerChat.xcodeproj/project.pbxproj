@@ -58,6 +58,11 @@
 		B3DF333516F1B8F000E9C4D9 /* UserData.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF333416F1B8F000E9C4D9 /* UserData.m */; };
 		B3DF333816F1BBBB00E9C4D9 /* UserDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B3DF333716F1BBBB00E9C4D9 /* UserDataManager.m */; };
 		B3E5C86016F7EEF200739CE5 /* PopupView.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E5C85F16F7EEF200739CE5 /* PopupView.m */; };
+		B3F8F22317013F9400D80E42 /* RoomListTableViewHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = B3F8F22217013F9400D80E42 /* RoomListTableViewHeader.m */; };
+		B3F8F22517013FC200D80E42 /* RoomListTableViewHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3F8F22417013FC200D80E42 /* RoomListTableViewHeader.xib */; };
+		B3F8F2281701439800D80E42 /* RoomListTableViewFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = B3F8F2271701439800D80E42 /* RoomListTableViewFooter.m */; };
+		B3F8F22A170143C500D80E42 /* RoomListTableViewFooter.xib in Resources */ = {isa = PBXBuildFile; fileRef = B3F8F229170143C500D80E42 /* RoomListTableViewFooter.xib */; };
+		B3F8F22C17016F7A00D80E42 /* SS_PinYin.c in Sources */ = {isa = PBXBuildFile; fileRef = B3F8F22B17016F7A00D80E42 /* SS_PinYin.c */; };
 		C4B39B3816FD82F200C45BB9 /* avatar.png in Resources */ = {isa = PBXBuildFile; fileRef = C4B39B3716FD82F200C45BB9 /* avatar.png */; };
 /* End PBXBuildFile section */
 
@@ -143,6 +148,14 @@
 		B3DF333716F1BBBB00E9C4D9 /* UserDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserDataManager.m; sourceTree = "<group>"; };
 		B3E5C85E16F7EEF200739CE5 /* PopupView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopupView.h; sourceTree = "<group>"; };
 		B3E5C85F16F7EEF200739CE5 /* PopupView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopupView.m; sourceTree = "<group>"; };
+		B3F8F22117013F9400D80E42 /* RoomListTableViewHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomListTableViewHeader.h; sourceTree = "<group>"; };
+		B3F8F22217013F9400D80E42 /* RoomListTableViewHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomListTableViewHeader.m; sourceTree = "<group>"; };
+		B3F8F22417013FC200D80E42 /* RoomListTableViewHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomListTableViewHeader.xib; sourceTree = "<group>"; };
+		B3F8F2261701439700D80E42 /* RoomListTableViewFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomListTableViewFooter.h; sourceTree = "<group>"; };
+		B3F8F2271701439800D80E42 /* RoomListTableViewFooter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomListTableViewFooter.m; sourceTree = "<group>"; };
+		B3F8F229170143C500D80E42 /* RoomListTableViewFooter.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomListTableViewFooter.xib; sourceTree = "<group>"; };
+		B3F8F22B17016F7A00D80E42 /* SS_PinYin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SS_PinYin.c; sourceTree = "<group>"; };
+		B3F8F22D1701704400D80E42 /* SS_PinYin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SS_PinYin.h; sourceTree = "<group>"; };
 		C4B39B3716FD82F200C45BB9 /* avatar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = avatar.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -230,6 +243,8 @@
 				B302E23A16FD5495002897BD /* LoadingView.m */,
 				B302E23C16FD7CE2002897BD /* UIDevice-Hardware.h */,
 				B302E23D16FD7CE2002897BD /* UIDevice-Hardware.m */,
+				B3F8F22B17016F7A00D80E42 /* SS_PinYin.c */,
+				B3F8F22D1701704400D80E42 /* SS_PinYin.h */,
 			);
 			name = Addition;
 			path = PokerChat/Addition;
@@ -273,6 +288,12 @@
 				B334B87816FD9C7F006AB8DD /* RoomListTableViewCell.h */,
 				B334B87916FD9C7F006AB8DD /* RoomListTableViewCell.m */,
 				B334B87A16FD9C7F006AB8DD /* RoomListTableViewCell.xib */,
+				B3F8F22117013F9400D80E42 /* RoomListTableViewHeader.h */,
+				B3F8F22217013F9400D80E42 /* RoomListTableViewHeader.m */,
+				B3F8F22417013FC200D80E42 /* RoomListTableViewHeader.xib */,
+				B3F8F2261701439700D80E42 /* RoomListTableViewFooter.h */,
+				B3F8F2271701439800D80E42 /* RoomListTableViewFooter.m */,
+				B3F8F229170143C500D80E42 /* RoomListTableViewFooter.xib */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -452,6 +473,8 @@
 				B334B89016FD9CEE006AB8DD /* ChatViewController.xib in Resources */,
 				B334B89216FD9CEE006AB8DD /* LoginViewController.xib in Resources */,
 				B334B89416FD9CEE006AB8DD /* RoomViewController.xib in Resources */,
+				B3F8F22517013FC200D80E42 /* RoomListTableViewHeader.xib in Resources */,
+				B3F8F22A170143C500D80E42 /* RoomListTableViewFooter.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -488,6 +511,9 @@
 				B334B88F16FD9CEE006AB8DD /* ChatViewController.m in Sources */,
 				B334B89116FD9CEE006AB8DD /* LoginViewController.m in Sources */,
 				B334B89316FD9CEE006AB8DD /* RoomViewController.m in Sources */,
+				B3F8F22317013F9400D80E42 /* RoomListTableViewHeader.m in Sources */,
+				B3F8F2281701439800D80E42 /* RoomListTableViewFooter.m in Sources */,
+				B3F8F22C17016F7A00D80E42 /* SS_PinYin.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -33,7 +33,7 @@
 			</object>
 			<object class="IBUITableViewCell" id="86580385">
 				<reference key="NSNextResponder"/>
-				<int key="NSvFlags">292</int>
+				<int key="NSvFlags">319</int>
 				<array class="NSMutableArray" key="NSSubviews">
 					<object class="IBUIView" id="974919839">
 						<reference key="NSNextResponder" ref="86580385"/>
@@ -53,9 +53,9 @@
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<string key="IBUIText">ID</string>
-								<object class="NSColor" key="IBUITextColor" id="476402439">
-									<int key="NSColorSpace">1</int>
-									<bytes key="NSRGB">MCAwIDAAA</bytes>
+								<object class="NSColor" key="IBUITextColor" id="644187667">
+									<int key="NSColorSpace">3</int>
+									<bytes key="NSWhite">MQA</bytes>
 								</object>
 								<nil key="IBUIHighlightedColor"/>
 								<int key="IBUIBaselineAdjustment">0</int>
@@ -84,7 +84,7 @@
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<string key="IBUIText">房间</string>
-								<reference key="IBUITextColor" ref="476402439"/>
+								<reference key="IBUITextColor" ref="644187667"/>
 								<nil key="IBUIHighlightedColor"/>
 								<int key="IBUIBaselineAdjustment">0</int>
 								<reference key="IBUIFontDescription" ref="82711012"/>
@@ -104,7 +104,7 @@
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 								<string key="IBUIText">在玩人数</string>
-								<reference key="IBUITextColor" ref="476402439"/>
+								<reference key="IBUITextColor" ref="644187667"/>
 								<nil key="IBUIHighlightedColor"/>
 								<int key="IBUIBaselineAdjustment">0</int>
 								<reference key="IBUIFontDescription" ref="82711012"/>
@@ -133,6 +133,10 @@
 				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="974919839"/>
 				<string key="NSReuseIdentifierKey">_NS:9</string>
+				<object class="NSColor" key="IBUIBackgroundColor">
+					<int key="NSColorSpace">1</int>
+					<bytes key="NSRGB">MC4xNjM3MTkyOTYzIDAuNjA4NjczNzQwMyAwLjg4NDAwMTM1ODcAA</bytes>
+				</object>
 				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 				<reference key="IBUIContentView" ref="974919839"/>
 				<string key="IBUIReuseIdentifier">RoomListTableViewCellIdentifier</string>
@@ -188,9 +192,9 @@
 						<int key="objectID">81</int>
 						<reference key="object" ref="86580385"/>
 						<array class="NSMutableArray" key="children">
-							<reference ref="1071544406"/>
 							<reference ref="400141374"/>
 							<reference ref="35031533"/>
+							<reference ref="1071544406"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>

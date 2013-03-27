@@ -13,12 +13,6 @@
 #import "RegisterView.h"
 
 
-
-#define PASSWORDERROR 0
-#define NOUSERNAME 1
-#define ALREADYHASUSER 2
-#define ALREADYLOGIN 3
-
 //#define API_HOST @"http://10.0.1.23"
 //#define API_HOST @"http://10.0.1.9"
 #define API_HOST @"http://10.0.1.44"
@@ -70,7 +64,6 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        
     }
     return self;
 }
@@ -187,6 +180,16 @@
 - (void)checkError:(int)errorType
 {
     switch (errorType) {
+        case SERVER_ERROR:
+        {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                message:@"服务端错误"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil, nil];
+            [alertView show];
+        }
+            break;
         case PASSWORDERROR:
         {   //密码错误
             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
@@ -195,7 +198,6 @@
                                                       cancelButtonTitle:@"OK"
                                                       otherButtonTitles:nil];
             [alertView show];
-            
         }
             break;
         case NOUSERNAME:
@@ -218,7 +220,6 @@
                                                       otherButtonTitles:nil];
             [registerView.spinner removeFromSuperview];
             [alertView show];
-
         }
             break;
         case ALREADYLOGIN:
@@ -233,42 +234,49 @@
             [self.pomelo disconnect];
         }
             break;
-            
+        case PARAM_ERROR:
+        {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                message:@"参数错误"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil, nil];
+            [alertView show];
+        }
+            break;
+        case GUEST_FORBIDDEN:
+        {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                message:@"游客禁止登陆"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil, nil];
+            [alertView show];
+        }
+            break;
+        case AUTH_FILED:
+        {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                message:@"验证失败"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil, nil];
+            [alertView show];
+        }
+            break;
+        case AUTH_TIME:
+        {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                                message:@"验证超时"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil, nil];
+            [alertView show];
+
+        }
         default:
             break;
     }
-}
-
-/**
- *@brief login请求
- *@param theUsername 用户名
- *@param thePassword 密码
- *@param theRole 玩家类型
- */
-- (void)connectServerWithUsername:(NSString *)theUsername password:(NSString *)thePassword andUserRole:(UserRole )theRole
-{
-    [self.pomelo connectToHost:@"10.0.1.44" onPort:3014 withCallback:^(Pomelo *p) {
-        NSDictionary *params = @{@"username": [theUsername base64EncodedString],
-                                 @"password":[thePassword base64EncodedString]};
-        [self.pomelo requestWithRoute:@"gate.gateHandler.login" andParams:params andCallback:^(NSDictionary *result) {
-            [self.pomelo disconnectWithCallback:^(Pomelo *p) {
-                SSLog(@"rusult = %@",result);
-                if ([[result objectForKey:@"code"] intValue] == 200) {
-                    UserData *userData = [[UserData alloc] initWithDic:result];
-                    [UserDataManager sharedUserDataManager].user = userData;
-                    [UserDataManager sharedUserDataManager].user.role = @(theRole);
-                    [UserDataManager sharedUserDataManager].user.username = [theUsername base64EncodedString];
-                    [UserDataManager sharedUserDataManager].user.userpassword = [thePassword base64EncodedString];
-                    [self entryWithLoginData:result
-                                    userName:[theUsername base64EncodedString]
-                                 andPassword:[thePassword base64EncodedString]];
-                } else {
-                    SSLog(@"result.logincode = %@",[result objectForKey:@"err"]);
-                    [self checkError:[[[result objectForKey:@"err"] objectForKey:@"errorcode"] intValue]];
-                }
-            }];
-        }];
-    }];
 }
 
 //TODO:LOGIN:
@@ -302,8 +310,6 @@
                                               otherButtonTitles:nil, nil];
         [alert show];
     } else {
-        //TODO:旧登陆接口
-//        [self connectServerWithUsername:username password:password andUserRole:userRole];
         //TODO:新登陆接口:
         if ([username length] >= 4 && [username length] <= 12) {
             [self connectHttpServerWithUsername:username password:password];
@@ -327,17 +333,12 @@
                 [alert show];
             }
         }
-       
     }
 }
 
 //TODO:新登陆接口实现:
 - (void)connectHttpServerWithUsername:(NSString *)theName password:(NSString *)thePassword
 {
-//    username	string	用户名
-//    password	string	密码
-//    devicetoken	string	机器的唯一标识
-//    macaddress	string	mac地址
     NSString *loginBody = [NSString stringWithFormat:@"username=%@&password=%@&devicetoken=%@&macaddress=%@",theName,thePassword,@"",MacAddress];
     NSURL *loginUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@:%@/%@",API_HOST,API_PORT,@"login"]];
     NSMutableURLRequest *loginRequest = [[NSMutableURLRequest alloc] initWithURL:loginUrl];
@@ -351,50 +352,13 @@
         receiveData = [NSMutableData data];
     } else {
         SSLog(@"http login faild");
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"登陆失败"
+                                                            message:@"http请求失败"
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil, nil];
+        [alertView show];
     }
-}
-
-/**
- *@brief 游客登陆或者玩家注册时调用的方法，用来完成注册
- *@param theName 注册姓名或默认游客姓名
- *@param thePassword 注册密码或默认游客密码123456
- *@param theRole 判断是注册玩家还是游客玩家
- */
-- (void)guestLoginOrRegisterWithUsername:(NSString *)theName password:(NSString *)thePassword andUserRole:(UserRole)theRole
-{
-    [self.pomelo connectToHost:@"10.0.1.44" onPort:3014 withCallback:^(Pomelo *p) {
-        NSDictionary *params = @{@"username": theName,
-                                 @"password":thePassword,
-                                 @"role":@(theRole)};
-        [self.pomelo requestWithRoute:@"gate.gateHandler.entry" andParams:params andCallback:^(NSDictionary *result) {
-            SSLog(@"registOrGuestResult = %@",result);
-            [self.pomelo disconnectWithCallback:^(Pomelo* p) {
-                if ([[result objectForKey:@"code"] intValue] == 200) {
-                    UserData *userData = [[UserData alloc] initWithDic:result];
-                    [UserDataManager sharedUserDataManager].user = userData;
-                    [UserDataManager sharedUserDataManager].user.role = @(theRole);
-                    [UserDataManager sharedUserDataManager].user.username = [theName base64EncodedString];
-                    [UserDataManager sharedUserDataManager].user.userpassword = [thePassword base64EncodedString];
-                    [UserDataManager sharedUserDataManager].user.resultDict = result;
-                    if (theRole == UserRoleRegister) {
-                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Congratulation"
-                                                                        message:@"注册成功"
-                                                                       delegate:self
-                                                              cancelButtonTitle:@"OK"
-                                                              otherButtonTitles:nil, nil];
-                        [alert show];
-                    } else {
-                        //NEXT:游客登陆
-                        [self entryWithLoginData:result
-                                        userName:[theName base64EncodedString]
-                                     andPassword:[thePassword base64EncodedString]];
-                    }                   
-                } else {
-                    [self checkError:[[[result objectForKey:@"err"] objectForKey:@"errorcode"] intValue]];
-                }
-            }];
-        }];
-    }];
 }
 
 //TODO:新游客登陆
@@ -419,6 +383,12 @@
         receiveData = [NSMutableData data];
     } else {
         SSLog(@"http login failed");
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"登陆失败"
+                                                        message:@"http请求失败"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
     }
 }
 
@@ -438,7 +408,7 @@
  *@brief注册Action
  */
 - (IBAction)register:(id)sender
-{//    [self guestRegister];
+{
     //弹出注册框
     registerView = [RegisterView createRegisterViewWithDelegate:self addParentView:self.view];
     registerView.parentView = self.view;
@@ -447,7 +417,8 @@
 /**
  *@brief游客登陆Action
  */
-- (IBAction)guestLogin:(id)sender {
+- (IBAction)guestLogin:(id)sender
+{
     [self guestLogin];
 }
 
@@ -459,10 +430,8 @@
     SSLog(@"textFieldDoneEdit");
     UITextField *selectTextField = (id)sender;
     if (selectTextField == _nameTextField) {
-        SSLog(@"textFieldDoneEditName");
         [_channelTextField becomeFirstResponder];
     } else if (selectTextField == _channelTextField) {
-        SSLog(@"textFieldDoneEditChannel");
         [_channelTextField resignFirstResponder];
         [self normalLogin];
     }
@@ -472,7 +441,6 @@
     SSLog(@"switchClick");
     UISwitch *memSwitch = (id)sender;
     if (memSwitch == _nameSwitch) {
-        SSLog(@"memSwithOffOrOn=%d",memSwitch.on);
         switch (memSwitch.on) {
             case 1:
                 [[NSUserDefaults standardUserDefaults] setObject:[UserDataManager sharedUserDataManager].user.username
@@ -488,7 +456,6 @@
                 break;
         }
     } else if (memSwitch == _passwordSwitch) {
-        SSLog(@"memSwithOffOrOn=%d",memSwitch.on);
         switch (memSwitch.on) {
             case 1:
                 [[NSUserDefaults standardUserDefaults] setObject:[UserDataManager sharedUserDataManager].user.userpassword
@@ -512,10 +479,8 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     if (textField == _nameTextField) {
-        SSLog(@"textFieldShouldReturnName");
         [_channelTextField becomeFirstResponder];
     } else if (textField == _channelTextField) {
-        SSLog(@"textFieldShouldReturnChannel");
         [_channelTextField resignFirstResponder];
     }
     return YES;
@@ -526,11 +491,6 @@
 - (void)userRegisterWithName:(NSString *)theName andPassword:(NSString *)thePassword
 {
     userRole = UserRoleRegister;
-    SSLog(@"theName = %@",theName);
-    SSLog(@"thePassword = %@",thePassword);
-
-    //TODO:旧注册系统
-//    [self guestLoginOrRegisterWithUsername:theName password:thePassword andUserRole:userRole];
     [self guestRegisterWithUsername:theName password:thePassword andUserRole:userRole];
 }
 //TODO:新:http注册系统
@@ -539,7 +499,6 @@
     username = name;
     password = thepassword;
     NSString *registerBody = [NSString stringWithFormat:@"username=%@&password=%@&devicetoken=%@&macaddress=%@&isguest=%d",name,password,@"",MacAddress,0];
-    SSLog(@"registerBody = %@",registerBody);
     NSURL *registerUrl = [NSURL URLWithString:[NSString stringWithFormat:@"%@:%@/%@",API_HOST,API_PORT,@"register"]];
     NSMutableURLRequest *registerRequest = [[NSMutableURLRequest alloc] initWithURL:registerUrl];
     [registerRequest setHTTPMethod:@"POST"];
@@ -551,6 +510,12 @@
         receiveData = [NSMutableData data];
     } else {
         SSLog(@"http register failed");
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"注册失败"
+                                                        message:@"http请求失败"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
     }
 }
 
@@ -558,12 +523,20 @@
 #pragma mark NSURLConnectionDataDelegate && NSURLConnectionDelegate
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    SSLog(@"Error = %@",error);
+    [self.spinner removeFromSuperview];
+    if ([[[[error userInfo] objectForKey:@"NSErrorFailingURLStringKey"] substringFromIndex:[[[error userInfo] objectForKey:@"NSErrorFailingURLStringKey"] length] - 8] isEqualToString:@"register"]) {
+        [registerView.spinner removeFromSuperview];
+    }
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Error:%d",[error code]]
+                                                    message:[NSString stringWithFormat:@"%@",[[error userInfo] objectForKey:@"NSLocalizedDescription"]]
+                                                   delegate:nil
+                                          cancelButtonTitle:@"确定"
+                                          otherButtonTitles:nil, nil];
+    [alert show];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
-    SSLog(@"response = %@",response);
     [receiveData setLength:0];
 }
 
@@ -576,9 +549,6 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     [self.spinner removeFromSuperview];
-    //reciveData 为NULL会崩
-    SSLog(@"finish");
-    SSLog(@"recevieData = %@",receiveData);
     NSError *jsonParseError = nil;
     NSDictionary *jsonData = [NSJSONSerialization JSONObjectWithData:receiveData options:NSJSONReadingMutableContainers error:&jsonParseError];
     SSLog(@"jsonData = %@",jsonData);
@@ -610,12 +580,9 @@
                                               otherButtonTitles:nil, nil];
         [alert show];
     } else if ([jsonData objectForKey:@"route"] != nil && [[jsonData objectForKey:@"route"] isEqualToString:@"guest"]) {
-        SSLog(@"进入新的游客登陆");
         //进入新的游客登陆
-        //还需要返回一个密码
-        SSLog(@"jsonData gu = %@",jsonData);
+        SSLog(@"进入新的游客登陆");
         UserData *user = [[UserData alloc] initWithDic:jsonData];
-        SSLog(@"user = %@",user);
         [UserDataManager sharedUserDataManager].user = user;
         [UserDataManager sharedUserDataManager].user.userRole = UserRoleGuest;
         [self connectServerForEnterWithUserid:[[jsonData objectForKey:@"userid"] intValue] andToken:[jsonData objectForKey:@"token"]];
@@ -626,19 +593,12 @@
 //TODO:连接pomemo 接入gate.gateHandler.entry接口
 - (void)connectServerForEnterWithUserid:(int)userid andToken:(NSString *)theToken
 {
-    SSLog(@"userid = %d",userid);
     NSDictionary *params = @{@"userid": [NSString stringWithFormat:@"%d",userid],@"token":theToken};
-    SSLog(@"params = %@",params);
     [self.pomelo connectToHost:API_POMELO_HOST onPort:API_POMELO_PORT withCallback:^(Pomelo *p) {
         [self.pomelo requestWithRoute:@"gate.gateHandler.entry" andParams:params andCallback:^(NSDictionary *result) {
-            SSLog(@"entry1_result = %@",result);
             [self.pomelo disconnectWithCallback:^(Pomelo *p) {
                 if ([[result objectForKey:@"code"] intValue] == CODESUCCESS) {
                     //成功进入
-                    SSLog(@"userid = %@, token = %@, username = %@",[UserDataManager sharedUserDataManager].user.userid,
-                          [UserDataManager sharedUserDataManager].user.userToken,[UserDataManager sharedUserDataManager].user.username);
-                    SSLog(@"result %@",result);
-                    SSLog(@"token%@",theToken);
                     [self entryWithLoginData:result andToken:theToken];
                 } else {
                     [self checkError:[[[result objectForKey:@"error"] objectForKey:@"errorcode"] intValue]];
@@ -654,16 +614,12 @@
     NSString *host = [data objectForKey:@"host"];
     NSInteger port = [[data objectForKey:@"port"] intValue];
     [self.pomelo connectToHost:host onPort:port withCallback:^(Pomelo *p) {
-        SSLog(@"id = %@",[UserDataManager sharedUserDataManager].user.userid);
-        SSLog(@"token = %@",[UserDataManager sharedUserDataManager].user.userToken);
         NSDictionary *params = @{@"userid": [UserDataManager sharedUserDataManager].user.userid,
                                  @"token":[UserDataManager sharedUserDataManager].user.userToken};
         [p requestWithRoute:@"connector.entryHandler.entry" andParams:params andCallback:^(NSDictionary *result) {
             if ([[result objectForKey:@"code"] intValue] == CODESUCCESS) {
-                SSLog(@"connector.entryHandler.entry=%@",result);
                 [self enterCenterRoom:result];
             } else {
-                SSLog(@"connector.entryHandler.entry err");
                 [self checkError:[[[result objectForKey:@"error"] objectForKey:@"errorcode"] intValue]];
             }
         }];
@@ -675,9 +631,7 @@
 #pragma mark UIAlertViewDelegate
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    NSLog(@"cancel alertView");
     [registerView close];
-    SSLog(@"resultDic = %@",[UserDataManager sharedUserDataManager].user.resultDict);
     [self connectServerForEnterWithUserid:[[UserDataManager sharedUserDataManager].user.userid intValue]
                                 andToken:[UserDataManager sharedUserDataManager].user.userToken];
 }
